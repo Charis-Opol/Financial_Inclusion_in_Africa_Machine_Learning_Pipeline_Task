@@ -1,10 +1,15 @@
+import numpy as np
 import pytest
 
 from fin_inclusion.evaluation.cv_runner import CVFoldResult
 from fin_inclusion.evaluation.reporting import (
+    aggregate_confusion_matrix,
     compare_paired_pr_auc,
+    confusion_matrix_markdown,
     country_table_markdown,
     fold_pr_auc_scores,
+    full_results_table_markdown,
+    full_results_table_row,
     results_table_markdown,
     results_table_row,
     summarize_country_metrics,
@@ -16,19 +21,21 @@ def _fold_results() -> list[CVFoldResult]:
     return [
         CVFoldResult(
             fold=0,
-            metrics={"pr_auc": 0.5, "roc_auc": 0.8, "f1": 0.4, "precision": 0.3, "recall": 0.5},
+            metrics={"pr_auc": 0.5, "roc_auc": 0.8, "f1": 0.4, "precision": 0.3, "recall": 0.5, "accuracy": 0.7},
             country_metrics={
                 "Kenya": {"pr_auc": 0.6, "f1": 0.5},
                 "Uganda": {"pr_auc": 0.4, "f1": 0.3},
             },
+            confusion_matrix=np.array([[50, 10], [8, 12]]),
         ),
         CVFoldResult(
             fold=1,
-            metrics={"pr_auc": 0.7, "roc_auc": 0.9, "f1": 0.6, "precision": 0.5, "recall": 0.7},
+            metrics={"pr_auc": 0.7, "roc_auc": 0.9, "f1": 0.6, "precision": 0.5, "recall": 0.7, "accuracy": 0.8},
             country_metrics={
                 "Kenya": {"pr_auc": 0.8, "f1": 0.7},
                 "Uganda": {"pr_auc": 0.2, "f1": 0.1},
             },
+            confusion_matrix=np.array([[55, 5], [6, 14]]),
         ),
     ]
 
@@ -102,3 +109,45 @@ def test_compare_paired_pr_auc_consistent_difference_is_significant():
 
     assert result.ttest_p_value < 0.05
     assert result.wilcoxon_p_value < 0.1
+
+
+def test_full_results_table_row_includes_precision_recall_accuracy():
+    summary = summarize_metrics(_fold_results())
+
+    row = full_results_table_row("XGBoost", "class-weight", summary)
+
+    assert "precision" in row
+    assert "recall" in row
+    assert "accuracy" in row
+    assert "±" in row["accuracy"]
+
+
+def test_full_results_table_markdown_has_all_metric_columns():
+    summary = summarize_metrics(_fold_results())
+    row = full_results_table_row("XGBoost", "class-weight", summary)
+
+    table = full_results_table_markdown([row])
+
+    assert "Precision" in table
+    assert "Recall" in table
+    assert "Accuracy" in table
+
+
+def test_aggregate_confusion_matrix_sums_across_folds():
+    total = aggregate_confusion_matrix(_fold_results())
+
+    expected = np.array([[50, 10], [8, 12]]) + np.array([[55, 5], [6, 14]])
+    np.testing.assert_array_equal(total, expected)
+
+
+def test_confusion_matrix_markdown_renders_all_four_cells():
+    cm = np.array([[105, 15], [14, 26]])
+
+    table = confusion_matrix_markdown(cm)
+
+    assert "105" in table
+    assert "15" in table
+    assert "14" in table
+    assert "26" in table
+    assert "Actual No" in table
+    assert "Pred Yes" in table

@@ -6,7 +6,7 @@ from fin_inclusion.imbalance.strategies import ClassWeightStrategy
 from fin_inclusion.models.logistic_regression import LogisticRegressionModel
 
 N_FOLDS = 3
-METRIC_KEYS = {"pr_auc", "roc_auc", "f1", "precision", "recall"}
+METRIC_KEYS = {"pr_auc", "roc_auc", "f1", "precision", "recall", "accuracy"}
 
 
 def _synthetic_data(n_per_group: int = 12):
@@ -56,6 +56,13 @@ def test_country_metrics_cover_every_country():
             assert set(country_metrics) == METRIC_KEYS
 
 
+def test_fold_confusion_matrix_counts_match_validation_fold_size():
+    results = _run()
+    for r in results:
+        assert r.confusion_matrix.shape == (2, 2)
+        assert r.confusion_matrix.sum() == len(_synthetic_data()[0]) // N_FOLDS
+
+
 def test_same_seed_is_reproducible():
     first = _run(seed=7)
     second = _run(seed=7)
@@ -95,6 +102,7 @@ class TestNestedCV:
             assert isinstance(r.best_params, dict)
             assert isinstance(r.threshold, float)
             assert set(r.country_metrics) == {"Kenya", "Uganda"}
+            assert r.confusion_matrix.shape == (2, 2)
 
     def test_outer_validation_fold_never_reaches_tune_fn(self):
         X, y, country = _synthetic_data(n_per_group=20)

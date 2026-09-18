@@ -163,29 +163,44 @@ each one directly produced a design decision elsewhere in this document.
   tradeoff rather than a silent default.
 - **ROC-AUC** reported alongside PR-AUC for comparability with other
   published work on this dataset, not as the decision metric.
+- **Accuracy and the confusion matrix** are also computed
+  (`evaluation/metrics.py`) and reported in the full metrics tables
+  (`reports/baseline_results.md`, `reports/ablation_study_report.md`) —
+  but, like ROC-AUC, accuracy is *not* the headline metric: at this
+  dataset's ~14% positive rate, always predicting "No" scores ~86%
+  accuracy while catching zero true positives, so it's included for
+  completeness rather than as something to optimize. The confusion matrix
+  is reported as the sum across the 5 outer-validation folds (each row a
+  disjoint slice of the data, so summing double-counts nothing).
 - **All metrics reported as mean ± std across the 5 outer folds**, not a
   single number — a model at 0.65 ± 0.02 PR-AUC is a materially different
   (and better) result than 0.65 ± 0.15, even with an identical headline
   number.
 
-**Core results table** (Phase 3 rows populated as untuned baselines --
-default hyperparameters, F1 at the default 0.5 threshold, not yet tuned;
-see `reports/baseline_results.md` for the full per-country breakdown and
-`reports/ablation_study_report.md` for Phase 4's tuned numbers):
+**Core results table** — Phase 4, nested-CV tuned (full methodology,
+per-country breakdown, statistical test, and recommendation:
+`reports/ablation_study_report.md`; untuned Phase 3 floor:
+`reports/baseline_results.md`):
 
 | Model | Imbalance strategy | PR-AUC | F1 | ROC-AUC |
 |---|---|---|---|---|
-| XGBoost | class-weight | 0.551 ± 0.017 | 0.508 ± 0.005 | 0.846 ± 0.005 |
-| XGBoost | resampling (SMOTE) | ... | ... | ... |
-| PyTorch (2-layer) | class-weight | 0.580 ± 0.019 | 0.506 ± 0.013 | 0.863 ± 0.006 |
-| PyTorch (2-layer) | resampling (SMOTE) | ... | ... | ... |
-| PyTorch (3-layer) | best strategy from above | ... | ... | ... |
+| XGBoost | class-weight | **0.590 ± 0.019** | 0.547 ± 0.016 | 0.865 ± 0.003 |
+| XGBoost | resampling (SMOTE) | 0.577 ± 0.017 | 0.537 ± 0.018 | 0.859 ± 0.004 |
+| PyTorch (2-layer) | class-weight | 0.584 ± 0.019 | 0.546 ± 0.019 | 0.864 ± 0.006 |
+| PyTorch (2-layer) | resampling (SMOTE) | 0.568 ± 0.018 | 0.525 ± 0.018 | 0.852 ± 0.008 |
+| PyTorch (3-layer) | best strategy (class-weight) | 0.581 ± 0.019 | 0.542 ± 0.014 | 0.862 ± 0.006 |
 
-Logistic Regression (sanity-check floor, not part of the ablation grid):
-PR-AUC 0.559 ± 0.019, F1 0.496 ± 0.008, ROC-AUC 0.852 ± 0.006 -- both
-XGBoost and PyTorch are expected to eventually clear this once tuned;
-neither does yet at default hyperparameters, which is the expected shape
-of an *untuned* baseline, not a modeling problem.
+**Shipped: XGBoost, class-weight.** Best mean PR-AUC *and* tied-tightest
+std, though not statistically distinguishable from PyTorch-best at n=5
+folds (paired t-test p=0.087, Wilcoxon p=0.125) — chosen on the balance of
+PR-AUC stability, Uganda-specific per-country fairness, and
+interpretability, not a bare PR-AUC-highest-wins rule (full reasoning:
+`reports/ablation_study_report.md` §8). SMOTE underperforms class-weighting
+for *both* model families, consistent with caveats the post-SMOTE EDA
+checkpoint flagged before any ablation ran
+(`notebooks/02_smote_distribution_eda.ipynb`). Logistic Regression
+(untuned sanity floor, not part of this grid): PR-AUC 0.559 ± 0.019 — both
+tuned XGBoost and PyTorch now clear it.
 
 **Secondary reporting:**
 
@@ -265,7 +280,7 @@ fixtures — none of it depends on `data/raw/` being present.
 
 ## 9. Repository Structure
 
-```
+```text
 financial-inclusion-africa/
 ├── README.md
 ├── IMPLEMENTATION_PLAN.md

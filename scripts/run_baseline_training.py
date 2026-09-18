@@ -21,9 +21,11 @@ from settings import load_settings  # noqa: E402
 from fin_inclusion.data.loader import DataLoader, TARGET_COLUMN  # noqa: E402
 from fin_inclusion.evaluation.cv_runner import run_stratified_cv  # noqa: E402
 from fin_inclusion.evaluation.reporting import (  # noqa: E402
+    aggregate_confusion_matrix,
+    confusion_matrix_markdown,
     country_table_markdown,
-    results_table_markdown,
-    results_table_row,
+    full_results_table_markdown,
+    full_results_table_row,
     summarize_country_metrics,
     summarize_metrics,
 )
@@ -85,6 +87,7 @@ def main() -> None:
 
     rows = []
     country_tables = {}
+    confusion_tables = {}
     for name, X, model_factory in model_specs:
         print(f"\nRunning {n_folds}-fold CV: {name} ({IMBALANCE_STRATEGY_LABEL})")
         results = run_stratified_cv(
@@ -99,18 +102,22 @@ def main() -> None:
         )
         summary = summarize_metrics(results)
         print({k: f"{v[0]:.3f} +/- {v[1]:.3f}" for k, v in summary.items()})
-        rows.append(results_table_row(name, IMBALANCE_STRATEGY_LABEL, summary))
+        rows.append(full_results_table_row(name, IMBALANCE_STRATEGY_LABEL, summary))
         country_tables[name] = summarize_country_metrics(results)
+        confusion_tables[name] = aggregate_confusion_matrix(results)
 
-    table_md = results_table_markdown(rows)
+    table_md = full_results_table_markdown(rows)
     print("\n" + table_md)
 
     report_lines = [
         "# Phase 3 — Untuned Baseline Results",
         "",
         "Single stratified 5-fold CV (country + target stratified), class-weight "
-        "imbalance handling only, F1 at the default 0.5 threshold (not yet tuned -- "
-        "see `reports/ablation_study_report.md` for Phase 4's tuned results).",
+        "imbalance handling only, F1/precision/recall/accuracy at the default 0.5 "
+        "threshold (not yet tuned -- see `reports/ablation_study_report.md` for "
+        "Phase 4's tuned results). Accuracy is included for completeness, not as "
+        "the metric to optimize against -- see `evaluation/metrics.py`'s "
+        "module docstring for why it's misleading at this dataset's ~14% positive rate.",
         "",
         "## Results table",
         "",
@@ -123,6 +130,14 @@ def main() -> None:
         report_lines.append(f"### {name}")
         report_lines.append("")
         report_lines.append(country_table_markdown(country_tables[name]))
+        report_lines.append("")
+
+    report_lines.append("## Confusion matrices (summed across the 5 outer-validation folds)")
+    report_lines.append("")
+    for name, _, _ in model_specs:
+        report_lines.append(f"### {name}")
+        report_lines.append("")
+        report_lines.append(confusion_matrix_markdown(confusion_tables[name]))
         report_lines.append("")
 
     report_path = settings.paths.reports_dir / "baseline_results.md"

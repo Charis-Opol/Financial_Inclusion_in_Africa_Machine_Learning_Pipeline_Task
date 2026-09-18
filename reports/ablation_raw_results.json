@@ -1,300 +1,300 @@
 {
   "grid_means_pr_auc": {
-    "xgb_cw": 0.5647113326090076,
-    "xgb_smote": 0.5723665419142643,
-    "pt2_cw": 0.4167485552063869,
-    "pt2_smote": 0.45409073239710407,
-    "pt3_best": 0.5539932551413596
+    "xgb_cw": 0.5901154342818521,
+    "xgb_smote": 0.5772836915529302,
+    "pt2_cw": 0.5837057434971235,
+    "pt2_smote": 0.5675230605826083,
+    "pt3_best": 0.5810494218404505
   },
-  "pt_best_strategy_for_3layer": "smote",
-  "xgb_best_key": "xgb_smote",
-  "pt_best_key": "pt3_best",
-  "overall_best_key": "xgb_smote",
-  "results_table_md": "| Model | Imbalance strategy | PR-AUC | F1 | ROC-AUC |\n|---|---|---|---|---|\n| XGBoost | class-weight | 0.565 \u00b1 0.020 | 0.540 \u00b1 0.021 | 0.856 \u00b1 0.006 |\n| XGBoost | resampling (SMOTE) | 0.572 \u00b1 0.017 | 0.529 \u00b1 0.021 | 0.858 \u00b1 0.005 |\n| PyTorch (2-layer) | class-weight | 0.417 \u00b1 0.025 | 0.454 \u00b1 0.006 | 0.787 \u00b1 0.005 |\n| PyTorch (2-layer) | resampling (SMOTE) | 0.454 \u00b1 0.017 | 0.481 \u00b1 0.010 | 0.817 \u00b1 0.002 |\n| PyTorch (3-layer) | best strategy (smote) | 0.554 \u00b1 0.018 | 0.532 \u00b1 0.014 | 0.852 \u00b1 0.007 |",
-  "country_table_md": "| Country | PR-AUC | F1 |\n|---|---|---|\n| Kenya | 0.644 \u00b1 0.025 | 0.587 \u00b1 0.022 |\n| Rwanda | 0.444 \u00b1 0.019 | 0.428 \u00b1 0.032 |\n| Tanzania | 0.608 \u00b1 0.028 | 0.550 \u00b1 0.042 |\n| Uganda | 0.527 \u00b1 0.058 | 0.432 \u00b1 0.078 |",
+  "pt_best_strategy_for_3layer": "class_weight",
+  "xgb_best_key": "xgb_cw",
+  "pt_best_key": "pt2_cw",
+  "overall_best_key": "xgb_cw",
+  "results_table_md": "| Model | Imbalance strategy | PR-AUC | F1 | ROC-AUC |\n|---|---|---|---|---|\n| XGBoost | class-weight | 0.590 \u00b1 0.019 | 0.547 \u00b1 0.016 | 0.865 \u00b1 0.003 |\n| XGBoost | resampling (SMOTE) | 0.577 \u00b1 0.017 | 0.537 \u00b1 0.018 | 0.859 \u00b1 0.004 |\n| PyTorch (2-layer) | class-weight | 0.584 \u00b1 0.019 | 0.546 \u00b1 0.019 | 0.864 \u00b1 0.006 |\n| PyTorch (2-layer) | resampling (SMOTE) | 0.568 \u00b1 0.018 | 0.525 \u00b1 0.018 | 0.852 \u00b1 0.008 |\n| PyTorch (3-layer) | best strategy (class_weight) | 0.581 \u00b1 0.019 | 0.542 \u00b1 0.014 | 0.862 \u00b1 0.006 |",
+  "country_table_md": "| Country | PR-AUC | F1 |\n|---|---|---|\n| Kenya | 0.649 \u00b1 0.030 | 0.591 \u00b1 0.016 |\n| Rwanda | 0.473 \u00b1 0.023 | 0.450 \u00b1 0.039 |\n| Tanzania | 0.627 \u00b1 0.020 | 0.567 \u00b1 0.027 |\n| Uganda | 0.553 \u00b1 0.047 | 0.542 \u00b1 0.043 |",
   "stats": {
-    "ttest_statistic": 6.7540898703513506,
-    "ttest_p_value": 0.0025057531605103944,
-    "wilcoxon_statistic": 0.0,
-    "wilcoxon_p_value": 0.0625
+    "ttest_statistic": 2.252576674975715,
+    "ttest_p_value": 0.08739545469296649,
+    "wilcoxon_statistic": 1.0,
+    "wilcoxon_p_value": 0.125
   },
   "shap_top10": {
-    "cellphone_access_No": 0.5661226511001587,
-    "education_level_Primary education": 0.49877694249153137,
-    "education_level_No formal education": 0.4261663258075714,
-    "country_Kenya": 0.3749316334724426,
-    "gender_of_respondent_Female": 0.3002256155014038,
-    "age_of_respondent": 0.297993540763855,
-    "job_type_Informally employed": 0.2347371131181717,
-    "country_Rwanda": 0.23189081251621246,
-    "location_type_Rural": 0.2159590870141983,
-    "job_type_Formally employed Private": 0.15232399106025696
+    "cellphone_access_No": 0.39762234687805176,
+    "education_level_Primary education": 0.23782142996788025,
+    "country_Kenya": 0.21318048238754272,
+    "age_of_respondent": 0.1993558555841446,
+    "education_level_No formal education": 0.18547585606575012,
+    "cellphone_access_Yes": 0.16832038760185242,
+    "education_level_Tertiary education": 0.12380681186914444,
+    "gender_of_respondent_Female": 0.1061338484287262,
+    "job_type_Informally employed": 0.10235268622636795,
+    "job_type_Formally employed Private": 0.09571964293718338
   },
   "fold_pr_auc": {
     "xgb_cw": [
-      0.5510232261647474,
-      0.5862104383153515,
-      0.5836799490161146,
-      0.5340805464386634,
-      0.5685625031101615
+      0.5794294115985709,
+      0.6006840281906457,
+      0.6211796837324247,
+      0.5646698361509642,
+      0.5846142117366551
     ],
     "xgb_smote": [
-      0.5610228873894576,
-      0.5801225883720174,
-      0.5996063173883871,
-      0.551485661294205,
-      0.5695952551272543
+      0.5623695702546336,
+      0.5842618047910539,
+      0.6073205210174409,
+      0.5624135712578369,
+      0.5700529904436863
     ],
     "pt2_cw": [
-      0.3984082289249134,
-      0.419509774193124,
-      0.4561292034688547,
-      0.42594075843851864,
-      0.3837548110065233
+      0.5758585831583543,
+      0.6007580372762996,
+      0.6059378799556531,
+      0.5539092785563366,
+      0.5820649385389735
     ],
     "pt2_smote": [
-      0.4452700258959309,
-      0.44371019338908,
-      0.4863544683123186,
-      0.454312911039655,
-      0.4408060633485361
+      0.5533201174036594,
+      0.5793299033897001,
+      0.5870441423915597,
+      0.5401525915853529,
+      0.5777685481427696
     ],
     "pt3_best": [
-      0.5403887115674635,
-      0.5534299650198818,
-      0.5855063314782287,
-      0.5320509760667943,
-      0.5585902915744292
+      0.5688375070636981,
+      0.601301718337594,
+      0.603793291662575,
+      0.5558362412969647,
+      0.5754783508414207
     ]
   },
   "thresholds": {
     "xgb_cw": [
-      0.3082629442214966,
-      0.34574636816978455,
-      0.3422759771347046,
-      0.32637473940849304,
-      0.27576538920402527
+      0.45514804124832153,
+      0.4523411989212036,
+      0.5595550537109375,
+      0.344094842672348,
+      0.7487448453903198
     ],
     "xgb_smote": [
-      0.4481425881385803,
-      0.3821848928928375,
-      0.366604208946228,
-      0.3435148596763611,
-      0.47999897599220276
+      0.44340217113494873,
+      0.44139835238456726,
+      0.426500529050827,
+      0.42512601613998413,
+      0.48555925488471985
     ],
     "pt2_cw": [
-      0.5622768402099609,
-      0.5482958555221558,
-      0.54917973279953,
-      0.5619520545005798,
-      0.5532921552658081
+      0.7435206174850464,
+      0.6764993667602539,
+      0.6823532581329346,
+      0.6105882525444031,
+      0.7013353705406189
     ],
     "pt2_smote": [
-      0.6368265748023987,
-      0.607376217842102,
-      0.6566556692123413,
-      0.5680481791496277,
-      0.6679884791374207
+      0.6974385976791382,
+      0.689799427986145,
+      0.7208635210990906,
+      0.6963208913803101,
+      0.797478973865509
     ],
     "pt3_best": [
-      0.7146156430244446,
-      0.658325731754303,
-      0.7117629647254944,
-      0.6286220550537109,
-      0.6445249319076538
+      0.7124007940292358,
+      0.678085446357727,
+      0.6480421423912048,
+      0.6341940760612488,
+      0.6987150311470032
     ]
   },
   "best_params_per_fold": {
     "xgb_cw": [
       {
-        "max_depth": 4,
-        "learning_rate": 0.2536999076681772,
-        "n_estimators": 306,
-        "min_child_weight": 6,
-        "subsample": 0.5780093202212182,
-        "colsample_bytree": 0.5779972601681014,
-        "scale_pos_weight": 1.1430983876313219
+        "max_depth": 8,
+        "learning_rate": 0.024172510199471923,
+        "n_estimators": 211,
+        "min_child_weight": 10,
+        "subsample": 0.6325111957475132,
+        "colsample_bytree": 0.5534562057273876,
+        "scale_pos_weight": 2.4198854503133935
       },
       {
-        "max_depth": 4,
-        "learning_rate": 0.2536999076681772,
-        "n_estimators": 306,
-        "min_child_weight": 6,
-        "subsample": 0.5780093202212182,
-        "colsample_bytree": 0.5779972601681014,
-        "scale_pos_weight": 1.1430983876313219
+        "max_depth": 8,
+        "learning_rate": 0.024172510199471923,
+        "n_estimators": 211,
+        "min_child_weight": 10,
+        "subsample": 0.6325111957475132,
+        "colsample_bytree": 0.5534562057273876,
+        "scale_pos_weight": 2.4198854503133935
       },
       {
-        "max_depth": 4,
-        "learning_rate": 0.2536999076681772,
-        "n_estimators": 306,
-        "min_child_weight": 6,
-        "subsample": 0.5780093202212182,
-        "colsample_bytree": 0.5779972601681014,
-        "scale_pos_weight": 1.1430983876313219
+        "max_depth": 7,
+        "learning_rate": 0.012314104500089176,
+        "n_estimators": 269,
+        "min_child_weight": 3,
+        "subsample": 0.5169749381559718,
+        "colsample_bytree": 0.9624559557084602,
+        "scale_pos_weight": 4.825058599946195
       },
       {
-        "max_depth": 4,
-        "learning_rate": 0.2536999076681772,
-        "n_estimators": 306,
-        "min_child_weight": 6,
-        "subsample": 0.5780093202212182,
-        "colsample_bytree": 0.5779972601681014,
-        "scale_pos_weight": 1.1430983876313219
+        "max_depth": 8,
+        "learning_rate": 0.024172510199471923,
+        "n_estimators": 211,
+        "min_child_weight": 10,
+        "subsample": 0.6325111957475132,
+        "colsample_bytree": 0.5534562057273876,
+        "scale_pos_weight": 2.4198854503133935
       },
       {
-        "max_depth": 4,
-        "learning_rate": 0.2536999076681772,
-        "n_estimators": 306,
-        "min_child_weight": 6,
-        "subsample": 0.5780093202212182,
-        "colsample_bytree": 0.5779972601681014,
-        "scale_pos_weight": 1.1430983876313219
+        "max_depth": 5,
+        "learning_rate": 0.0212146552873062,
+        "n_estimators": 290,
+        "min_child_weight": 3,
+        "subsample": 0.9126373500091916,
+        "colsample_bytree": 0.6579191637170307,
+        "scale_pos_weight": 7.484536608410666
       }
     ],
     "xgb_smote": [
       {
-        "max_depth": 2,
-        "learning_rate": 0.19030368381735815,
-        "n_estimators": 260,
-        "min_child_weight": 8,
-        "subsample": 0.5102922471479012,
-        "colsample_bytree": 0.9849549260809971
+        "max_depth": 5,
+        "learning_rate": 0.02692655251486473,
+        "n_estimators": 264,
+        "min_child_weight": 2,
+        "subsample": 0.6460723242676091,
+        "colsample_bytree": 0.6831809216468459
       },
       {
-        "max_depth": 2,
-        "learning_rate": 0.19030368381735815,
-        "n_estimators": 260,
-        "min_child_weight": 8,
-        "subsample": 0.5102922471479012,
-        "colsample_bytree": 0.9849549260809971
+        "max_depth": 5,
+        "learning_rate": 0.021043508940636137,
+        "n_estimators": 368,
+        "min_child_weight": 9,
+        "subsample": 0.6627126263768781,
+        "colsample_bytree": 0.9714221079667863
       },
       {
-        "max_depth": 2,
-        "learning_rate": 0.19030368381735815,
-        "n_estimators": 260,
-        "min_child_weight": 8,
-        "subsample": 0.5102922471479012,
-        "colsample_bytree": 0.9849549260809971
+        "max_depth": 4,
+        "learning_rate": 0.027306240821675716,
+        "n_estimators": 394,
+        "min_child_weight": 4,
+        "subsample": 0.664327087276891,
+        "colsample_bytree": 0.6493706753296502
       },
       {
-        "max_depth": 2,
-        "learning_rate": 0.19030368381735815,
-        "n_estimators": 260,
-        "min_child_weight": 8,
-        "subsample": 0.5102922471479012,
-        "colsample_bytree": 0.9849549260809971
+        "max_depth": 5,
+        "learning_rate": 0.021043508940636137,
+        "n_estimators": 368,
+        "min_child_weight": 9,
+        "subsample": 0.6627126263768781,
+        "colsample_bytree": 0.9714221079667863
       },
       {
-        "max_depth": 2,
-        "learning_rate": 0.19030368381735815,
-        "n_estimators": 260,
-        "min_child_weight": 8,
-        "subsample": 0.5102922471479012,
-        "colsample_bytree": 0.9849549260809971
+        "max_depth": 5,
+        "learning_rate": 0.02692655251486473,
+        "n_estimators": 264,
+        "min_child_weight": 2,
+        "subsample": 0.6460723242676091,
+        "colsample_bytree": 0.6831809216468459
       }
     ],
     "pt2_cw": [
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       }
     ],
     "pt2_smote": [
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 11,
+        "dropout": 0.06974693032602092,
+        "lr": 0.0003839629299804173,
+        "weight_decay": 2.9204338471814107e-05,
         "hidden_dims": [
-          53,
-          123
+          60,
+          43
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 6,
+        "dropout": 0.2571172192068058,
+        "lr": 0.0015304852121831463,
+        "weight_decay": 1.5339162591163623e-06,
         "hidden_dims": [
-          53,
-          123
+          63,
+          103
         ]
       },
       {
-        "embedding_dim": 13,
-        "dropout": 0.2993292420985183,
-        "lr": 0.0002051338263087451,
-        "weight_decay": 4.207053950287936e-06,
+        "embedding_dim": 11,
+        "dropout": 0.06974693032602092,
+        "lr": 0.0003839629299804173,
+        "weight_decay": 2.9204338471814107e-05,
         "hidden_dims": [
-          53,
-          123
+          60,
+          43
         ]
       }
     ],
@@ -357,11 +357,65 @@
     ]
   },
   "production_xgb_params": {
-    "max_depth": 2,
-    "learning_rate": 0.19030368381735815,
-    "n_estimators": 260,
-    "min_child_weight": 8,
-    "subsample": 0.5102922471479012,
-    "colsample_bytree": 0.9849549260809971
+    "max_depth": 8,
+    "learning_rate": 0.019901215064816333,
+    "n_estimators": 141,
+    "min_child_weight": 6,
+    "subsample": 0.7993093544472046,
+    "colsample_bytree": 0.5986379932154655,
+    "scale_pos_weight": 3.566909441278662
+  },
+  "full_metrics_table_md": "| Model | Imbalance strategy | PR-AUC | ROC-AUC | F1 | Precision | Recall | Accuracy |\n|---|---|---|---|---|---|---|---|\n| XGBoost | class-weight | 0.590 \u00b1 0.019 | 0.865 \u00b1 0.003 | 0.547 \u00b1 0.016 | 0.500 \u00b1 0.039 | 0.612 \u00b1 0.058 | 0.857 \u00b1 0.016 |\n| XGBoost | resampling (SMOTE) | 0.577 \u00b1 0.017 | 0.859 \u00b1 0.004 | 0.537 \u00b1 0.018 | 0.505 \u00b1 0.026 | 0.576 \u00b1 0.033 | 0.860 \u00b1 0.008 |\n| PyTorch (2-layer) | class-weight | 0.584 \u00b1 0.019 | 0.864 \u00b1 0.006 | 0.546 \u00b1 0.019 | 0.495 \u00b1 0.036 | 0.614 \u00b1 0.029 | 0.856 \u00b1 0.014 |\n| PyTorch (2-layer) | resampling (SMOTE) | 0.568 \u00b1 0.018 | 0.852 \u00b1 0.008 | 0.525 \u00b1 0.018 | 0.540 \u00b1 0.049 | 0.521 \u00b1 0.059 | 0.868 \u00b1 0.010 |\n| PyTorch (3-layer) | best strategy (class_weight) | 0.581 \u00b1 0.019 | 0.862 \u00b1 0.006 | 0.542 \u00b1 0.014 | 0.486 \u00b1 0.036 | 0.617 \u00b1 0.041 | 0.853 \u00b1 0.014 |",
+  "confusion_matrices": {
+    "xgb_cw": [
+      [
+        18130,
+        2082
+      ],
+      [
+        1284,
+        2028
+      ]
+    ],
+    "xgb_smote": [
+      [
+        18330,
+        1882
+      ],
+      [
+        1403,
+        1909
+      ]
+    ],
+    "pt2_cw": [
+      [
+        18103,
+        2109
+      ],
+      [
+        1280,
+        2032
+      ]
+    ],
+    "pt2_smote": [
+      [
+        18687,
+        1525
+      ],
+      [
+        1586,
+        1726
+      ]
+    ],
+    "pt3_best": [
+      [
+        18013,
+        2199
+      ],
+      [
+        1267,
+        2045
+      ]
+    ]
   }
 }

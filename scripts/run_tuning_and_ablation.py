@@ -23,18 +23,22 @@ from pathlib import Path
 from typing import Callable
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "config"))
 from settings import load_settings  # noqa: E402
 
 from fin_inclusion.data.loader import DataLoader, TARGET_COLUMN  # noqa: E402
 from fin_inclusion.evaluation.cv_runner import NestedFoldResult, run_nested_cv  # noqa: E402
+from fin_inclusion.evaluation.pr_curve import plot_pr_curve_overlay  # noqa: E402
 from fin_inclusion.evaluation.reporting import (  # noqa: E402
+    aggregate_confusion_matrix,
     compare_paired_pr_auc,
+    confusion_matrix_markdown,
     country_table_markdown,
     fold_pr_auc_scores,
-    results_table_markdown,
-    results_table_row,
+    full_results_table_markdown,
+    full_results_table_row,
     summarize_country_metrics,
     summarize_metrics,
 )
@@ -57,6 +61,7 @@ from fin_inclusion.preprocessing.pipeline_factory import (  # noqa: E402
     NUMERIC_COLUMNS,
     build_pytorch_pipeline,
     build_xgboost_pipeline,
+    make_country_target_stratify_key,
 )
 from fin_inclusion.tuning.optuna_search import tune_pytorch_mlp, tune_xgboost  # noqa: E402
 
@@ -197,15 +202,24 @@ def main() -> None:
         3, pt_best_strategy, n_outer_folds, seed,
     )
 
+    row_labels = {
+        "xgb_cw": ("XGBoost", "class-weight"),
+        "xgb_smote": ("XGBoost", "resampling (SMOTE)"),
+        "pt2_cw": ("PyTorch (2-layer)", "class-weight"),
+        "pt2_smote": ("PyTorch (2-layer)", "resampling (SMOTE)"),
+        "pt3_best": ("PyTorch (3-layer)", f"best strategy ({pt_best_strategy})"),
+    }
     rows = [
-        results_table_row("XGBoost", "class-weight", summarize_metrics(all_results["xgb_cw"])),
-        results_table_row("XGBoost", "resampling (SMOTE)", summarize_metrics(all_results["xgb_smote"])),
-        results_table_row("PyTorch (2-layer)", "class-weight", summarize_metrics(all_results["pt2_cw"])),
-        results_table_row("PyTorch (2-layer)", "resampling (SMOTE)", summarize_metrics(all_results["pt2_smote"])),
-        results_table_row("PyTorch (3-layer)", f"best strategy ({pt_best_strategy})", summarize_metrics(all_results["pt3_best"])),
+        full_results_table_row(model_name, strategy_name, summarize_metrics(all_results[key]))
+        for key, (model_name, strategy_name) in row_labels.items()
     ]
-    table_md = results_table_markdown(rows)
+    table_md = full_results_table_markdown(rows)
     print("\n" + table_md)
+
+    confusion_tables = {k: aggregate_confusion_matrix(v) for k, v in all_results.items()}
+    for key, (model_name, strategy_name) in row_labels.items():
+        print(f"\n{model_name} ({strategy_name}) confusion matrix (summed across outer folds):")
+        print(confusion_matrix_markdown(confusion_tables[key]))
 
     grid_means = {k: summarize_metrics(v)["pr_auc"][0] for k, v in all_results.items()}
     xgb_best_key = "xgb_cw" if grid_means["xgb_cw"] >= grid_means["xgb_smote"] else "xgb_smote"
@@ -221,6 +235,47 @@ def main() -> None:
     country_df = summarize_country_metrics(all_results[overall_best_key])
     country_md = country_table_markdown(country_df)
     print("\nPer-country breakdown (overall best model):\n" + country_md)
+
+    print("\n=== PR curve overlay: XGBoost-best vs PyTorch-best ===")
+    key_to_strategy_name = {
+        "xgb_cw": "class_weight", "xgb_smote": "smote",
+        "pt2_cw": "class_weight", "pt2_smote": "smote", "pt3_best": pt_best_strategy,
+    }
+    key_to_X = {"xgb_cw": X_xgb, "xgb_smote": X_xgb, "pt2_cw": X_pt, "pt2_smote": X_pt, "pt3_best": X_pt}
+
+    def _build_for_key(key: str, params: dict):
+        if key.startswith("xgb"):
+            return XGBoostModel(seed=seed, **params)
+        p = dict(params)
+        p["hidden_dims"] = tuple(p["hidden_dims"])
+        return PyTorchMLP(
+            categorical_columns=CATEGORICAL_COLUMNS, vocab_sizes=vocab_sizes,
+            numeric_columns=pt_numeric_columns, epochs=PT_FINAL_EPOCHS, seed=seed, **p,
+        )
+
+    stratify_df = pd.DataFrame({"country": country.to_numpy(), "target": y.to_numpy()})
+    pr_curve_stratify_key = make_country_target_stratify_key(stratify_df, country_col="country", target_col="target")
+    idx_train, idx_val = train_test_split(train.index, test_size=0.2, stratify=pr_curve_stratify_key, random_state=seed)
+    y_val_binary = (y.loc[idx_val] == "Yes").astype(int).to_numpy()
+
+    curves = {}
+    for key in (xgb_best_key, pt_best_key):
+        model_name, strategy_name_label = row_labels[key]
+        X = key_to_X[key]
+        strategy_name = key_to_strategy_name[key]
+        strategy = (
+            _xgb_strategy_factory(strategy_name, seed)() if key.startswith("xgb")
+            else _pt_strategy_factory(strategy_name, seed)()
+        )
+        params = all_results[key][0].best_params  # fold 0's tuned hyperparameters, representative
+        X_res, y_res, sw = strategy.apply(X.loc[idx_train], y.loc[idx_train])
+        model = _build_for_key(key, params).fit(X_res, y_res, sample_weight=sw)
+        curves[f"{model_name} ({strategy_name_label})"] = (y_val_binary, model.predict_proba(X.loc[idx_val]))
+
+    pr_curve_path = settings.paths.figures_dir / "pr_curve_overlay.png"
+    average_precisions = plot_pr_curve_overlay(curves, pr_curve_path)
+    print(f"Average precision (single 80/20 split, illustrative): {average_precisions}")
+    print(f"Wrote {pr_curve_path}")
 
     print("\n=== SHAP: refitting the winning XGBoost arm on full train ===")
     xgb_strategy_name = "class_weight" if xgb_best_key == "xgb_cw" else "smote"
@@ -248,6 +303,8 @@ def main() -> None:
         "overall_best_key": overall_best_key,
         "results_table_md": table_md,
         "country_table_md": country_md,
+        "confusion_matrices": {k: v.tolist() for k, v in confusion_tables.items()},
+        "pr_curve_average_precision": average_precisions,
         "stats": vars(stats_result),
         "shap_top10": importance.head(10).to_dict(),
         "fold_pr_auc": {k: fold_pr_auc_scores(v) for k, v in all_results.items()},

@@ -15,7 +15,7 @@ from scipy import stats
 
 from fin_inclusion.evaluation.cv_runner import CVFoldResult, NestedFoldResult
 
-METRIC_NAMES = ("pr_auc", "roc_auc", "f1", "precision", "recall")
+METRIC_NAMES = ("pr_auc", "roc_auc", "f1", "precision", "recall", "accuracy")
 
 
 def summarize_metrics(
@@ -84,6 +84,58 @@ def results_table_markdown(rows: list[dict[str, str]]) -> str:
     ]
     for row in rows:
         lines.append("| " + " | ".join(str(row[k]) for k in keys) + " |")
+    return "\n".join(lines)
+
+
+FULL_METRIC_NAMES = ("pr_auc", "roc_auc", "f1", "precision", "recall", "accuracy")
+
+
+def full_results_table_row(
+    model_name: str, imbalance_strategy: str, summary: dict[str, tuple[float, float]]
+) -> dict[str, str]:
+    """Like `results_table_row`, but every metric (incl. precision/recall/
+    accuracy) rather than just the README §6 headline three."""
+    row = {"model": model_name, "imbalance_strategy": imbalance_strategy}
+    for metric in FULL_METRIC_NAMES:
+        mean, std = summary[metric]
+        row[metric] = f"{mean:.3f} ± {std:.3f}"
+    return row
+
+
+def full_results_table_markdown(rows: list[dict[str, str]]) -> str:
+    """`full_results_table_row`'s markdown table -- PR-AUC/ROC-AUC/F1/
+    Precision/Recall/Accuracy. Accuracy is included for completeness, not as
+    a metric to optimize against: see `metrics.py`'s module docstring for
+    why it's misleading at this dataset's ~14% positive rate."""
+    headers = ["Model", "Imbalance strategy", "PR-AUC", "ROC-AUC", "F1", "Precision", "Recall", "Accuracy"]
+    keys = ["model", "imbalance_strategy", "pr_auc", "roc_auc", "f1", "precision", "recall", "accuracy"]
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "|" + "|".join(["---"] * len(headers)) + "|",
+    ]
+    for row in rows:
+        lines.append("| " + " | ".join(str(row[k]) for k in keys) + " |")
+    return "\n".join(lines)
+
+
+def aggregate_confusion_matrix(results: list[CVFoldResult] | list[NestedFoldResult]) -> np.ndarray:
+    """Sums the per-fold confusion matrices into one aggregate over every
+    outer-validation fold combined -- every prediction made across the CV
+    run counted exactly once (each row's outer fold holds out a disjoint
+    slice, so summing doesn't double-count anything)."""
+    return np.sum([r.confusion_matrix for r in results], axis=0)
+
+
+def confusion_matrix_markdown(cm: np.ndarray, labels: tuple[str, str] = ("No", "Yes")) -> str:
+    """Renders a 2x2 `[[TN, FP], [FN, TP]]` confusion matrix (rows=actual, columns=predicted)."""
+    tn, fp, fn, tp = cm.ravel()
+    headers = ["Actual \\ Predicted", f"Pred {labels[0]}", f"Pred {labels[1]}"]
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "|" + "|".join(["---"] * len(headers)) + "|",
+        f"| Actual {labels[0]} | {tn} | {fp} |",
+        f"| Actual {labels[1]} | {fn} | {tp} |",
+    ]
     return "\n".join(lines)
 
 

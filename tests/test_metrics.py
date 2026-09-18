@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from fin_inclusion.evaluation.metrics import compute_classification_metrics
+from fin_inclusion.evaluation.metrics import compute_classification_metrics, compute_confusion_matrix
 
 
 def test_perfect_separation_scores_near_one():
@@ -15,6 +15,7 @@ def test_perfect_separation_scores_near_one():
     assert metrics["f1"] == pytest.approx(1.0)
     assert metrics["precision"] == pytest.approx(1.0)
     assert metrics["recall"] == pytest.approx(1.0)
+    assert metrics["accuracy"] == pytest.approx(1.0)
 
 
 def test_inverted_scores_score_near_zero():
@@ -48,3 +49,45 @@ def test_no_predicted_positives_does_not_raise():
     assert metrics["precision"] == 0.0
     assert metrics["recall"] == 0.0
     assert metrics["f1"] == 0.0
+    assert metrics["accuracy"] == 0.5
+
+
+def test_accuracy_reflects_majority_class_baseline():
+    y_true = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+    y_score = np.zeros(10)
+
+    metrics = compute_classification_metrics(y_true, y_score, threshold=0.5)
+
+    assert metrics["accuracy"] == pytest.approx(0.9)
+    assert metrics["recall"] == 0.0
+
+
+class TestConfusionMatrix:
+    def test_shape_and_ordering(self):
+        y_true = np.array([0, 0, 1, 1])
+        y_score = np.array([0.1, 0.6, 0.4, 0.9])
+
+        cm = compute_confusion_matrix(y_true, y_score, threshold=0.5)
+
+        assert cm.shape == (2, 2)
+        tn, fp, fn, tp = cm.ravel()
+        assert (tn, fp, fn, tp) == (1, 1, 1, 1)
+
+    def test_perfect_predictions_only_populate_diagonal(self):
+        y_true = np.array([0, 0, 0, 1, 1, 1])
+        y_score = np.array([0.1, 0.05, 0.2, 0.8, 0.9, 0.95])
+
+        cm = compute_confusion_matrix(y_true, y_score)
+
+        assert cm[0, 1] == 0
+        assert cm[1, 0] == 0
+        assert cm.sum() == 6
+
+    def test_total_count_matches_input_size(self):
+        rng = np.random.default_rng(0)
+        y_true = rng.integers(0, 2, size=50)
+        y_score = rng.uniform(size=50)
+
+        cm = compute_confusion_matrix(y_true, y_score)
+
+        assert cm.sum() == 50

@@ -20,10 +20,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
-from fin_inclusion.evaluation.metrics import compute_classification_metrics
+from fin_inclusion.evaluation.metrics import compute_classification_metrics, compute_confusion_matrix
 from fin_inclusion.evaluation.threshold_selection import select_f1_maximizing_threshold
 from fin_inclusion.imbalance.strategies import BaseImbalanceStrategy
 from fin_inclusion.models.base_model import BaseModel
@@ -37,6 +38,7 @@ class CVFoldResult:
     fold: int
     metrics: dict[str, float]
     country_metrics: dict[str, dict[str, float]]
+    confusion_matrix: np.ndarray
 
 
 @dataclass(frozen=True)
@@ -46,6 +48,7 @@ class NestedFoldResult:
     threshold: float
     metrics: dict[str, float]
     country_metrics: dict[str, dict[str, float]]
+    confusion_matrix: np.ndarray
 
 
 def _stratify_key(y: pd.Series, country: pd.Series) -> pd.Series:
@@ -81,6 +84,7 @@ def run_stratified_cv(
         y_val_binary = (y_val == POSITIVE_LABEL).astype(int).to_numpy()
 
         fold_metrics = compute_classification_metrics(y_val_binary, y_score, threshold)
+        fold_confusion = compute_confusion_matrix(y_val_binary, y_score, threshold)
         country_metrics = {
             c: compute_classification_metrics(
                 y_val_binary[country_val.to_numpy() == c],
@@ -89,7 +93,12 @@ def run_stratified_cv(
             )
             for c in sorted(country_val.unique())
         }
-        results.append(CVFoldResult(fold=fold, metrics=fold_metrics, country_metrics=country_metrics))
+        results.append(
+            CVFoldResult(
+                fold=fold, metrics=fold_metrics, country_metrics=country_metrics,
+                confusion_matrix=fold_confusion,
+            )
+        )
 
     return results
 
@@ -148,6 +157,7 @@ def run_nested_cv(
         y_val_score = final_model.predict_proba(X_val_outer)
         y_val_binary = (y_val_outer == POSITIVE_LABEL).astype(int).to_numpy()
         fold_metrics = compute_classification_metrics(y_val_binary, y_val_score, threshold)
+        fold_confusion = compute_confusion_matrix(y_val_binary, y_val_score, threshold)
         country_val_arr = country_val_outer.to_numpy()
         country_metrics = {
             c: compute_classification_metrics(
@@ -163,6 +173,7 @@ def run_nested_cv(
                 threshold=threshold,
                 metrics=fold_metrics,
                 country_metrics=country_metrics,
+                confusion_matrix=fold_confusion,
             )
         )
 
