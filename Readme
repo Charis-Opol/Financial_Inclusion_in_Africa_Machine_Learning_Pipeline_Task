@@ -220,12 +220,46 @@ of an *untuned* baseline, not a modeling problem.
 ## 8. Reproducibility
 
 - All random seeds (`numpy`, `torch`, `sklearn`, `optuna`, SMOTE) fixed and
-  centralized in `config/`.
+  centralized in `config/config.yaml` (`seed: 42`), threaded explicitly
+  through every script and model constructor rather than relying on a
+  global default.
 - `requirements.txt` / `pyproject.toml` pins exact versions.
-- Nested CV fold assignments are saved to disk (not regenerated silently on
-  reruns) so results are re-derivable.
+- `evaluation/cv_runner.py`'s `StratifiedKFold(shuffle=True, random_state=
+  seed)` makes fold assignments deterministic and re-derivable from the seed
+  alone; `reports/ablation_raw_results.json` additionally persists the
+  per-fold tuned hyperparameters and thresholds Phase 4 actually selected,
+  so the reported numbers don't require re-running the (~1-2 hour) nested
+  search to audit.
 - No metric is computed on data the corresponding model/threshold selection
-  step has seen.
+  step has seen (`evaluation/cv_runner.run_nested_cv`'s outer validation
+  fold is untouched by tuning, threshold selection, and the final refit).
+
+### Reproducing this pipeline
+
+Environment: Python ≥3.10 (developed against 3.13), `pip install -r
+requirements.txt`, then `pip install -e .` from the repo root so `src/
+fin_inclusion` is importable as `fin_inclusion`. Place `Train_v2.csv` /
+`Test_v2.csv` under `data/raw/` (gitignored; not redistributed here).
+
+Run in order — each stage's outputs are inputs to the next:
+
+```bash
+python scripts/run_eda.py                  # re-executes notebooks/01_eda.ipynb in place
+python scripts/run_preprocessing.py         # data/raw -> data/interim -> data/processed
+python scripts/run_baseline_training.py     # Phase 3 untuned baselines -> reports/baseline_results.md
+python scripts/run_tuning_and_ablation.py   # Phase 4 nested-CV tuning + ablation -> reports/ablation_raw_results.json
+```
+
+`run_tuning_and_ablation.py` also requires `notebooks/02_smote_distribution_
+eda.ipynb` to have been reviewed first (Phase 4.3's hard gate; already
+cleared — see that notebook's summary and §2 of
+`reports/ablation_study_report.md`). It is the slow step: the documented
+tuning budget (§1.4 of the ablation report) targets roughly one to two
+hours on a single CPU machine, not minutes — a deliberate breadth/time
+trade-off, not an oversight.
+
+`pytest` runs the full test suite (`tests/`) against small synthetic
+fixtures — none of it depends on `data/raw/` being present.
 
 ---
 
@@ -265,8 +299,8 @@ financial-inclusion-africa/
 │       │   └── pipeline_factory.py   # builds sklearn Pipeline / ColumnTransformer per model family
 │       │
 │       ├── features/
-│       │   ├── __init__.py
-│       │   └── engineering.py        # any engineered features (e.g. relationship/marital interaction, post-EDA)
+│       │   └── __init__.py           # empty: Phase 2.7's conditional combined-feature engineering
+│       │                             # didn't trigger (EDA 1.9 found partial, not total, overlap)
 │       │
 │       ├── models/
 │       │   ├── __init__.py
@@ -290,38 +324,43 @@ financial-inclusion-africa/
 │       │   ├── __init__.py
 │       │   └── optuna_search.py      # inner-loop hyperparameter search per model family
 │       │
-│       ├── interpretability/
-│       │   ├── __init__.py
-│       │   └── shap_analysis.py      # SHAP importance + dependence plots on XGBoost
-│       │
-│       └── pipeline.py               # top-level orchestrator wiring the above via dependency injection
+│       └── interpretability/
+│           ├── __init__.py
+│           └── shap_analysis.py      # SHAP importance + dependence plots on XGBoost
 │
 ├── notebooks/
 │   ├── 01_eda.ipynb
-│   ├── 02_smote_distribution_eda.ipynb   # post-SMOTE distribution/correlation checks (Phase 4 pre-ablation)
-│   └── 03_results_exploration.ipynb
+│   └── 02_smote_distribution_eda.ipynb   # post-SMOTE distribution/correlation checks (Phase 4 pre-ablation)
 │
 ├── reports/
 │   ├── eda_summary.md
+│   ├── baseline_results.md               # Phase 3 deliverable (untuned baselines)
 │   ├── ablation_study_report.md          # Phase 4 deliverable
+│   ├── ablation_raw_results.json         # machine-readable Phase 4 output the report above is written from
 │   └── figures/                          # PR curves, SHAP plots, per-country bar charts
 │
 ├── tests/
 │   ├── test_loader.py
+│   ├── test_validators.py
 │   ├── test_preprocessing.py
 │   ├── test_models.py
+│   ├── test_imbalance.py
+│   ├── test_metrics.py
+│   ├── test_threshold_selection.py
 │   ├── test_cv_runner.py
-│   └── test_metrics.py
+│   ├── test_optuna_search.py
+│   ├── test_shap_analysis.py
+│   └── test_reporting.py
 │
 └── scripts/
-    ├── run_eda.py
+    ├── run_eda.py                    # re-executes notebooks/01_eda.ipynb in place
     ├── run_preprocessing.py
     ├── run_baseline_training.py
-    ├── run_tuning_and_ablation.py
-    └── run_full_pipeline.py
+    └── run_tuning_and_ablation.py
 ```
 
 **Structure rationale:**
+
 - `src/fin_inclusion/` as an installable package (not loose scripts) so
   `tests/` can import it cleanly and the code is portable beyond this repo.
 - `models/base_model.py` and `preprocessing/base.py` are the two interfaces
@@ -333,6 +372,11 @@ financial-inclusion-africa/
   structure itself.
 - `reports/ablation_study_report.md` is a named deliverable matching Phase 4
   of the implementation plan below, not an incidental notebook output.
+- No separate `pipeline.py` orchestrator: each `scripts/run_*.py` *is* the
+  orchestration layer for its phase, composing the same injected
+  abstractions (`BaseModel`, `BaseImbalanceStrategy`, the `Pipeline`s from
+  `pipeline_factory.py`) a `pipeline.py` module would have — an extra
+  wrapper module would have added indirection without adding capability.
 
 ---
 

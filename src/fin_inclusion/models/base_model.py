@@ -38,8 +38,10 @@ class BaseModel(ABC):
         """Hyperparameters this model was constructed with (for logging/reporting)."""
 
     @abstractmethod
-    def save(self, path: Path) -> None: ...
+    def save(self, path: Path) -> None:
+        """Persists the fitted model to `path` (format is model-family-specific)."""
 
     @classmethod
     @abstractmethod
-    def load(cls, path: Path) -> "BaseModel": ...
+    def load(cls, path: Path) -> "BaseModel":
+        """Reconstructs a fitted model previously written by `save`."""
