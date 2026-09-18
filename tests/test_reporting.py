@@ -2,7 +2,9 @@ import pytest
 
 from fin_inclusion.evaluation.cv_runner import CVFoldResult
 from fin_inclusion.evaluation.reporting import (
+    compare_paired_pr_auc,
     country_table_markdown,
+    fold_pr_auc_scores,
     results_table_markdown,
     results_table_row,
     summarize_country_metrics,
@@ -74,3 +76,29 @@ def test_country_table_markdown_has_one_row_per_country():
     assert "Kenya" in table
     assert "Uganda" in table
     assert table.count("\n") == 3
+
+
+def test_fold_pr_auc_scores_extracts_in_order():
+    scores = fold_pr_auc_scores(_fold_results())
+
+    assert scores == [0.5, 0.7]
+
+
+def test_compare_paired_pr_auc_no_systematic_difference_is_not_significant():
+    scores_a = [0.50, 0.62, 0.55, 0.70, 0.60]
+    scores_b = [0.52, 0.60, 0.57, 0.68, 0.61]
+
+    result = compare_paired_pr_auc(scores_a, scores_b)
+
+    assert result.ttest_p_value > 0.3
+    assert result.wilcoxon_p_value > 0.3
+
+
+def test_compare_paired_pr_auc_consistent_difference_is_significant():
+    scores_a = [0.60, 0.62, 0.61, 0.63, 0.60]
+    scores_b = [0.50, 0.48, 0.51, 0.49, 0.52]
+
+    result = compare_paired_pr_auc(scores_a, scores_b)
+
+    assert result.ttest_p_value < 0.05
+    assert result.wilcoxon_p_value < 0.1

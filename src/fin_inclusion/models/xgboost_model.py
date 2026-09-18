@@ -17,9 +17,17 @@ POSITIVE_LABEL = "Yes"
 
 
 class XGBoostModel(BaseModel):
-    def __init__(self, seed: int = 42):
+    """`**xgb_params` forwards directly to `XGBClassifier` -- Phase 4's Optuna
+    search passes `max_depth`, `learning_rate`, `n_estimators`,
+    `min_child_weight`, `subsample`, `colsample_bytree`, and, for the
+    class-weight ablation arm, `scale_pos_weight` (XGBoost's native
+    imbalance lever, used instead of generic `sample_weight` for that arm
+    specifically -- see `imbalance/strategies.py`'s `NoImbalanceStrategy`)."""
+
+    def __init__(self, seed: int = 42, **xgb_params):
         self.seed = seed
-        self._model = XGBClassifier(random_state=self.seed, eval_metric="logloss")
+        self.xgb_params = xgb_params
+        self._model = XGBClassifier(random_state=self.seed, eval_metric="logloss", **xgb_params)
 
     def fit(
         self, X: pd.DataFrame, y: pd.Series, sample_weight: np.ndarray | None = None
@@ -33,6 +41,11 @@ class XGBoostModel(BaseModel):
 
     def get_params(self) -> dict:
         return self._model.get_params()
+
+    @property
+    def booster(self) -> XGBClassifier:
+        """The underlying fitted `XGBClassifier`, for `interpretability/shap_analysis.py`."""
+        return self._model
 
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)

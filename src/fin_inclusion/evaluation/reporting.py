@@ -7,16 +7,19 @@ number").
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
+from scipy import stats
 
-from fin_inclusion.evaluation.cv_runner import CVFoldResult
+from fin_inclusion.evaluation.cv_runner import CVFoldResult, NestedFoldResult
 
 METRIC_NAMES = ("pr_auc", "roc_auc", "f1", "precision", "recall")
 
 
 def summarize_metrics(
-    results: list[CVFoldResult], metric_names: tuple[str, ...] = METRIC_NAMES
+    results: list[CVFoldResult] | list[NestedFoldResult], metric_names: tuple[str, ...] = METRIC_NAMES
 ) -> dict[str, tuple[float, float]]:
     """Mean, std (across folds) per metric."""
     return {
@@ -29,7 +32,7 @@ def summarize_metrics(
 
 
 def summarize_country_metrics(
-    results: list[CVFoldResult], metric_names: tuple[str, ...] = ("pr_auc", "f1")
+    results: list[CVFoldResult] | list[NestedFoldResult], metric_names: tuple[str, ...] = ("pr_auc", "f1")
 ) -> pd.DataFrame:
     """Mean ± std per country per metric, aggregated across folds (README §6 secondary reporting)."""
     countries = sorted(results[0].country_metrics)
@@ -82,3 +85,33 @@ def results_table_markdown(rows: list[dict[str, str]]) -> str:
     for row in rows:
         lines.append("| " + " | ".join(str(row[k]) for k in keys) + " |")
     return "\n".join(lines)
+
+
+def fold_pr_auc_scores(results: list[CVFoldResult] | list[NestedFoldResult]) -> list[float]:
+    return [r.metrics["pr_auc"] for r in results]
+
+
+@dataclass(frozen=True)
+class PairedComparisonResult:
+    """Both tests are cheap to compute given the 5 fold-level scores already
+    exist -- reported together (README §6 names either as acceptable) rather
+    than picking one. Wilcoxon is the more robust choice at n=5 (no normality
+    assumption); the paired t-test is included for comparability."""
+
+    ttest_statistic: float
+    ttest_p_value: float
+    wilcoxon_statistic: float
+    wilcoxon_p_value: float
+
+
+def compare_paired_pr_auc(scores_a: list[float], scores_b: list[float]) -> PairedComparisonResult:
+    """Paired comparison of fold-level PR-AUC scores between two models
+    (Phase 4.7) -- `scores_a`/`scores_b` must be the same folds, same order."""
+    t_stat, t_p = stats.ttest_rel(scores_a, scores_b)
+    w_stat, w_p = stats.wilcoxon(scores_a, scores_b)
+    return PairedComparisonResult(
+        ttest_statistic=float(t_stat),
+        ttest_p_value=float(t_p),
+        wilcoxon_statistic=float(w_stat),
+        wilcoxon_p_value=float(w_p),
+    )

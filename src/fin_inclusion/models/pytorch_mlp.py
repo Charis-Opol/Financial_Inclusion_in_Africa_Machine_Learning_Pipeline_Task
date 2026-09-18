@@ -66,6 +66,7 @@ class PyTorchMLP(BaseModel):
         embedding_dim: int = 8,
         dropout: float = 0.1,
         lr: float = 1e-3,
+        weight_decay: float = 0.0,
         epochs: int = 20,
         batch_size: int = 256,
         seed: int = 42,
@@ -77,6 +78,7 @@ class PyTorchMLP(BaseModel):
         self.embedding_dim = embedding_dim
         self.dropout = dropout
         self.lr = lr
+        self.weight_decay = weight_decay
         self.epochs = epochs
         self.batch_size = batch_size
         self.seed = seed
@@ -117,7 +119,7 @@ class PyTorchMLP(BaseModel):
             shuffle=True,
             generator=torch.Generator().manual_seed(self.seed),
         )
-        optimizer = torch.optim.Adam(self._net.parameters(), lr=self.lr)
+        optimizer = torch.optim.Adam(self._net.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         loss_fn = nn.BCEWithLogitsLoss(reduction="none")
 
         self._net.train()
@@ -144,6 +146,7 @@ class PyTorchMLP(BaseModel):
             "embedding_dim": self.embedding_dim,
             "dropout": self.dropout,
             "lr": self.lr,
+            "weight_decay": self.weight_decay,
             "epochs": self.epochs,
             "batch_size": self.batch_size,
             "seed": self.seed,
@@ -162,6 +165,7 @@ class PyTorchMLP(BaseModel):
                 "embedding_dim": self.embedding_dim,
                 "dropout": self.dropout,
                 "lr": self.lr,
+                "weight_decay": self.weight_decay,
                 "epochs": self.epochs,
                 "batch_size": self.batch_size,
                 "seed": self.seed,
@@ -180,6 +184,7 @@ class PyTorchMLP(BaseModel):
             embedding_dim=checkpoint["embedding_dim"],
             dropout=checkpoint["dropout"],
             lr=checkpoint["lr"],
+            weight_decay=checkpoint.get("weight_decay", 0.0),
             epochs=checkpoint["epochs"],
             batch_size=checkpoint["batch_size"],
             seed=checkpoint["seed"],
