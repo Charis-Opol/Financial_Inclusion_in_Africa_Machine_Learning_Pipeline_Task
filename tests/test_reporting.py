@@ -1,0 +1,76 @@
+import pytest
+
+from fin_inclusion.evaluation.cv_runner import CVFoldResult
+from fin_inclusion.evaluation.reporting import (
+    country_table_markdown,
+    results_table_markdown,
+    results_table_row,
+    summarize_country_metrics,
+    summarize_metrics,
+)
+
+
+def _fold_results() -> list[CVFoldResult]:
+    return [
+        CVFoldResult(
+            fold=0,
+            metrics={"pr_auc": 0.5, "roc_auc": 0.8, "f1": 0.4, "precision": 0.3, "recall": 0.5},
+            country_metrics={
+                "Kenya": {"pr_auc": 0.6, "f1": 0.5},
+                "Uganda": {"pr_auc": 0.4, "f1": 0.3},
+            },
+        ),
+        CVFoldResult(
+            fold=1,
+            metrics={"pr_auc": 0.7, "roc_auc": 0.9, "f1": 0.6, "precision": 0.5, "recall": 0.7},
+            country_metrics={
+                "Kenya": {"pr_auc": 0.8, "f1": 0.7},
+                "Uganda": {"pr_auc": 0.2, "f1": 0.1},
+            },
+        ),
+    ]
+
+
+def test_summarize_metrics_computes_mean_and_std():
+    summary = summarize_metrics(_fold_results())
+
+    assert summary["pr_auc"][0] == 0.6
+    assert summary["pr_auc"][1] > 0.0
+
+
+def test_summarize_country_metrics_aggregates_per_country():
+    df = summarize_country_metrics(_fold_results())
+
+    kenya = df[df["country"] == "Kenya"].iloc[0]
+    uganda = df[df["country"] == "Uganda"].iloc[0]
+    assert kenya["pr_auc_mean"] == pytest.approx(0.7)
+    assert uganda["pr_auc_mean"] == pytest.approx(0.3)
+
+
+def test_results_table_row_formats_mean_pm_std():
+    summary = summarize_metrics(_fold_results())
+
+    row = results_table_row("XGBoost", "class-weight", summary)
+
+    assert row["model"] == "XGBoost"
+    assert "±" in row["pr_auc"]
+
+
+def test_results_table_markdown_has_header_and_one_row_per_entry():
+    summary = summarize_metrics(_fold_results())
+    row = results_table_row("XGBoost", "class-weight", summary)
+
+    table = results_table_markdown([row])
+
+    assert "| Model | Imbalance strategy | PR-AUC | F1 | ROC-AUC |" in table
+    assert "XGBoost" in table
+
+
+def test_country_table_markdown_has_one_row_per_country():
+    df = summarize_country_metrics(_fold_results())
+
+    table = country_table_markdown(df)
+
+    assert "Kenya" in table
+    assert "Uganda" in table
+    assert table.count("\n") == 3

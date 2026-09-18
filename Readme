@@ -168,15 +168,24 @@ each one directly produced a design decision elsewhere in this document.
   (and better) result than 0.65 ± 0.15, even with an identical headline
   number.
 
-**Core results table (target shape):**
+**Core results table** (Phase 3 rows populated as untuned baselines --
+default hyperparameters, F1 at the default 0.5 threshold, not yet tuned;
+see `reports/baseline_results.md` for the full per-country breakdown and
+`reports/ablation_study_report.md` for Phase 4's tuned numbers):
 
 | Model | Imbalance strategy | PR-AUC | F1 | ROC-AUC |
 |---|---|---|---|---|
-| XGBoost | class-weight | mean ± std | mean ± std | mean ± std |
+| XGBoost | class-weight | 0.551 ± 0.017 | 0.508 ± 0.005 | 0.846 ± 0.005 |
 | XGBoost | resampling (SMOTE) | ... | ... | ... |
-| PyTorch (2-layer) | class-weight | ... | ... | ... |
+| PyTorch (2-layer) | class-weight | 0.580 ± 0.019 | 0.506 ± 0.013 | 0.863 ± 0.006 |
 | PyTorch (2-layer) | resampling (SMOTE) | ... | ... | ... |
 | PyTorch (3-layer) | best strategy from above | ... | ... | ... |
+
+Logistic Regression (sanity-check floor, not part of the ablation grid):
+PR-AUC 0.559 ± 0.019, F1 0.496 ± 0.008, ROC-AUC 0.852 ± 0.006 -- both
+XGBoost and PyTorch are expected to eventually clear this once tuned;
+neither does yet at default hyperparameters, which is the expected shape
+of an *untuned* baseline, not a modeling problem.
 
 **Secondary reporting:**
 
