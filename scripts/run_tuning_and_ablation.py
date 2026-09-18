@@ -39,6 +39,7 @@ from fin_inclusion.evaluation.reporting import (  # noqa: E402
     fold_pr_auc_scores,
     full_results_table_markdown,
     full_results_table_row,
+    plot_confusion_matrix_heatmap,
     summarize_country_metrics,
     summarize_metrics,
 )
@@ -220,6 +221,11 @@ def main() -> None:
     for key, (model_name, strategy_name) in row_labels.items():
         print(f"\n{model_name} ({strategy_name}) confusion matrix (summed across outer folds):")
         print(confusion_matrix_markdown(confusion_tables[key]))
+        plot_confusion_matrix_heatmap(
+            confusion_tables[key],
+            settings.paths.figures_dir / f"confusion_matrix_{key}.png",
+            title=f"{model_name}, {strategy_name}",
+        )
 
     grid_means = {k: summarize_metrics(v)["pr_auc"][0] for k, v in all_results.items()}
     xgb_best_key = "xgb_cw" if grid_means["xgb_cw"] >= grid_means["xgb_smote"] else "xgb_smote"

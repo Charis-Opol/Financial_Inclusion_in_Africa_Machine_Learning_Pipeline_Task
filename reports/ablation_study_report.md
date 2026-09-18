@@ -191,12 +191,16 @@ XGBoost/class-weight) rather than trusting any one fold's value.
 
 **XGBoost, class-weight (shipped model):**
 
+![XGBoost class-weight confusion matrix](figures/confusion_matrix_xgb_cw.png)
+
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|
 | Actual No | 18130 | 2082 |
 | Actual Yes | 1284 | 2028 |
 
 **XGBoost, SMOTE:**
+
+![XGBoost SMOTE confusion matrix](figures/confusion_matrix_xgb_smote.png)
 
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|
@@ -205,6 +209,8 @@ XGBoost/class-weight) rather than trusting any one fold's value.
 
 **PyTorch (2-layer), class-weight:**
 
+![PyTorch 2-layer class-weight confusion matrix](figures/confusion_matrix_pt2_cw.png)
+
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|
 | Actual No | 18103 | 2109 |
@@ -212,12 +218,16 @@ XGBoost/class-weight) rather than trusting any one fold's value.
 
 **PyTorch (2-layer), SMOTE:**
 
+![PyTorch 2-layer SMOTE confusion matrix](figures/confusion_matrix_pt2_smote.png)
+
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|
 | Actual No | 18687 | 1525 |
 | Actual Yes | 1586 | 1726 |
 
 **PyTorch (3-layer), class-weight:**
+
+![PyTorch 3-layer confusion matrix](figures/confusion_matrix_pt3_best.png)
 
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|

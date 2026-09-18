@@ -8,9 +8,15 @@ number").
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")  # headless: every plot here is saved to disk, never shown interactively
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from scipy import stats
 
 from fin_inclusion.evaluation.cv_runner import CVFoldResult, NestedFoldResult
@@ -137,6 +143,34 @@ def confusion_matrix_markdown(cm: np.ndarray, labels: tuple[str, str] = ("No", "
         f"| Actual {labels[1]} | {fn} | {tp} |",
     ]
     return "\n".join(lines)
+
+
+def plot_confusion_matrix_heatmap(
+    cm: np.ndarray,
+    output_path: Path,
+    title: str,
+    labels: tuple[str, str] = ("No", "Yes"),
+) -> None:
+    """Saves a single-hue (count = magnitude, not polarity) annotated heatmap."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig, ax = plt.subplots(figsize=(5, 4.5))
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        cbar_kws={"label": "Count"},
+        xticklabels=[f"Pred {l}" for l in labels],
+        yticklabels=[f"Actual {l}" for l in labels],
+        square=True,
+        ax=ax,
+    )
+    ax.set_title(title)
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("Actual")
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150)
+    plt.close(fig)
 
 
 def fold_pr_auc_scores(results: list[CVFoldResult] | list[NestedFoldResult]) -> list[float]:

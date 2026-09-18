@@ -12,6 +12,7 @@ per the Implementation Plan).
 """
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -26,6 +27,7 @@ from fin_inclusion.evaluation.reporting import (  # noqa: E402
     country_table_markdown,
     full_results_table_markdown,
     full_results_table_row,
+    plot_confusion_matrix_heatmap,
     summarize_country_metrics,
     summarize_metrics,
 )
@@ -48,6 +50,7 @@ IMBALANCE_STRATEGY_LABEL = "class-weight"
 def main() -> None:
     settings = load_settings()
     settings.paths.reports_dir.mkdir(parents=True, exist_ok=True)
+    settings.paths.figures_dir.mkdir(parents=True, exist_ok=True)
 
     loader = DataLoader(
         raw_train_path=settings.paths.raw_train, raw_test_path=settings.paths.raw_test
@@ -135,7 +138,12 @@ def main() -> None:
     report_lines.append("## Confusion matrices (summed across the 5 outer-validation folds)")
     report_lines.append("")
     for name, _, _ in model_specs:
+        slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+        image_path = settings.paths.figures_dir / f"confusion_matrix_baseline_{slug}.png"
+        plot_confusion_matrix_heatmap(confusion_tables[name], image_path, title=f"{name} (untuned baseline)")
         report_lines.append(f"### {name}")
+        report_lines.append("")
+        report_lines.append(f"![{name} confusion matrix](figures/confusion_matrix_baseline_{slug}.png)")
         report_lines.append("")
         report_lines.append(confusion_matrix_markdown(confusion_tables[name]))
         report_lines.append("")

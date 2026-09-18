@@ -10,6 +10,7 @@ from fin_inclusion.evaluation.reporting import (
     fold_pr_auc_scores,
     full_results_table_markdown,
     full_results_table_row,
+    plot_confusion_matrix_heatmap,
     results_table_markdown,
     results_table_row,
     summarize_country_metrics,
@@ -151,3 +152,13 @@ def test_confusion_matrix_markdown_renders_all_four_cells():
     assert "26" in table
     assert "Actual No" in table
     assert "Pred Yes" in table
+
+
+def test_plot_confusion_matrix_heatmap_writes_file(tmp_path):
+    cm = np.array([[105, 15], [14, 26]])
+    output_path = tmp_path / "cm.png"
+
+    plot_confusion_matrix_heatmap(cm, output_path, title="Test model")
+
+    assert output_path.exists()
+    assert output_path.stat().st_size > 0

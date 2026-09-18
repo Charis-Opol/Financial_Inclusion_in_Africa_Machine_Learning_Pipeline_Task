@@ -43,6 +43,8 @@ Single stratified 5-fold CV (country + target stratified), class-weight imbalanc
 
 ### LogisticRegression
 
+![LogisticRegression confusion matrix](figures/confusion_matrix_baseline_logisticregression.png)
+
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|
 | Actual No | 16124 | 4088 |
@@ -50,12 +52,16 @@ Single stratified 5-fold CV (country + target stratified), class-weight imbalanc
 
 ### XGBoost
 
+![XGBoost confusion matrix](figures/confusion_matrix_baseline_xgboost.png)
+
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|
 | Actual No | 16722 | 3490 |
 | Actual Yes | 994 | 2318 |
 
 ### PyTorchMLP (2-layer)
+
+![PyTorchMLP (2-layer) confusion matrix](figures/confusion_matrix_baseline_pytorchmlp_2_layer.png)
 
 | Actual \ Predicted | Pred No | Pred Yes |
 |---|---|---|
