@@ -1,0 +1,18 @@
+seed: 42
+
+paths:
+  raw_train: data/raw/Train_v2.csv
+  raw_test: data/raw/Test_v2.csv
+  interim_dir: data/interim
+  processed_dir: data/processed
+  reports_dir: reports
+  figures_dir: reports/figures
+
+data:
+  id_columns: [uniqueid, country, year]
+  target_column: bank_account
+
+cv:
+  n_outer_folds: 5
+  n_inner_folds: 5
+  stratify_columns: [country, bank_account]

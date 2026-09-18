@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fin-inclusion"
+version = "0.1.0"
+description = "Financial Inclusion in Africa — end-to-end ML pipeline"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Windows locks down the default %TEMP%\pytest-of-<user> base dir in some
+# environments (PermissionError on tmp_path fixtures) — use a project-local
+# basetemp instead.
+addopts = "--basetemp=.pytest_tmp"
