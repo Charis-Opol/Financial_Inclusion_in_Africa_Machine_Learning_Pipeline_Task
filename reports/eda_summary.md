@@ -133,6 +133,49 @@ composite key).
 `DataLoader._validate_composite_key` (Phase 2.1) so no downstream code can
 silently join on `uniqueid` alone.
 
+### 1.11 — Correlation analysis
+
+**Numeric features (Pearson r), incl. target as 0/1:**
+
+|  | year | household_size | age_of_respondent | bank_account_yes |
+|---|---|---|---|---|
+| year | 1.00 | -0.05 | -0.02 | 0.11 |
+| household_size | -0.05 | 1.00 | -0.13 | -0.03 |
+| age_of_respondent | -0.02 | -0.13 | 1.00 | 0.02 |
+| bank_account_yes | 0.11 | -0.03 | 0.02 | 1.00 |
+
+All |r| ≤ 0.13 — numeric features are weakly correlated with each other
+and with the target.
+
+**Categorical features (Cramér's V) association with target, sorted:**
+
+| Column | Cramér's V |
+|---|---|
+| `education_level` | 0.39 |
+| `job_type` | 0.36 |
+| `cellphone_access` | 0.21 |
+| `country` | 0.19 |
+| `relationship_with_head` | 0.12 |
+| `gender_of_respondent` | 0.12 |
+| `marital_status` | 0.09 |
+| `location_type` | 0.09 |
+
+`relationship_with_head` × `marital_status` association with each other:
+V = 0.30 (moderate — consistent with 1.9's "strong but not total" overlap).
+
+**Decision:** `education_level` and `job_type` show the strongest
+association with `bank_account`, ahead of `cellphone_access` and
+`country` — refines the SHAP-importance prediction from 1.4 by ranking
+education and job type above cellphone access, since Cramér's V uses the
+full distribution rather than an eyeballed rate spread. `relationship_
+with_head` and `marital_status` are only weakly associated with the
+target but moderately associated with each other (V=0.30) — corroborates
+1.9 quantitatively and confirms Phase 2.7's decision to keep both columns
+separate: their mutual association (0.30) doesn't approach what would
+justify collapsing them. Numeric features show no multicollinearity
+concern and confirm (per 1.5) that whatever predictive value they carry
+is non-linear, not linear.
+
 ---
 
 ## Summary of decisions carried into Phase 2
