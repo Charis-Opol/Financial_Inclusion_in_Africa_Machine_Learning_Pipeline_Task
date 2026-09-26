@@ -1,0 +1,11 @@
+# Allow-list: the serving image needs only its requirements, the source
+# package, and the trained artifact. Everything else (raw survey data --
+# personal data that must not leak into an image -- notebooks, reports,
+# virtualenvs, git history) is excluded from the build context.
+*
+!requirements-serving.txt
+!src/fin_inclusion/__init__.py
+!src/fin_inclusion/serving/
+!models/production/model.json
+!models/production/metadata.json
+**/__pycache__

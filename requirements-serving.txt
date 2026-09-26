@@ -5,4 +5,7 @@ fastapi==0.115.4
 pydantic==2.8.2
 uvicorn==0.52.0
 numpy==2.1.3
-xgboost==3.3.0
+# CPU-only build of the same XGBoost release the model was trained with
+# (identical `xgboost` module and model format). The default `xgboost` wheel is
+# ~99 MB because it bundles CUDA kernels; this one is ~6 MB.
+xgboost-cpu==3.3.0

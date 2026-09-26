@@ -1,0 +1,44 @@
+# Local deployment of the prediction service.
+#   docker compose up --build        -> http://localhost:8000/docs
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fin-inclusion-api:latest
+    ports:
+      # Bound to loopback only: this API scores personal survey data and has no
+      # auth layer, so it must not be reachable from the LAN by default.
+      - "127.0.0.1:8000:8000"
+    environment:
+      LOG_LEVEL: INFO
+      INFERENCE_THREADS: "1"
+    volumes:
+      # Named volume, not a bind mount: survives `down`/rebuilds, and Docker
+      # seeds it with the image's ownership of /app/logs, so the non-root user
+      # can write to it on Linux hosts too (bind mounts would be host-owned).
+      - prediction-logs:/app/logs
+    deploy:
+      resources:
+        # 1 CPU matches the single uvicorn worker + INFERENCE_THREADS=1.
+        # Memory: measured ~76 MiB after startup + first requests (model is
+        # 1.5 MB); 512M leaves headroom for bursts without masking a leak.
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    # Hardening: the app only needs to write to /app/logs (a volume) and /tmp.
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+    stop_grace_period: 15s
+
+volumes:
+  prediction-logs:
