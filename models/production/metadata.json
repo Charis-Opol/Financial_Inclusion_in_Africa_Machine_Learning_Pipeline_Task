@@ -1,0 +1,142 @@
+{
+  "model_family": "xgboost",
+  "imbalance_strategy": "class_weight",
+  "xgboost_version": "3.3.0",
+  "hyperparameters": {
+    "max_depth": 8,
+    "learning_rate": 0.019901215064816333,
+    "n_estimators": 141,
+    "min_child_weight": 6,
+    "subsample": 0.7993093544472046,
+    "colsample_bytree": 0.5986379932154655,
+    "scale_pos_weight": 3.566909441278662
+  },
+  "seed": 42,
+  "decision_threshold": 0.45514804124832153,
+  "threshold_source": "median of per-outer-fold F1-optimal thresholds (ablation_study_report.md \u00a73.4)",
+  "positive_label": "Yes",
+  "target": "bank_account",
+  "feature_columns": [
+    "household_size",
+    "age_of_respondent",
+    "household_size_outlier",
+    "country_Kenya",
+    "country_Rwanda",
+    "country_Tanzania",
+    "country_Uganda",
+    "location_type_Rural",
+    "location_type_Urban",
+    "cellphone_access_No",
+    "cellphone_access_Yes",
+    "gender_of_respondent_Female",
+    "gender_of_respondent_Male",
+    "relationship_with_head_Child",
+    "relationship_with_head_Head of Household",
+    "relationship_with_head_Other non-relatives",
+    "relationship_with_head_Other relative",
+    "relationship_with_head_Parent",
+    "relationship_with_head_Spouse",
+    "marital_status_Divorced/Seperated",
+    "marital_status_Married/Living together",
+    "marital_status_Single/Never Married",
+    "marital_status_Widowed",
+    "marital_status_unknown",
+    "education_level_No formal education",
+    "education_level_Primary education",
+    "education_level_Secondary education",
+    "education_level_Tertiary education",
+    "education_level_Vocational/Specialised training",
+    "education_level_unknown",
+    "job_type_Farming and Fishing",
+    "job_type_Formally employed Government",
+    "job_type_Formally employed Private",
+    "job_type_Government Dependent",
+    "job_type_Informally employed",
+    "job_type_No Income",
+    "job_type_Other Income",
+    "job_type_Remittance Dependent",
+    "job_type_Self employed",
+    "job_type_unknown"
+  ],
+  "numeric_columns": [
+    "household_size",
+    "age_of_respondent"
+  ],
+  "raw_categorical_levels": {
+    "country": [
+      "Kenya",
+      "Rwanda",
+      "Tanzania",
+      "Uganda"
+    ],
+    "location_type": [
+      "Rural",
+      "Urban"
+    ],
+    "cellphone_access": [
+      "No",
+      "Yes"
+    ],
+    "gender_of_respondent": [
+      "Female",
+      "Male"
+    ],
+    "relationship_with_head": [
+      "Child",
+      "Head of Household",
+      "Other non-relatives",
+      "Other relative",
+      "Parent",
+      "Spouse"
+    ],
+    "marital_status": [
+      "Divorced/Seperated",
+      "Dont know",
+      "Married/Living together",
+      "Single/Never Married",
+      "Widowed"
+    ],
+    "education_level": [
+      "No formal education",
+      "Other/Dont know/RTA",
+      "Primary education",
+      "Secondary education",
+      "Tertiary education",
+      "Vocational/Specialised training"
+    ],
+    "job_type": [
+      "Dont Know/Refuse to answer",
+      "Farming and Fishing",
+      "Formally employed Government",
+      "Formally employed Private",
+      "Government Dependent",
+      "Informally employed",
+      "No Income",
+      "Other Income",
+      "Remittance Dependent",
+      "Self employed"
+    ]
+  },
+  "disguised_missing_values": {
+    "marital_status": "Dont know",
+    "education_level": "Other/Dont know/RTA",
+    "job_type": "Dont Know/Refuse to answer"
+  },
+  "unknown_label": "unknown",
+  "household_size_outlier_threshold": 15,
+  "numeric_observed_range": {
+    "household_size": [
+      1,
+      21
+    ],
+    "age_of_respondent": [
+      16,
+      100
+    ]
+  },
+  "training_rows": 23524,
+  "training_data_sha256": "05c0e0801e85eaccd1457012a2af155da77d1ebb3c48371949faea231741ed34",
+  "model_version": "xgb-cw-5ec2d564be13",
+  "model_sha256": "5ec2d564be131b078231c18f1963f21201341b020fced971f4c3139607d8243f",
+  "trained_at": "2026-09-26T11:47:53+00:00"
+}
