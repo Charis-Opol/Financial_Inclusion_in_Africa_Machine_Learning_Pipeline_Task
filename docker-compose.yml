@@ -38,7 +38,33 @@ services:
     cap_drop:
       - ALL
     restart: unless-stopped
+    # Long enough for the prediction-log writer to flush its queue on shutdown.
     stop_grace_period: 15s
+
+  # On-demand / schedulable PSI drift check over the accumulated prediction log.
+  # Not started by `up` (profile "jobs"); run it with:
+  #   docker compose run --rm drift-check                      # pooled, last 7 days
+  #   docker compose run --rm drift-check --country Uganda --hours 24
+  # Exit code: 0 stable, 10 moderate, 20 significant, 30 insufficient data, 1 error.
+  drift-check:
+    image: fin-inclusion-api:latest
+    profiles: ["jobs"]
+    entrypoint: ["python", "-m", "fin_inclusion.monitoring.drift_check",
+                 "--log-dir", "/app/logs",
+                 "--reference", "/app/models/production/reference_profile.json"]
+    volumes:
+      # Read-only: the job must never be able to alter the audit trail it inspects.
+      - prediction-logs:/app/logs:ro
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
 
 volumes:
   prediction-logs:

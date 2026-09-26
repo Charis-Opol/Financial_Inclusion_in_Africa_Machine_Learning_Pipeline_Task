@@ -148,6 +148,9 @@ class HealthResponse(BaseModel):
     status: Literal["ok", "unavailable"]
     model_version: str | None = None
     detail: str | None = None
+    prediction_log: dict | None = Field(
+        default=None, description="Writer counters: written / queued / dropped / write_errors."
+    )
 
 
 class ErrorResponse(BaseModel):

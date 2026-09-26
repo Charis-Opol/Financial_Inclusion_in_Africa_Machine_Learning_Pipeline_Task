@@ -38,13 +38,18 @@ VALID_RECORD = {
 }
 
 
-def _config(model_dir: Path) -> ServiceConfig:
-    return ServiceConfig(model_dir=model_dir, inference_threads=1, log_level="WARNING")
+def _config(model_dir: Path, log_dir: Path) -> ServiceConfig:
+    return ServiceConfig(model_dir=model_dir, inference_threads=1, log_level="WARNING", prediction_log_dir=log_dir)
 
 
 @pytest.fixture(scope="module")
-def client():
-    with TestClient(create_app(_config(MODEL_DIR))) as test_client:
+def log_dir(tmp_path_factory) -> Path:
+    return tmp_path_factory.mktemp("prediction-logs")
+
+
+@pytest.fixture(scope="module")
+def client(log_dir):
+    with TestClient(create_app(_config(MODEL_DIR, log_dir))) as test_client:
         yield test_client
 
 
@@ -117,7 +122,7 @@ def test_non_finite_numbers_are_422_not_500(client, token):
 
 
 def test_missing_model_gives_503_with_reason(tmp_path):
-    with TestClient(create_app(_config(tmp_path))) as unready:
+    with TestClient(create_app(_config(tmp_path, tmp_path / "logs"))) as unready:
         health = unready.get("/health")
         assert health.status_code == 503
         assert "Missing artifact file" in health.json()["detail"]
@@ -168,3 +173,36 @@ def test_load_rejects_schema_vocabulary_drift(tmp_path):
     (artifact / "metadata.json").write_text(json.dumps(metadata))
     with pytest.raises(ModelLoadError, match="disagree"):
         Predictor.load(artifact)
+
+
+def test_prediction_is_logged_as_json_line(tmp_path):
+    log_dir = tmp_path / "logs"
+    with TestClient(create_app(_config(MODEL_DIR, log_dir))) as test_client:
+        response = test_client.post("/predict", json=VALID_RECORD, headers={"X-Request-ID": "log-test-1"})
+        assert response.status_code == 200
+        test_client.post("/predict", json=VALID_RECORD | {"country": "Nigeria"})  # 422: not a prediction
+    # Leaving the context runs lifespan shutdown, which flushes the writer.
+    lines = [json.loads(line) for f in log_dir.glob("predictions-*.jsonl") for line in f.read_text().splitlines()]
+    assert len(lines) == 1
+    event = lines[0]
+    assert event["request_id"] == "log-test-1"
+    assert event["features"] == VALID_RECORD
+    assert event["probability"] == response.json()["probability_bank_account"]
+    assert event["model_version"].startswith("xgb-cw-")
+    assert event["latency_ms"] >= event["inference_ms"] > 0
+    assert {"timestamp", "prediction", "confidence", "decision_threshold"} <= event.keys()
+
+
+def test_health_exposes_prediction_log_counters(client):
+    stats = client.get("/health").json()["prediction_log"]
+    assert stats["dropped"] == 0 and stats["writer_alive"] is True
+
+
+def test_unwritable_log_dir_gives_503(tmp_path):
+    not_a_dir = tmp_path / "occupied"
+    not_a_dir.write_text("a file where the log directory should be")
+    with TestClient(create_app(_config(MODEL_DIR, not_a_dir))) as unready:
+        health = unready.get("/health")
+        assert health.status_code == 503
+        assert "not writable" in health.json()["detail"]
+        assert unready.post("/predict", json=VALID_RECORD).status_code == 503

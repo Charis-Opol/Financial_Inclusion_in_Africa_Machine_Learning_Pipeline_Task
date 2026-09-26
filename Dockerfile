@@ -48,6 +48,7 @@ ENV PATH=/opt/venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     MODEL_DIR=/app/models/production \
+    PREDICTION_LOG_DIR=/app/logs \
     INFERENCE_THREADS=1 \
     LOG_LEVEL=INFO \
     PORT=8000

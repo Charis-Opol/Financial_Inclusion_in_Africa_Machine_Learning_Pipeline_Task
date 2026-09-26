@@ -2,7 +2,9 @@
 
 Status-code contract:
     422  the client sent something invalid (schema/type/range/NaN/extra field)
-    503  the service is up but has no usable model (failed load) -- retryable
+    503  the service is up but not ready: no usable model, or no writable
+         prediction log (serving unrecorded predictions would silently break
+         monitoring and auditability) -- retryable
     500  a valid request hit a server-side failure (model/encoder error)
 
 Run locally:  uvicorn fin_inclusion.serving.app:app --port 8000
@@ -11,9 +13,11 @@ from __future__ import annotations
 
 import logging
 import re
+import time
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, Request
 from fastapi.concurrency import run_in_threadpool
@@ -21,7 +25,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from fin_inclusion.serving.config import ServiceConfig
-from fin_inclusion.serving.predictor import InferenceError, Predictor
+from fin_inclusion.serving.prediction_log import PredictionLogger
+from fin_inclusion.serving.predictor import InferenceError, Prediction, Predictor
 from fin_inclusion.serving.schemas import (
     ErrorResponse,
     HealthResponse,
@@ -53,6 +58,32 @@ def _require_predictor(request: Request) -> Predictor:
     return predictor
 
 
+def _prediction_event(
+    request: Request, predictor: Predictor, record: SurveyRecord, prediction: Prediction, inference_ms: float
+) -> dict:
+    """One JSON-lines log record. Plain dict: encoding happens on the writer thread."""
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+        "request_id": request.state.request_id,
+        "model_version": predictor.model_version,
+        "features": record.model_dump(),
+        "probability": prediction.probability,
+        "prediction": prediction.label,
+        "confidence": prediction.confidence,
+        "decision_threshold": predictor.threshold,
+        # Server-side time from request arrival to a ready prediction:
+        # validation + threadpool hop + encoding + model. Excludes response
+        # serialization and network time.
+        "latency_ms": round((time.perf_counter_ns() - request.state.start_ns) / 1e6, 3),
+        # Threadpool dispatch + encoding + model call. Under concurrent load
+        # this is dominated by waiting for a worker thread / CPU share, not by
+        # the model itself (~0.5 ms, see reports/inference_benchmark*.md):
+        # a rising inference_ms at flat traffic means CPU starvation.
+        "inference_ms": round(inference_ms, 3),
+        "warnings": prediction.warnings,
+    }
+
+
 def create_app(config: ServiceConfig | None = None) -> FastAPI:
     config = config or ServiceConfig.from_env()
     logging.basicConfig(
@@ -68,12 +99,19 @@ def create_app(config: ServiceConfig | None = None) -> FastAPI:
         # instead of a crash loop that hides the message.
         app.state.predictor = None
         app.state.load_error = None
+        prediction_log = PredictionLogger(config.prediction_log_dir, config.prediction_log_queue_size)
+        app.state.prediction_log = prediction_log
         try:
-            app.state.predictor = Predictor.load(config.model_dir, config.inference_threads)
+            prediction_log.start()
+            predictor = Predictor.load(config.model_dir, config.inference_threads)
         except Exception as exc:
             app.state.load_error = f"{type(exc).__name__}: {exc}"
-            logger.exception("Model failed to load from %s; serving 503 until fixed", config.model_dir)
+            logger.exception("Startup failed (model dir %s, log dir %s); serving 503 until fixed",
+                             config.model_dir, config.prediction_log_dir)
+        else:
+            app.state.predictor = predictor
         yield
+        prediction_log.close()
 
     app = FastAPI(
         title="Financial Inclusion — bank account prediction",
@@ -83,6 +121,7 @@ def create_app(config: ServiceConfig | None = None) -> FastAPI:
 
     @app.middleware("http")
     async def assign_request_id(request: Request, call_next):
+        request.state.start_ns = time.perf_counter_ns()
         incoming = request.headers.get(REQUEST_ID_HEADER, "")
         request.state.request_id = incoming if _SAFE_REQUEST_ID.match(incoming) else uuid.uuid4().hex
         response = await call_next(request)
@@ -120,10 +159,11 @@ def create_app(config: ServiceConfig | None = None) -> FastAPI:
     )
     async def health(request: Request):
         predictor: Predictor | None = request.app.state.predictor
+        log_stats = request.app.state.prediction_log.stats()
         if predictor is None:
-            body = HealthResponse(status="unavailable", detail=request.app.state.load_error)
+            body = HealthResponse(status="unavailable", detail=request.app.state.load_error, prediction_log=log_stats)
             return JSONResponse(status_code=503, content=body.model_dump())
-        return HealthResponse(status="ok", model_version=predictor.model_version)
+        return HealthResponse(status="ok", model_version=predictor.model_version, prediction_log=log_stats)
 
     @app.post(
         "/predict",
@@ -135,7 +175,12 @@ def create_app(config: ServiceConfig | None = None) -> FastAPI:
         # Scoring is CPU-bound; running it on the threadpool keeps the event
         # loop free to accept other requests. XGBoost's C API releases the
         # GIL, so concurrent predictions genuinely run in parallel.
+        inference_start = time.perf_counter_ns()
         prediction = await run_in_threadpool(predictor.predict, record)
+        inference_ms = (time.perf_counter_ns() - inference_start) / 1e6
+        request.app.state.prediction_log.log(
+            _prediction_event(request, predictor, record, prediction, inference_ms)
+        )
         return PredictionResponse(
             request_id=request.state.request_id,
             model_version=predictor.model_version,

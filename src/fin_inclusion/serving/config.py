@@ -15,6 +15,9 @@ class ServiceConfig:
     # parallel requests, not from threads inside one prediction.
     inference_threads: int
     log_level: str
+    prediction_log_dir: Path
+    # ~10k events x ~1 KB = ~10 MB worst case held in memory while the disk stalls.
+    prediction_log_queue_size: int = 10_000
 
     @classmethod
     def from_env(cls) -> "ServiceConfig":
@@ -22,4 +25,6 @@ class ServiceConfig:
             model_dir=Path(os.environ.get("MODEL_DIR", "models/production")),
             inference_threads=int(os.environ.get("INFERENCE_THREADS", "1")),
             log_level=os.environ.get("LOG_LEVEL", "INFO").upper(),
+            prediction_log_dir=Path(os.environ.get("PREDICTION_LOG_DIR", "logs")),
+            prediction_log_queue_size=int(os.environ.get("PREDICTION_LOG_QUEUE_SIZE", "10000")),
         )

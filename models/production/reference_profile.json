@@ -1,0 +1,1029 @@
+{
+  "model_version": "xgb-cw-5ec2d564be13",
+  "training_data_sha256": "05c0e0801e85eaccd1457012a2af155da77d1ebb3c48371949faea231741ed34",
+  "created_at": "2026-09-26T13:50:38+00:00",
+  "psi_thresholds": {
+    "stable_below": 0.1,
+    "significant_above": 0.25
+  },
+  "segments": {
+    "all": {
+      "n": 23524,
+      "positive_rate": 0.20612990987927224,
+      "features": {
+        "household_size": {
+          "kind": "numeric",
+          "edges": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0
+          ],
+          "proportions": [
+            0.1299523890494814,
+            0.22228362523380377,
+            0.1666383268151675,
+            0.14767896616221732,
+            0.12128039449073287,
+            0.08910049311341608,
+            0.0595136881482741,
+            0.06355211698690699
+          ]
+        },
+        "age_of_respondent": {
+          "kind": "numeric",
+          "edges": [
+            20.0,
+            24.0,
+            28.0,
+            31.0,
+            35.0,
+            40.0,
+            45.0,
+            53.0,
+            64.0
+          ],
+          "proportions": [
+            0.11137561639177011,
+            0.09305390239755143,
+            0.11583914300289067,
+            0.08671994558748512,
+            0.11052542084679476,
+            0.10657201156265941,
+            0.08306410474409114,
+            0.09947287876211529,
+            0.09734738989967692,
+            0.09602958680496514
+          ]
+        },
+        "country": {
+          "kind": "categorical",
+          "levels": [
+            "Kenya",
+            "Rwanda",
+            "Tanzania",
+            "Uganda"
+          ],
+          "proportions": [
+            0.2579493283455195,
+            0.37132290426798165,
+            0.281414725386839,
+            0.08931304199965992,
+            0.0
+          ]
+        },
+        "location_type": {
+          "kind": "categorical",
+          "levels": [
+            "Rural",
+            "Urban"
+          ],
+          "proportions": [
+            0.6097177350790682,
+            0.3902822649209318,
+            0.0
+          ]
+        },
+        "cellphone_access": {
+          "kind": "categorical",
+          "levels": [
+            "No",
+            "Yes"
+          ],
+          "proportions": [
+            0.258034347900017,
+            0.741965652099983,
+            0.0
+          ]
+        },
+        "gender_of_respondent": {
+          "kind": "categorical",
+          "levels": [
+            "Female",
+            "Male"
+          ],
+          "proportions": [
+            0.5899081788811427,
+            0.41009182111885734,
+            0.0
+          ]
+        },
+        "relationship_with_head": {
+          "kind": "categorical",
+          "levels": [
+            "Child",
+            "Head of Household",
+            "Other non-relatives",
+            "Other relative",
+            "Parent",
+            "Spouse"
+          ],
+          "proportions": [
+            0.09475429348750213,
+            0.5454429518789321,
+            0.008076857677265771,
+            0.0283965312021765,
+            0.046165618092161194,
+            0.2771637476619623,
+            0.0
+          ]
+        },
+        "marital_status": {
+          "kind": "categorical",
+          "levels": [
+            "Divorced/Seperated",
+            "Dont know",
+            "Married/Living together",
+            "Single/Never Married",
+            "Widowed"
+          ],
+          "proportions": [
+            0.08825029756844074,
+            0.0003400782179901377,
+            0.4569375956469988,
+            0.3393555517769087,
+            0.11511647678966162,
+            0.0
+          ]
+        },
+        "education_level": {
+          "kind": "categorical",
+          "levels": [
+            "No formal education",
+            "Other/Dont know/RTA",
+            "Primary education",
+            "Secondary education",
+            "Tertiary education",
+            "Vocational/Specialised training"
+          ],
+          "proportions": [
+            0.191931644278184,
+            0.0014878422037068527,
+            0.5437425607889814,
+            0.17951878932154394,
+            0.04918381227682367,
+            0.03413535113076008,
+            0.0
+          ]
+        },
+        "job_type": {
+          "kind": "categorical",
+          "levels": [
+            "Dont Know/Refuse to answer",
+            "Farming and Fishing",
+            "Formally employed Government",
+            "Formally employed Private",
+            "Government Dependent",
+            "Informally employed",
+            "No Income",
+            "Other Income",
+            "Remittance Dependent",
+            "Self employed"
+          ],
+          "proportions": [
+            0.005356231933344669,
+            0.23129569801054242,
+            0.016451283795272914,
+            0.044847814997449414,
+            0.010499914980445502,
+            0.2379272232613501,
+            0.026653630334977044,
+            0.0459105594286686,
+            0.10742220710763475,
+            0.27363543615031455,
+            0.0
+          ]
+        },
+        "prediction_score": {
+          "kind": "numeric",
+          "edges": [
+            0.04534771665930748,
+            0.07446301728487015,
+            0.12868568301200867,
+            0.17808078229427338,
+            0.2246553897857666,
+            0.2705017328262329,
+            0.3551225960254669,
+            0.46356335282325745,
+            0.6493805050849915
+          ],
+          "proportions": [
+            0.10002550586634926,
+            0.0999829960891005,
+            0.10002550586634926,
+            0.10002550586634926,
+            0.1004931134160857,
+            0.09994048631185172,
+            0.09951538853936405,
+            0.10002550586634926,
+            0.0999829960891005,
+            0.0999829960891005
+          ]
+        }
+      }
+    },
+    "Kenya": {
+      "n": 6068,
+      "positive_rate": 0.44050758075148316,
+      "features": {
+        "household_size": {
+          "kind": "numeric",
+          "edges": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0
+          ],
+          "proportions": [
+            0.1652933421226104,
+            0.14040870138431114,
+            0.15557020435069216,
+            0.1613381674357284,
+            0.13398154251812788,
+            0.1008569545154911,
+            0.06542518127883981,
+            0.07712590639419907
+          ]
+        },
+        "age_of_respondent": {
+          "kind": "numeric",
+          "edges": [
+            20.0,
+            24.0,
+            28.0,
+            31.0,
+            35.0,
+            40.0,
+            47.0,
+            55.0,
+            66.0
+          ],
+          "proportions": [
+            0.11206328279499012,
+            0.08899143045484509,
+            0.11634805537244562,
+            0.08470665787738958,
+            0.09970336189848385,
+            0.10563612392880685,
+            0.10003295978905735,
+            0.1008569545154911,
+            0.09739617666446934,
+            0.0942649967040211
+          ]
+        },
+        "location_type": {
+          "kind": "categorical",
+          "levels": [
+            "Rural",
+            "Urban"
+          ],
+          "proportions": [
+            0.5838826631509558,
+            0.4161173368490442,
+            0.0
+          ]
+        },
+        "cellphone_access": {
+          "kind": "categorical",
+          "levels": [
+            "No",
+            "Yes"
+          ],
+          "proportions": [
+            0.21143704680290046,
+            0.7885629531970996,
+            0.0
+          ]
+        },
+        "gender_of_respondent": {
+          "kind": "categorical",
+          "levels": [
+            "Female",
+            "Male"
+          ],
+          "proportions": [
+            0.5738299274884641,
+            0.42617007251153594,
+            0.0
+          ]
+        },
+        "relationship_with_head": {
+          "kind": "categorical",
+          "levels": [
+            "Child",
+            "Head of Household",
+            "Other non-relatives",
+            "Other relative",
+            "Parent",
+            "Spouse"
+          ],
+          "proportions": [
+            0.1277191825972314,
+            0.5825642715886619,
+            0.006097560975609756,
+            0.04119973632168754,
+            0.004614370468029005,
+            0.23780487804878048,
+            0.0
+          ]
+        },
+        "marital_status": {
+          "kind": "categorical",
+          "levels": [
+            "Divorced/Seperated",
+            "Dont know",
+            "Married/Living together",
+            "Single/Never Married",
+            "Widowed"
+          ],
+          "proportions": [
+            0.058338826631509556,
+            0.0013183915622940012,
+            0.5805866842452209,
+            0.24851680949241925,
+            0.11123928806855636,
+            0.0
+          ]
+        },
+        "education_level": {
+          "kind": "categorical",
+          "levels": [
+            "No formal education",
+            "Other/Dont know/RTA",
+            "Primary education",
+            "Secondary education",
+            "Tertiary education",
+            "Vocational/Specialised training"
+          ],
+          "proportions": [
+            0.1550758075148319,
+            0.0013183915622940012,
+            0.42847725774555045,
+            0.29416611733684905,
+            0.04812129202373105,
+            0.07284113381674358,
+            0.0
+          ]
+        },
+        "job_type": {
+          "kind": "categorical",
+          "levels": [
+            "Dont Know/Refuse to answer",
+            "Farming and Fishing",
+            "Formally employed Government",
+            "Formally employed Private",
+            "Government Dependent",
+            "Informally employed",
+            "No Income",
+            "Other Income",
+            "Remittance Dependent",
+            "Self employed"
+          ],
+          "proportions": [
+            0.0004943968358602505,
+            0.265161502966381,
+            0.04284772577455504,
+            0.06855636123928807,
+            0.01071193144363876,
+            0.23384970336189848,
+            0.0,
+            0.025379037574159526,
+            0.19578114700065918,
+            0.15721819380355967,
+            0.0
+          ]
+        },
+        "prediction_score": {
+          "kind": "numeric",
+          "edges": [
+            0.09518352895975113,
+            0.17834335565567017,
+            0.2649080753326416,
+            0.3415878415107727,
+            0.41127949953079224,
+            0.49601536989212036,
+            0.5769094228744507,
+            0.6827518343925476,
+            0.7992848753929138
+          ],
+          "proportions": [
+            0.10003295978905735,
+            0.10003295978905735,
+            0.1001977587343441,
+            0.0998681608437706,
+            0.0998681608437706,
+            0.10003295978905735,
+            0.10003295978905735,
+            0.10003295978905735,
+            0.10003295978905735,
+            0.0998681608437706
+          ]
+        }
+      }
+    },
+    "Rwanda": {
+      "n": 8735,
+      "positive_rate": 0.13943903835145965,
+      "features": {
+        "household_size": {
+          "kind": "numeric",
+          "edges": [
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0
+          ],
+          "proportions": [
+            0.15684029765311963,
+            0.18225529479107042,
+            0.1934745277618775,
+            0.17676016027475672,
+            0.13119633657698912,
+            0.0889524899828277,
+            0.0705208929593589
+          ]
+        },
+        "age_of_respondent": {
+          "kind": "numeric",
+          "edges": [
+            20.0,
+            25.0,
+            29.0,
+            32.0,
+            35.0,
+            40.0,
+            45.0,
+            53.0,
+            63.0
+          ],
+          "proportions": [
+            0.10532341156267888,
+            0.1070406410990269,
+            0.09925586720091585,
+            0.09593589009730967,
+            0.094791070406411,
+            0.10875787063537493,
+            0.08963938179736691,
+            0.10028620492272466,
+            0.09902690326273612,
+            0.09994275901545506
+          ]
+        },
+        "location_type": {
+          "kind": "categorical",
+          "levels": [
+            "Rural",
+            "Urban"
+          ],
+          "proportions": [
+            0.8566685746994849,
+            0.14333142530051518,
+            0.0
+          ]
+        },
+        "cellphone_access": {
+          "kind": "categorical",
+          "levels": [
+            "No",
+            "Yes"
+          ],
+          "proportions": [
+            0.17012020606754436,
+            0.8298797939324556,
+            0.0
+          ]
+        },
+        "gender_of_respondent": {
+          "kind": "categorical",
+          "levels": [
+            "Female",
+            "Male"
+          ],
+          "proportions": [
+            0.5957641671436749,
+            0.40423583285632514,
+            0.0
+          ]
+        },
+        "relationship_with_head": {
+          "kind": "categorical",
+          "levels": [
+            "Child",
+            "Head of Household",
+            "Other non-relatives",
+            "Other relative",
+            "Parent",
+            "Spouse"
+          ],
+          "proportions": [
+            0.13898111047510017,
+            0.5237550085861477,
+            0.009845449341728678,
+            0.010074413279908415,
+            0.026445334859759587,
+            0.2908986834573555,
+            0.0
+          ]
+        },
+        "marital_status": {
+          "kind": "categorical",
+          "levels": [
+            "Divorced/Seperated",
+            "Dont know",
+            "Married/Living together",
+            "Single/Never Married",
+            "Widowed"
+          ],
+          "proportions": [
+            0.05426445334859759,
+            0.0,
+            0.594848311390956,
+            0.2137378362907842,
+            0.13714939896966227,
+            0.0
+          ]
+        },
+        "education_level": {
+          "kind": "categorical",
+          "levels": [
+            "No formal education",
+            "Other/Dont know/RTA",
+            "Primary education",
+            "Secondary education",
+            "Tertiary education",
+            "Vocational/Specialised training"
+          ],
+          "proportions": [
+            0.24293073840870064,
+            0.00206067544361763,
+            0.5536348025186033,
+            0.1706926159129937,
+            0.020263308528906697,
+            0.01041785918717802,
+            0.0
+          ]
+        },
+        "job_type": {
+          "kind": "categorical",
+          "levels": [
+            "Dont Know/Refuse to answer",
+            "Farming and Fishing",
+            "Formally employed Government",
+            "Formally employed Private",
+            "Government Dependent",
+            "Informally employed",
+            "No Income",
+            "Other Income",
+            "Remittance Dependent",
+            "Self employed"
+          ],
+          "proportions": [
+            0.006410990269032627,
+            0.4386949055523755,
+            0.01453921007441328,
+            0.018431597023468804,
+            0.01041785918717802,
+            0.3294791070406411,
+            0.0,
+            0.03697767601602748,
+            0.07578706353749284,
+            0.06926159129937035,
+            0.0
+          ]
+        },
+        "prediction_score": {
+          "kind": "numeric",
+          "edges": [
+            0.059946753084659576,
+            0.10722437500953674,
+            0.14517149329185486,
+            0.18711236119270325,
+            0.2194797843694687,
+            0.25046011805534363,
+            0.3054696023464203,
+            0.3850312829017639,
+            0.5120379328727722
+          ],
+          "proportions": [
+            0.10005724098454494,
+            0.09994275901545506,
+            0.10005724098454494,
+            0.10005724098454494,
+            0.09994275901545506,
+            0.1005151688609044,
+            0.09959931310818546,
+            0.0998282770463652,
+            0.10005724098454494,
+            0.09994275901545506
+          ]
+        }
+      }
+    },
+    "Tanzania": {
+      "n": 6620,
+      "positive_rate": 0.11027190332326284,
+      "features": {
+        "household_size": {
+          "kind": "numeric",
+          "edges": [
+            1.0,
+            2.0,
+            3.0,
+            4.0
+          ],
+          "proportions": [
+            0.2122356495468278,
+            0.4879154078549849,
+            0.15861027190332327,
+            0.07854984894259819,
+            0.06268882175226587
+          ]
+        },
+        "age_of_respondent": {
+          "kind": "numeric",
+          "edges": [
+            20.0,
+            24.0,
+            27.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            52.0,
+            63.0
+          ],
+          "proportions": [
+            0.10709969788519637,
+            0.10528700906344411,
+            0.08972809667673716,
+            0.09954682779456193,
+            0.12235649546827794,
+            0.10709969788519637,
+            0.0836858006042296,
+            0.09441087613293052,
+            0.09410876132930514,
+            0.09667673716012085
+          ]
+        },
+        "location_type": {
+          "kind": "categorical",
+          "levels": [
+            "Rural",
+            "Urban"
+          ],
+          "proportions": [
+            0.27326283987915406,
+            0.7267371601208459,
+            0.0
+          ]
+        },
+        "cellphone_access": {
+          "kind": "categorical",
+          "levels": [
+            "No",
+            "Yes"
+          ],
+          "proportions": [
+            0.402416918429003,
+            0.5975830815709969,
+            0.0
+          ]
+        },
+        "gender_of_respondent": {
+          "kind": "categorical",
+          "levels": [
+            "Female",
+            "Male"
+          ],
+          "proportions": [
+            0.5749244712990936,
+            0.42507552870090637,
+            0.0
+          ]
+        },
+        "relationship_with_head": {
+          "kind": "categorical",
+          "levels": [
+            "Child",
+            "Head of Household",
+            "Other non-relatives",
+            "Other relative",
+            "Parent",
+            "Spouse"
+          ],
+          "proportions": [
+            0.030060422960725076,
+            0.5584592145015106,
+            0.007099697885196375,
+            0.03580060422960725,
+            0.09607250755287008,
+            0.27250755287009065,
+            0.0
+          ]
+        },
+        "marital_status": {
+          "kind": "categorical",
+          "levels": [
+            "Divorced/Seperated",
+            "Dont know",
+            "Married/Living together",
+            "Single/Never Married",
+            "Widowed"
+          ],
+          "proportions": [
+            0.1632930513595166,
+            0.0,
+            0.10075528700906344,
+            0.638821752265861,
+            0.09712990936555892,
+            0.0
+          ]
+        },
+        "education_level": {
+          "kind": "categorical",
+          "levels": [
+            "No formal education",
+            "Other/Dont know/RTA",
+            "Primary education",
+            "Secondary education",
+            "Tertiary education",
+            "Vocational/Specialised training"
+          ],
+          "proportions": [
+            0.17114803625377645,
+            0.00045317220543806646,
+            0.6380664652567976,
+            0.06540785498489426,
+            0.09909365558912386,
+            0.025830815709969788,
+            0.0
+          ]
+        },
+        "job_type": {
+          "kind": "categorical",
+          "levels": [
+            "Dont Know/Refuse to answer",
+            "Farming and Fishing",
+            "Formally employed Government",
+            "Formally employed Private",
+            "Government Dependent",
+            "Informally employed",
+            "No Income",
+            "Other Income",
+            "Remittance Dependent",
+            "Self employed"
+          ],
+          "proportions": [
+            0.0,
+            0.0,
+            0.0,
+            0.055891238670694864,
+            0.012688821752265862,
+            0.19637462235649547,
+            0.05740181268882175,
+            0.005287009063444109,
+            0.10226586102719033,
+            0.5700906344410877,
+            0.0
+          ]
+        },
+        "prediction_score": {
+          "kind": "numeric",
+          "edges": [
+            0.034858863800764084,
+            0.03973805904388428,
+            0.049052126705646515,
+            0.084358349442482,
+            0.14653879404067993,
+            0.19032080471515656,
+            0.2533200979232788,
+            0.2816944122314453,
+            0.4664074182510376
+          ],
+          "proportions": [
+            0.1,
+            0.1,
+            0.10015105740181268,
+            0.09984894259818732,
+            0.10045317220543806,
+            0.09954682779456193,
+            0.1,
+            0.1,
+            0.1,
+            0.1
+          ]
+        }
+      }
+    },
+    "Uganda": {
+      "n": 2101,
+      "positive_rate": 0.10851975249881009,
+      "features": {
+        "household_size": {
+          "kind": "numeric",
+          "edges": [
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0,
+            9.0
+          ],
+          "proportions": [
+            0.20276059019514517,
+            0.1589719181342218,
+            0.13564969062351262,
+            0.1256544502617801,
+            0.1099476439790576,
+            0.0894811994288434,
+            0.09947643979057591,
+            0.0780580675868634
+          ]
+        },
+        "age_of_respondent": {
+          "kind": "numeric",
+          "edges": [
+            19.0,
+            22.0,
+            25.0,
+            28.0,
+            31.0,
+            35.0,
+            40.0,
+            48.0,
+            60.0
+          ],
+          "proportions": [
+            0.10423607805806759,
+            0.10471204188481675,
+            0.11946692051404094,
+            0.0894811994288434,
+            0.0894811994288434,
+            0.09804854831032842,
+            0.09852451213707758,
+            0.09852451213707758,
+            0.11518324607329843,
+            0.0823417420276059
+          ]
+        },
+        "location_type": {
+          "kind": "categorical",
+          "levels": [
+            "Rural",
+            "Urban"
+          ],
+          "proportions": [
+            0.7177534507377439,
+            0.28224654926225606,
+            0.0
+          ]
+        },
+        "cellphone_access": {
+          "kind": "categorical",
+          "levels": [
+            "No",
+            "Yes"
+          ],
+          "proportions": [
+            0.30318895763921944,
+            0.6968110423607806,
+            0.0
+          ]
+        },
+        "gender_of_respondent": {
+          "kind": "categorical",
+          "levels": [
+            "Female",
+            "Male"
+          ],
+          "proportions": [
+            0.6592099000475964,
+            0.3407900999524036,
+            0.0
+          ]
+        },
+        "relationship_with_head": {
+          "kind": "categorical",
+          "levels": [
+            "Child",
+            "Head of Household",
+            "Other non-relatives",
+            "Other relative",
+            "Parent",
+            "Spouse"
+          ],
+          "proportions": [
+            0.01951451689671585,
+            0.48738695859114706,
+            0.00951927653498334,
+            0.044264635887672536,
+            0.09090909090909091,
+            0.3484055211803903,
+            0.0
+          ]
+        },
+        "marital_status": {
+          "kind": "categorical",
+          "levels": [
+            "Divorced/Seperated",
+            "Dont know",
+            "Married/Living together",
+            "Single/Never Married",
+            "Widowed"
+          ],
+          "proportions": [
+            0.0794859590671109,
+            0.0,
+            0.6487386958591147,
+            0.18039029033793433,
+            0.09138505473584008,
+            0.0
+          ]
+        },
+        "education_level": {
+          "kind": "categorical",
+          "levels": [
+            "No formal education",
+            "Other/Dont know/RTA",
+            "Primary education",
+            "Secondary education",
+            "Tertiary education",
+            "Vocational/Specialised training"
+          ],
+          "proportions": [
+            0.1518324607329843,
+            0.0028557829604950024,
+            0.538315088053308,
+            0.24464540694907186,
+            0.015230842455973346,
+            0.04712041884816754,
+            0.0
+          ]
+        },
+        "job_type": {
+          "kind": "categorical",
+          "levels": [
+            "Dont Know/Refuse to answer",
+            "Farming and Fishing",
+            "Formally employed Government",
+            "Formally employed Private",
+            "Government Dependent",
+            "Informally employed",
+            "No Income",
+            "Other Income",
+            "Remittance Dependent",
+            "Self employed"
+          ],
+          "proportions": [
+            0.0318895763921942,
+            0.0,
+            0.0,
+            0.05140409328891004,
+            0.0033317467872441696,
+            0.0,
+            0.11756306520704426,
+            0.2703474535935269,
+            0.0,
+            0.5254640647310804,
+            0.0
+          ]
+        },
+        "prediction_score": {
+          "kind": "numeric",
+          "edges": [
+            0.05388160049915314,
+            0.0687730684876442,
+            0.09151696413755417,
+            0.12445651739835739,
+            0.16739527881145477,
+            0.19863201677799225,
+            0.24411210417747498,
+            0.3199063837528229,
+            0.4645131826400757
+          ],
+          "proportions": [
+            0.10042836744407425,
+            0.09995240361732509,
+            0.09995240361732509,
+            0.09995240361732509,
+            0.09995240361732509,
+            0.09995240361732509,
+            0.09995240361732509,
+            0.09995240361732509,
+            0.09995240361732509,
+            0.09995240361732509
+          ]
+        }
+      }
+    }
+  }
+}

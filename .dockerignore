@@ -6,6 +6,8 @@
 !requirements-serving.txt
 !src/fin_inclusion/__init__.py
 !src/fin_inclusion/serving/
+!src/fin_inclusion/monitoring/
 !models/production/model.json
 !models/production/metadata.json
+!models/production/reference_profile.json
 **/__pycache__
