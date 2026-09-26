@@ -1,0 +1,24 @@
+{
+  "onnx_sha256": "cf296bc8613ecaaea704a6b72a5c95fa3bb4d33c9799858216b9fbcccc08495f",
+  "model_version": "xgb-cw-5ec2d564be13",
+  "source_model_sha256": "5ec2d564be131b078231c18f1963f21201341b020fced971f4c3139607d8243f",
+  "target_opset": 15,
+  "versions": {
+    "onnx": "1.22.0",
+    "onnxmltools": "1.16.0",
+    "onnxruntime": "1.29.0"
+  },
+  "exported_at": "2026-09-26T12:43:21+00:00",
+  "verification": {
+    "rows_compared": 33654,
+    "max_abs_diff": 2.086162567138672e-07,
+    "mean_abs_diff": 3.9869870960274056e-08,
+    "tolerance": 1e-06,
+    "decision_flips_at_threshold": 0,
+    "dynamic_batch_sizes_checked": [
+      1,
+      7,
+      1000
+    ]
+  }
+}

@@ -71,6 +71,15 @@ class Predictor:
         self._positive_label: str = metadata["positive_label"]
         self._max_seen = {col: hi for col, (_, hi) in metadata["numeric_observed_range"].items()}
 
+    @property
+    def booster(self) -> xgboost.Booster:
+        """The integrity-checked booster, for offline tooling (ONNX export, benchmarks)."""
+        return self._booster
+
+    @property
+    def encoder(self) -> FeatureEncoder:
+        return self._encoder
+
     @classmethod
     def load(cls, model_dir: Path, inference_threads: int = 1) -> "Predictor":
         model_path, metadata_path = model_dir / "model.json", model_dir / "metadata.json"

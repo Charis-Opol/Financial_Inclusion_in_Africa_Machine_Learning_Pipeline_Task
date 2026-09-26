@@ -1,0 +1,6 @@
+# Offline ONNX export + benchmarking (scripts/export_onnx.py, scripts/benchmark_inference.py).
+# Install on top of requirements-serving.txt:
+#   pip install -r requirements-serving.txt -r requirements-onnx.txt
+onnx==1.22.0
+onnxmltools==1.16.0
+onnxruntime==1.29.0
