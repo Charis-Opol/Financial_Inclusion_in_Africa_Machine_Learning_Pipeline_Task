@@ -69,8 +69,11 @@ class SampleSets:
         return np.union1d(self.pooled, self.focus)
 
     def save(self, path: Path, composition: dict | None = None) -> None:
+        """Writes the summary first, indented for reading, then each list of
+        row positions on a single line (thousands of one-number lines would
+        bury the part a person actually opens the file for)."""
         path.parent.mkdir(parents=True, exist_ok=True)
-        payload = {
+        summary = {
             "seed": self.seed,
             "training_data_sha256": self.training_data_sha256,
             "focus_country": self.focus_country,
@@ -79,11 +82,11 @@ class SampleSets:
             "n_focus": int(self.focus.size),
             "n_explanation": int(self.explanation.size),
             "composition": composition or {},
-            "background": self.background.tolist(),
-            "pooled": self.pooled.tolist(),
-            "focus": self.focus.tolist(),
         }
-        path.write_text(json.dumps(payload, indent=1), encoding="utf-8")
+        row_lists = {"background": self.background, "pooled": self.pooled, "focus": self.focus}
+        lines = [f' "{name}": {json.dumps(rows.tolist())}' for name, rows in row_lists.items()]
+        summary_text = json.dumps(summary, indent=1).removesuffix("\n}")
+        path.write_text(summary_text + ",\n" + ",\n".join(lines) + "\n}\n", encoding="utf-8")
 
     @classmethod
     def load(cls, path: Path, training_data_sha256: str | None = None) -> "SampleSets":

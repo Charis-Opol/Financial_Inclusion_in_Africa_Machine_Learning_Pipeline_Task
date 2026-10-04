@@ -5,6 +5,40 @@ Entries are appended as each phase lands. Attributions throughout describe
 what the **model** learned to rely on; none of them is a causal claim about
 what drives bank account ownership.
 
+New to this code? Read `src/fin_inclusion/interpretability/README.md` first:
+it explains how the pieces fit together and defines the terms used below.
+
+## At a glance
+
+Each line is the decision in plain words; the full reasoning is under the
+same ID further down.
+
+| ID | Decision |
+| --- | --- |
+| D0.1 | The MLP was never saved, so it is retrained. All five folds had picked the same settings, so there was nothing to choose. |
+| D0.2 | The "large household" flag counts as part of `household_size`, not as an 11th feature. |
+| D0.3 | "Unknown" is a value neither model ever saw in training, so it is a weak reference point. It is still run, next to a second one. |
+| D0.4 | The older SHAP code is kept but not used: it works differently and its numbers are not comparable. |
+| D0.5 | The 0.4551 cut-off belongs to XGBoost only. |
+| D1.1 | The XAI work has its own Python environment, `.venv-xai`. |
+| D1.2 | New code goes in the existing `interpretability/` folder. |
+| D1.3 | Every saved explanation carries its model, method and reference with it. |
+| D1.4 | Explanations are in logits, not probabilities. |
+| D1.5 | Feature order: the 8 categorical fields, then household size, then age. |
+| D1.6 | Adding encoded columns together is valid, but may not exactly equal Shapley values computed on the 10 fields directly. The gap is measured in Phase 3. |
+| D1.7 | Methods are compared by each feature's share of importance, not by raw size. |
+| D1.8 | Every "does it add up?" check must state how close counts as equal. |
+| D1.9 | Sizes: 200 reference rows, 1,000 explained rows plus all of Uganda, 50 rows checked exactly, 1,000 bootstrap resamples. |
+| D1.10 | XAI figures are committed; the retrained MLP file is not. |
+| D2.1 | Both models were re-checked on held-out folds and perform as reported (MLP 0.584 exactly; XGBoost 0.588 vs 0.590). |
+| D2.2 | The MLP is trained on all labelled rows, the same as the shipped XGBoost. |
+| D2.3 | So every explained row is one both models trained on. No performance claims are made from them. |
+| D2.4 | The adapters reject a category the model never saw, instead of quietly treating it as "unknown". |
+| D2.5 | Reference set: 200 rows mirroring the training mix. Only 18 are from Uganda, so Uganda results are compared with a typical *pooled* respondent. |
+| D2.6 | Pooled results use the 1,000-row sample; Uganda results use all 2,101 Uganda rows. |
+| D2.7 | The MLP's "unknown" embeddings turned out to be almost all zeros. |
+| D2.8 | Cut-offs: XGBoost 0.4551, MLP 0.6824. |
+
 ## Phase 0 — Reconnaissance (findings that constrain later choices)
 
 **D0.1 — No trained MLP exists; it must be retrained.**
@@ -125,6 +159,7 @@ Neither final model has a labelled hold-out of its own: the shipped XGBoost
 was fit on all 23,524 labelled rows and `Test_v2.csv` has no labels. The
 gate re-runs the same folds (seed 42, country × target stratified) and
 requires the mean PR-AUC to be within ±0.02 of the reported nested-CV mean.
+
 - MLP: 0.5837 vs 0.5837 reported — every fold reproduces the reported value
   exactly (max per-fold difference 0.0), because all five outer folds had
   selected the same hyperparameters and the procedure is deterministic.
