@@ -34,11 +34,25 @@ class CVConfig:
 
 
 @dataclass(frozen=True)
+class XAIConfig:
+    background_size: int
+    explanation_sample_size: int
+    oracle_instances: int
+    ig_n_steps: int
+    bootstrap_reps: int
+    model_dir: Path
+    artifacts_dir: Path
+    figures_dir: Path
+    decisions_log: Path
+
+
+@dataclass(frozen=True)
 class Settings:
     seed: int
     paths: PathsConfig
     data: DataConfig
     cv: CVConfig
+    xai: XAIConfig
 
 
 def _resolve(relative: str) -> Path:
@@ -72,4 +86,23 @@ def load_settings(config_path: Path | None = None) -> Settings:
         n_inner_folds=raw["cv"]["n_inner_folds"],
         stratify_columns=list(raw["cv"]["stratify_columns"]),
     )
-    return Settings(seed=raw["seed"], paths=paths, data=data, cv=cv)
+    xai = XAIConfig(
+        background_size=_positive_int(raw["xai"], "background_size"),
+        explanation_sample_size=_positive_int(raw["xai"], "explanation_sample_size"),
+        oracle_instances=_positive_int(raw["xai"], "oracle_instances"),
+        ig_n_steps=_positive_int(raw["xai"], "ig_n_steps"),
+        bootstrap_reps=_positive_int(raw["xai"], "bootstrap_reps"),
+        model_dir=_resolve(raw["xai"]["model_dir"]),
+        artifacts_dir=_resolve(raw["xai"]["artifacts_dir"]),
+        figures_dir=_resolve(raw["xai"]["figures_dir"]),
+        decisions_log=_resolve(raw["xai"]["decisions_log"]),
+    )
+    return Settings(seed=raw["seed"], paths=paths, data=data, cv=cv, xai=xai)
+
+
+def _positive_int(section: dict, key: str) -> int:
+    value = section[key]
+    # bool is an int subclass; `background_size: true` must not pass as 1.
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError(f"xai.{key} must be a positive integer, got {value!r}")
+    return value

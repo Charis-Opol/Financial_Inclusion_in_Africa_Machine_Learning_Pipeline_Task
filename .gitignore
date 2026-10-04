@@ -8,6 +8,7 @@ build/
 dist/
 
 .venv/
+.venv-xai/
 venv/
 env/
 
@@ -25,6 +26,9 @@ reports/figures/*.svg
 *.pt
 *.pkl
 *.joblib
+
+# Retrained explanation-only models (scripts regenerate them); never the shipped artifact.
+models/xai/
 
 .DS_Store
 Thumbs.db

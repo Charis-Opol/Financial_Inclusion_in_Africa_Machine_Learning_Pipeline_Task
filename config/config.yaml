@@ -16,3 +16,22 @@ cv:
   n_outer_folds: 5
   n_inner_folds: 5
   stratify_columns: [country, bank_account]
+
+xai:
+  # Rows in the reference ("background") set every interventional method
+  # averages over. Stratified by country + target; ~100-200 keeps exact
+  # Shapley (1,024 coalitions x background rows per instance) tractable.
+  background_size: 200
+  # Stratified sample of rows to explain; all Uganda rows are added on top.
+  explanation_sample_size: 1000
+  # Instances checked against the brute-force exact-Shapley oracle.
+  oracle_instances: 50
+  # Integrated Gradients Riemann steps. A starting value: Phase 4 raises it
+  # if the reported convergence delta is not small.
+  ig_n_steps: 100
+  # Bootstrap resamples behind every confidence interval.
+  bootstrap_reps: 1000
+  model_dir: models/xai
+  artifacts_dir: reports/xai
+  figures_dir: reports/figures/xai
+  decisions_log: reports/xai_decisions_log.md

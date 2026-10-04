@@ -1,0 +1,19 @@
+# Explainability environment (Week 3 XAI work: SHAP, Captum, Streamlit dashboard).
+# A superset of the training environment, kept out of requirements-serving.txt so
+# the serving image stays lean (no torch/shap/captum/streamlit in the container).
+#
+# Install into its OWN virtualenv -- not the training or serving one:
+#   py -3.13 -m venv .venv-xai
+#   .venv-xai/Scripts/python -m pip install -r requirements-xai.txt
+#   .venv-xai/Scripts/python -m pip install --no-deps -e .
+-r requirements.txt
+captum==0.9.0
+streamlit==1.59.2
+# The dashboard validates inputs with the serving schemas (serving/schemas.py),
+# which are written against pydantic v2 -- same pin as requirements-serving.txt.
+pydantic==2.8.2
+# Deliberately NOT installed here: fastapi. requirements-serving.txt pins
+# fastapi==0.115.4, which holds starlette below 0.42; streamlit 1.59.2 declares
+# starlette>=0.40 but fails at import on 0.41.3 (it needs a newer
+# starlette.middleware.gzip). pip resolves that combination without complaint,
+# so the conflict is avoided by keeping the two stacks in separate environments.
