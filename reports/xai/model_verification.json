@@ -1,0 +1,149 @@
+{
+  "training_data_sha256": "05c0e0801e85eaccd1457012a2af155da77d1ebb3c48371949faea231741ed34",
+  "seed": 42,
+  "cv": "5-fold, stratified on country x target, same seed as Phase 4's outer loop",
+  "xgboost": {
+    "reported_fold_pr_auc": [
+      0.5794294115985709,
+      0.6006840281906457,
+      0.6211796837324247,
+      0.5646698361509642,
+      0.5846142117366551
+    ],
+    "reported_mean_pr_auc": 0.5901154342818521,
+    "fold_pr_auc": [
+      0.5743307085335028,
+      0.5972843068480018,
+      0.6193584618481657,
+      0.5695554684754663,
+      0.5776306898494564
+    ],
+    "mean_pr_auc": 0.5876319271109185,
+    "std_pr_auc": 0.01845777321469775,
+    "abs_diff_of_means": 0.0024835071709335965,
+    "max_abs_fold_diff": 0.00698352188719864,
+    "uganda_fold_pr_auc": [
+      0.5532143441806765,
+      0.6396619910040475,
+      0.5284609585765698,
+      0.5250363198362337,
+      0.47578181784283746
+    ],
+    "uganda_mean_pr_auc": 0.544431086288073,
+    "tolerance": 0.02,
+    "within_band": true,
+    "model_version": "xgb-cw-5ec2d564be13",
+    "hyperparameters": {
+      "max_depth": 8,
+      "learning_rate": 0.019901215064816333,
+      "n_estimators": 141,
+      "min_child_weight": 6,
+      "subsample": 0.7993093544472046,
+      "colsample_bytree": 0.5986379932154655,
+      "scale_pos_weight": 3.566909441278662
+    },
+    "evaluation": "held-out folds, shipped production_xgb_params fixed",
+    "caveat": "production params were tuned on the full training set (mildly optimistic); the reported number is nested CV with per-fold tuned params, so the folds are not expected to match exactly",
+    "adapter_encoding_matches_pipeline": true,
+    "refit_vs_shipped_max_abs_score_diff": 7.443472471724277e-08,
+    "refit_reproduces_shipped": true
+  },
+  "mlp": {
+    "reported_fold_pr_auc": [
+      0.5758585831583543,
+      0.6007580372762996,
+      0.6059378799556531,
+      0.5539092785563366,
+      0.5820649385389735
+    ],
+    "reported_mean_pr_auc": 0.5837057434971235,
+    "fold_pr_auc": [
+      0.5758585831583543,
+      0.6007580372762996,
+      0.6059378799556531,
+      0.5539092785563366,
+      0.5820649385389735
+    ],
+    "mean_pr_auc": 0.5837057434971235,
+    "std_pr_auc": 0.018639464069026185,
+    "abs_diff_of_means": 0.0,
+    "max_abs_fold_diff": 0.0,
+    "uganda_fold_pr_auc": [
+      0.592346005619557,
+      0.6386199992224411,
+      0.5013548940270189,
+      0.5076333531364138,
+      0.4694394778843592
+    ],
+    "uganda_mean_pr_auc": 0.5418787459779579,
+    "tolerance": 0.02,
+    "within_band": true,
+    "hyperparameters": {
+      "embedding_dim": 6,
+      "dropout": 0.2571172192068058,
+      "lr": 0.0015304852121831463,
+      "weight_decay": 1.5339162591163623e-06,
+      "hidden_dims": [
+        63,
+        103
+      ],
+      "epochs": 20
+    },
+    "hyperparameter_choice": "all 5 outer folds of pt2_cw selected this same configuration",
+    "evaluation": "held-out folds, same procedure as the reported nested CV's final refit",
+    "weights_sha256": "947acd88738609110aa46828d03994f018c5819dd129a10330609e687694cbdd",
+    "torch_version": "2.12.1+cpu",
+    "decision_threshold": 0.6823532581329346,
+    "adapter_encoding_matches_pipeline": true,
+    "adapter_vs_model_max_abs_score_diff": 8.460146105893074e-08,
+    "reload_max_abs_logit_diff": 0.0,
+    "unknown_embedding_rows": {
+      "country": {
+        "unknown_row_norm": 0.32373809814453125,
+        "mean_trained_row_norm": 2.7805423736572266,
+        "min_trained_row_norm": 1.9995819330215454
+      },
+      "location_type": {
+        "unknown_row_norm": 0.3244904577732086,
+        "mean_trained_row_norm": 2.0736517906188965,
+        "min_trained_row_norm": 1.6774985790252686
+      },
+      "cellphone_access": {
+        "unknown_row_norm": 6.077887155697681e-05,
+        "mean_trained_row_norm": 1.6835839748382568,
+        "min_trained_row_norm": 1.6691001653671265
+      },
+      "gender_of_respondent": {
+        "unknown_row_norm": 0.08061686903238297,
+        "mean_trained_row_norm": 1.4791395664215088,
+        "min_trained_row_norm": 1.242174744606018
+      },
+      "relationship_with_head": {
+        "unknown_row_norm": 0.0024917875416576862,
+        "mean_trained_row_norm": 2.3915514945983887,
+        "min_trained_row_norm": 1.2414230108261108
+      },
+      "marital_status": {
+        "unknown_row_norm": 0.0020263297483325005,
+        "mean_trained_row_norm": 1.840258002281189,
+        "min_trained_row_norm": 1.3307501077651978
+      },
+      "education_level": {
+        "unknown_row_norm": 0.09984847158193588,
+        "mean_trained_row_norm": 2.5024189949035645,
+        "min_trained_row_norm": 1.9900856018066406
+      },
+      "job_type": {
+        "unknown_row_norm": 0.5260739922523499,
+        "mean_trained_row_norm": 2.4665305614471436,
+        "min_trained_row_norm": 1.5276819467544556
+      }
+    }
+  },
+  "in_sample_not_a_performance_estimate": {
+    "xgboost_pr_auc": 0.6418694972876023,
+    "mlp_pr_auc": 0.6087881266893157,
+    "xgboost_share_predicted_yes": 0.20612990987927224,
+    "mlp_share_predicted_yes": 0.14857167148444142
+  }
+}

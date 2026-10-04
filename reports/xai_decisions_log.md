@@ -103,9 +103,9 @@ silent default would hide which claim is being made.
 
 **D1.9 — Config defaults (`config/config.yaml`, `xai:`).**
 `background_size: 200` (top of the 100–200 range: 4 countries × 2 classes
-gives 8 strata, and Uganda-positive is the smallest at 181 training rows, so
-a larger background represents it with more than a handful of rows while
-exact Shapley stays tractable at 1,024 coalitions × 200 rows per instance).
+gives 8 strata, and the larger the background the less the smallest strata
+are rounded away, while exact Shapley stays tractable at 1,024 coalitions ×
+200 rows per instance; see D2.5 for what the smallest stratum actually got).
 `explanation_sample_size: 1000` plus all Uganda rows. `oracle_instances: 50`.
 `ig_n_steps: 100` is a starting value only; Phase 4 raises it until the
 reported convergence delta is small. `bootstrap_reps: 1000`.
@@ -114,3 +114,82 @@ reported convergence delta is small. `bootstrap_reps: 1000`.
 The existing ignore rule covers only `reports/figures/*.png` (top level).
 The XAI report embeds its figures, so they are committed with it.
 `models/xai/` (retrained explanation-only weights) is gitignored.
+
+## Phase 2 — The models to explain
+
+All numbers below are from `reports/xai/model_verification.json` and
+`reports/xai/sample_sets.json`, written by `scripts/run_xai_models.py`.
+
+**D2.1 — The verification gate is the report's outer 5-fold CV with final hyperparameters fixed.**
+Neither final model has a labelled hold-out of its own: the shipped XGBoost
+was fit on all 23,524 labelled rows and `Test_v2.csv` has no labels. The
+gate re-runs the same folds (seed 42, country × target stratified) and
+requires the mean PR-AUC to be within ±0.02 of the reported nested-CV mean.
+- MLP: 0.5837 vs 0.5837 reported — every fold reproduces the reported value
+  exactly (max per-fold difference 0.0), because all five outer folds had
+  selected the same hyperparameters and the procedure is deterministic.
+- XGBoost: 0.5876 vs 0.5901 reported (max per-fold difference 0.0070). This
+  is not a like-for-like reproduction and is not presented as one: the
+  shipped `production_xgb_params` were tuned on the full training set (so
+  this estimate is mildly optimistic), whereas the reported figure used
+  different, per-fold tuned hyperparameters.
+- A full-data refit with the production params scores within 7.4e-8 of the
+  booster on disk, so the CV evaluates the same procedure that produced the
+  shipped artifact.
+- Uganda-only held-out PR-AUC: XGBoost 0.544, MLP 0.542 (five folds each,
+  wide spread: 0.476–0.640 and 0.469–0.639).
+
+**D2.2 — The MLP is refit on all labelled rows, like the shipped XGBoost.**
+Same hyperparameters, `ClassWeightStrategy`, seed 42, 20 epochs (Phase 4's
+final-fit epoch count). Experiment B compares what the two candidate models
+rely on, so they should have seen the same data. Saved to `models/xai/`
+(gitignored) as `mlp.pt` + `mlp_metadata.json`; the metadata carries the
+weights' SHA-256, which is checked before the checkpoint is unpickled.
+
+**D2.3 — Consequence: every explained row is a training row of both models.**
+There is no labelled data the final models have not seen. In-sample PR-AUC
+is 0.642 (XGBoost) and 0.609 (MLP) against ~0.59/0.58 held out, so TP/FN/FP/
+TN labels assigned from these models' own predictions are somewhat
+optimistic. Explanations are of the models' behaviour on these rows, which
+is what an explanation is; no performance claim is made from them.
+
+**D2.4 — Preprocessing state is stored as JSON, and adapters refuse unseen categories.**
+`MLPRawModel` keeps the category → index maps and scaler mean/scale as plain
+dicts instead of a pickled sklearn pipeline, and both adapters' encodings
+are checked bit-for-bit against the training pipelines on all 23,524 rows
+before anything is saved. Where the training pipeline routes an unseen
+category to "unknown" with a warning, the adapters raise: an explanation of
+a silently mis-encoded row would explain the wrong input.
+
+**D2.5 — Background set: 200 rows, proportional within country × target, seed 42.**
+Proportional (not equal) allocation, so the base value approximates the
+model's mean output over the training population; equal allocation would
+over-represent account holders and small countries and shift the reference.
+Resulting composition: Kenya 52, Rwanda 74, Tanzania 56, Uganda 18 (16 No,
+2 Yes); positive rate 14.0% vs 14.08% in training. Mean logit over the
+background vs over all training rows: XGBoost −1.247 vs −1.210, MLP −1.251
+vs −1.162, i.e. the base value sits 0.04 (XGBoost) and 0.09 (MLP) logits
+below the population mean. Uganda-only results use this same pooled
+background: they answer "why does this Ugandan respondent score differently
+from a typical respondent in the pool", not from a typical Ugandan. A
+Uganda-only reference would have to be built from many more than 18 rows.
+
+**D2.6 — Explanation set: 1,000 stratified rows (pooled) + all 2,101 Uganda rows = 3,012.**
+The pooled sample is disjoint from the background and is the only set used
+for pooled statistics (it contains 89 Uganda rows, their population share);
+adding all Uganda rows to pooled statistics would over-weight Uganda about
+sixfold. Uganda-only statistics use all 2,101 Uganda rows, 18 of which are
+also background rows.
+
+**D2.7 — Measured: the MLP's "unknown" embedding rows are near-zero vectors, not random ones.**
+Follow-up to D0.3. Index 0 receives no data gradient, but Adam applies the
+(tiny) L2 weight-decay gradient at a normalised step size, which shrinks the
+unused rows toward zero over training. Their norms are 0.00006–0.53 against
+1.5–2.8 for trained rows. The "unknown" IG baseline is therefore
+approximately a zero-embedding baseline: a well-defined point, but one that
+corresponds to no respondent the model was trained on.
+
+**D2.8 — Decision thresholds are per model.**
+XGBoost 0.4551 (shipped), MLP 0.6824 (median of its per-fold F1-optimal
+thresholds). At those thresholds 20.6% and 14.9% of training rows are
+predicted "Yes".
