@@ -1,0 +1,1246 @@
+{
+ "target_space": "logit",
+ "value_function": "interventional",
+ "reference": "Reference: mean logit over 200 background rows (pooled, stratified by country and target); interventional value function.",
+ "note": "attributions describe the models, not causes; scores are ranking scores, not calibrated probabilities; every explained row is a training row of both models",
+ "n_rows": {
+  "explanation": 3012,
+  "pooled": 1000,
+  "uganda": 2101,
+  "background": 200
+ },
+ "base_value": {
+  "tree_shap__xgboost": -1.2473500193156695,
+  "kernel_shap__xgboost": -1.2473498943052255,
+  "kernel_shap__mlp": -1.2508665722236039,
+  "gradient_shap__mlp": -1.2508666515350342
+ },
+ "efficiency": {
+  "tree_shap__xgboost": {
+   "method": "tree_shap",
+   "model_name": "xgboost (xgb-cw-5ec2d564be13)",
+   "n_instances": 3012,
+   "atol": 0.001,
+   "max_abs_error": 2.1296986760788172e-06,
+   "mean_abs_error": 3.397880575929213e-07,
+   "n_violations": 0,
+   "passed": true
+  },
+  "kernel_shap__xgboost": {
+   "method": "kernel_shap",
+   "model_name": "xgboost (xgb-cw-5ec2d564be13)",
+   "n_instances": 3012,
+   "atol": 0.0001,
+   "max_abs_error": 8.881784197001252e-16,
+   "mean_abs_error": 3.8776713874690065e-17,
+   "n_violations": 0,
+   "passed": true
+  },
+  "kernel_shap__mlp": {
+   "method": "kernel_shap",
+   "model_name": "pytorch_mlp",
+   "n_instances": 3012,
+   "atol": 0.0001,
+   "max_abs_error": 1.430511474609375e-06,
+   "mean_abs_error": 1.2818239089050412e-07,
+   "n_violations": 0,
+   "passed": true
+  },
+  "gradient_shap__mlp": {
+   "method": "gradient_shap",
+   "model_name": "pytorch_mlp",
+   "n_instances": 3012,
+   "atol": 0.05,
+   "max_abs_error": 0.6616735682698822,
+   "mean_abs_error": 0.1453973111495223,
+   "n_violations": 2360,
+   "passed": false
+  },
+  "exact_shapley__xgboost": {
+   "method": "exact_shapley",
+   "model_name": "xgboost (xgb-cw-5ec2d564be13)",
+   "n_instances": 50,
+   "atol": 0.0001,
+   "max_abs_error": 2.220446049250313e-16,
+   "mean_abs_error": 2.6645352591003756e-17,
+   "n_violations": 0,
+   "passed": true
+  },
+  "exact_shapley__mlp": {
+   "method": "exact_shapley",
+   "model_name": "pytorch_mlp",
+   "n_instances": 50,
+   "atol": 0.0001,
+   "max_abs_error": 8.881784197001252e-16,
+   "mean_abs_error": 2.0650148258027913e-16,
+   "n_violations": 0,
+   "passed": true
+  }
+ },
+ "oracle": {
+  "rows": [
+   1334,
+   1431,
+   1731,
+   1768,
+   2001,
+   3018,
+   3863,
+   4198,
+   4708,
+   5300,
+   6522,
+   8737,
+   8890,
+   9697,
+   10034,
+   10073,
+   10660,
+   10674,
+   10715,
+   10788,
+   11778,
+   12019,
+   12153,
+   12900,
+   13062,
+   14594,
+   14680,
+   14762,
+   15989,
+   16198,
+   16469,
+   16532,
+   16918,
+   17436,
+   17490,
+   18110,
+   18308,
+   18383,
+   18594,
+   19115,
+   19304,
+   19437,
+   19504,
+   20002,
+   20537,
+   21000,
+   21193,
+   21973,
+   22701,
+   23092
+  ],
+  "n_coalitions": 1024,
+  "xgboost": {
+   "mean_abs_oracle_attribution": 0.20063537767747427,
+   "base_value": -1.2473498943052255,
+   "kernel_shap_base_value_abs_diff": 0.0,
+   "kernel_shap_error_by_nsamples": {
+    "20": {
+     "mean_abs_error": 4008190662818.981,
+     "max_abs_error": 1002047665704730.8
+    },
+    "50": {
+     "mean_abs_error": 0.01623471072422495,
+     "max_abs_error": 0.09379808609562276
+    },
+    "100": {
+     "mean_abs_error": 0.010013291497912729,
+     "max_abs_error": 0.04864588748909895
+    },
+    "200": {
+     "mean_abs_error": 0.0055543694812017355,
+     "max_abs_error": 0.028023675590688836
+    },
+    "500": {
+     "mean_abs_error": 0.0030223071903294862,
+     "max_abs_error": 0.017308821428567822
+    },
+    "1022 (all coalitions)": {
+     "mean_abs_error": 3.778627801279133e-16,
+     "max_abs_error": 2.4424906541753444e-15
+    }
+   },
+   "tree_shap_grouped_vs_oracle": {
+    "mean_abs_error": 0.004239211346793139,
+    "max_abs_error": 0.04330900457647069,
+    "base_value_abs_diff": 1.250104439964872e-07,
+    "mean_abs_error_by_feature": {
+     "country": 0.007545095405493978,
+     "location_type": 0.004672574922947272,
+     "cellphone_access": 0.006221704169039389,
+     "gender_of_respondent": 0.0015928654542550146,
+     "relationship_with_head": 0.0015533958641957217,
+     "marital_status": 0.002120905040191135,
+     "education_level": 0.010495465558233582,
+     "job_type": 0.004468694787448789,
+     "household_size": 0.0006863550571784793,
+     "age_of_respondent": 0.003035057208948026
+    },
+    "mean_abs_oracle_by_feature": {
+     "country": 0.2762900904757481,
+     "location_type": 0.09389065914083447,
+     "cellphone_access": 0.5525966974052083,
+     "gender_of_respondent": 0.15514920598787194,
+     "relationship_with_head": 0.08590024054420148,
+     "marital_status": 0.04593869095655354,
+     "education_level": 0.3766318871224897,
+     "job_type": 0.1754360082707804,
+     "household_size": 0.025724789466567796,
+     "age_of_respondent": 0.21879550740448703
+    },
+    "relative_mean_abs_error": 0.021128932473752277,
+    "same_sign_share": 0.992,
+    "same_top_feature_share": 1.0
+   }
+  },
+  "mlp": {
+   "mean_abs_oracle_attribution": 0.3415763722794029,
+   "base_value": -1.2508665722236036,
+   "kernel_shap_base_value_abs_diff": 2.220446049250313e-16,
+   "kernel_shap_error_by_nsamples": {
+    "20": {
+     "mean_abs_error": 4771479135315.94,
+     "max_abs_error": 1192869783828958.2
+    },
+    "50": {
+     "mean_abs_error": 0.030117970909978153,
+     "max_abs_error": 0.20337124525345007
+    },
+    "100": {
+     "mean_abs_error": 0.019286187120805202,
+     "max_abs_error": 0.09574417883288672
+    },
+    "200": {
+     "mean_abs_error": 0.010780835398391943,
+     "max_abs_error": 0.060152983411218816
+    },
+    "500": {
+     "mean_abs_error": 0.006144693664258739,
+     "max_abs_error": 0.04398147655353957
+    },
+    "1022 (all coalitions)": {
+     "mean_abs_error": 7.227063497406826e-09,
+     "max_abs_error": 4.7683718695790134e-08
+    }
+   },
+   "gradient_shap_by_nsamples": {
+    "200": {
+     "vs_oracle": {
+      "mean_abs_error": 0.050166049748801594,
+      "max_abs_error": 0.39114994783566037
+     },
+     "efficiency_mean_abs_error": 0.14520442753955967,
+     "efficiency_max_abs_error": 0.5248389511411835
+    },
+    "1000": {
+     "vs_oracle": {
+      "mean_abs_error": 0.04043563763682499,
+      "max_abs_error": 0.34293112798624303
+     },
+     "efficiency_mean_abs_error": 0.0757026381662093,
+     "efficiency_max_abs_error": 0.24377638773679333
+    },
+    "5000": {
+     "vs_oracle": {
+      "mean_abs_error": 0.0356764291969874,
+      "max_abs_error": 0.319043835519388
+     },
+     "efficiency_mean_abs_error": 0.02681989423715604,
+     "efficiency_max_abs_error": 0.11503168151724852
+    }
+   }
+  },
+  "kernel_shap_note": "nsamples=20 is too few coalitions for 10 features: the regression is singular and the result is invalid, not merely imprecise"
+ },
+ "global_importance": {
+  "tree_shap__xgboost": {
+   "pooled": {
+    "n": 1000,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.28802234009807165,
+      "ci_low": 0.274835088531001,
+      "ci_high": 0.30056567302517084,
+      "share": 0.1368232161017602
+     },
+     "location_type": {
+      "mean_abs": 0.11160247071069569,
+      "ci_low": 0.1063643359729099,
+      "ci_high": 0.11707961325375157,
+      "share": 0.05301605758199349
+     },
+     "cellphone_access": {
+      "mean_abs": 0.5666338921688066,
+      "ci_low": 0.5473771576765897,
+      "ci_high": 0.5867507832083708,
+      "share": 0.269175896051659
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.15323600581061247,
+      "ci_low": 0.15021759541323437,
+      "ci_high": 0.15616596802199623,
+      "share": 0.07279380873878395
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.08312475618725804,
+      "ci_low": 0.08081537187709127,
+      "ci_high": 0.08539202130473462,
+      "share": 0.03948789692960168
+     },
+     "marital_status": {
+      "mean_abs": 0.04340125971883805,
+      "ci_low": 0.041751542721077436,
+      "ci_high": 0.04519014584095621,
+      "share": 0.020617497710688715
+     },
+     "education_level": {
+      "mean_abs": 0.40610482225493716,
+      "ci_low": 0.3858442167298617,
+      "ci_high": 0.42669377263949526,
+      "share": 0.19291756270167945
+     },
+     "job_type": {
+      "mean_abs": 0.1956740480685401,
+      "ci_low": 0.18416037860887186,
+      "ci_high": 0.2090744837340899,
+      "share": 0.09295373600281127
+     },
+     "household_size": {
+      "mean_abs": 0.02885148348539,
+      "ci_low": 0.027285263107957095,
+      "ci_high": 0.03044554918637167,
+      "share": 0.013705717266354197
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.22841813638695632,
+      "ci_low": 0.21570877504743174,
+      "ci_high": 0.2427532231238238,
+      "share": 0.10850861091466808
+     }
+    },
+    "ranking": [
+     "cellphone_access",
+     "education_level",
+     "country",
+     "age_of_respondent",
+     "job_type",
+     "gender_of_respondent",
+     "location_type",
+     "relationship_with_head",
+     "marital_status",
+     "household_size"
+    ]
+   },
+   "uganda": {
+    "n": 2101,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.40067140417121083,
+      "ci_low": 0.3934406138212625,
+      "ci_high": 0.40727287218556624,
+      "share": 0.18733817403496505
+     },
+     "location_type": {
+      "mean_abs": 0.13614992716658475,
+      "ci_low": 0.1317678198066117,
+      "ci_high": 0.14085041209319665,
+      "share": 0.06365834567890069
+     },
+     "cellphone_access": {
+      "mean_abs": 0.5406952098676472,
+      "ci_low": 0.5279025203096084,
+      "ci_high": 0.5533639700939272,
+      "share": 0.25280779279864407
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.12886184156967204,
+      "ci_low": 0.12742704382300865,
+      "ci_high": 0.130445789296911,
+      "share": 0.060250723787939046
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.07383579887375366,
+      "ci_low": 0.07257842869768087,
+      "ci_high": 0.07528596353886344,
+      "share": 0.034522712615426075
+     },
+     "marital_status": {
+      "mean_abs": 0.02399877069820197,
+      "ci_low": 0.023205226463957857,
+      "ci_high": 0.024811405578378062,
+      "share": 0.01122088033955087
+     },
+     "education_level": {
+      "mean_abs": 0.4136565057109719,
+      "ci_low": 0.4011364766522099,
+      "ci_high": 0.42733136151574197,
+      "share": 0.1934094962875458
+     },
+     "job_type": {
+      "mean_abs": 0.15843261804666875,
+      "ci_low": 0.15193889613806041,
+      "ci_high": 0.16483912116661575,
+      "share": 0.07407685465808589
+     },
+     "household_size": {
+      "mean_abs": 0.03197378665755785,
+      "ci_low": 0.030220166288504772,
+      "ci_high": 0.033858782306122936,
+      "share": 0.014949683823332869
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.23048419634041564,
+      "ci_low": 0.22205301857525075,
+      "ci_high": 0.23914714307476906,
+      "share": 0.1077653359756097
+     }
+    },
+    "ranking": [
+     "cellphone_access",
+     "education_level",
+     "country",
+     "age_of_respondent",
+     "job_type",
+     "location_type",
+     "gender_of_respondent",
+     "relationship_with_head",
+     "household_size",
+     "marital_status"
+    ]
+   }
+  },
+  "kernel_shap__xgboost": {
+   "pooled": {
+    "n": 1000,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.2866266134376975,
+      "ci_low": 0.2736278725195496,
+      "ci_high": 0.2990602435593943,
+      "share": 0.13630825116764034
+     },
+     "location_type": {
+      "mean_abs": 0.11285987987374217,
+      "ci_low": 0.10760361987956504,
+      "ci_high": 0.1184334925109804,
+      "share": 0.05367168340745736
+     },
+     "cellphone_access": {
+      "mean_abs": 0.5586201061945019,
+      "ci_low": 0.5395199463672493,
+      "ci_high": 0.5785790645742941,
+      "share": 0.26565757041610233
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.15416271920712307,
+      "ci_low": 0.1510643149044624,
+      "ci_high": 0.15713301306714,
+      "share": 0.07331367592960297
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.081973940138874,
+      "ci_low": 0.079672306374153,
+      "ci_high": 0.08420585984345827,
+      "share": 0.03898355525203009
+     },
+     "marital_status": {
+      "mean_abs": 0.04519887846408224,
+      "ci_low": 0.043498575075328484,
+      "ci_high": 0.047069502155221946,
+      "share": 0.021494794235207858
+     },
+     "education_level": {
+      "mean_abs": 0.4065339107174804,
+      "ci_low": 0.3866925920828547,
+      "ci_high": 0.42753994135418383,
+      "share": 0.19333140682795116
+     },
+     "job_type": {
+      "mean_abs": 0.19682789058638314,
+      "ci_low": 0.18535406120471562,
+      "ci_high": 0.2103517943880305,
+      "share": 0.09360353954946782
+     },
+     "household_size": {
+      "mean_abs": 0.029278161840155144,
+      "ci_low": 0.027678587485378537,
+      "ci_high": 0.030907738975681928,
+      "share": 0.013923532745162063
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.23070046026100108,
+      "ci_low": 0.2178559032243063,
+      "ci_high": 0.24520947228092665,
+      "share": 0.109711990469378
+     }
+    },
+    "ranking": [
+     "cellphone_access",
+     "education_level",
+     "country",
+     "age_of_respondent",
+     "job_type",
+     "gender_of_respondent",
+     "location_type",
+     "relationship_with_head",
+     "marital_status",
+     "household_size"
+    ]
+   },
+   "uganda": {
+    "n": 2101,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.40693978071205383,
+      "ci_low": 0.3998032225989681,
+      "ci_high": 0.41351663666821326,
+      "share": 0.19037441773731173
+     },
+     "location_type": {
+      "mean_abs": 0.13746140520181563,
+      "ci_low": 0.13302132826963764,
+      "ci_high": 0.14220517880572855,
+      "share": 0.06430714375197769
+     },
+     "cellphone_access": {
+      "mean_abs": 0.5273883549443031,
+      "ci_low": 0.5148786424255599,
+      "ci_high": 0.5398141901109855,
+      "share": 0.24672262519599486
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.12748882400353678,
+      "ci_low": 0.12604904677018405,
+      "ci_high": 0.12907294618235252,
+      "share": 0.059641774503391566
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.0724764491732877,
+      "ci_low": 0.0712421284666371,
+      "ci_high": 0.07393401765216087,
+      "share": 0.033905905652403125
+     },
+     "marital_status": {
+      "mean_abs": 0.02464234503314127,
+      "ci_low": 0.02380300696026842,
+      "ci_high": 0.025499950634808,
+      "share": 0.011528172741326802
+     },
+     "education_level": {
+      "mean_abs": 0.4187145715529406,
+      "ci_low": 0.405965701301843,
+      "ci_high": 0.4326240667656531,
+      "share": 0.195882896034494
+     },
+     "job_type": {
+      "mean_abs": 0.15798522260260858,
+      "ci_low": 0.15149926096625677,
+      "ci_high": 0.16442825558264537,
+      "share": 0.07390858841926021
+     },
+     "household_size": {
+      "mean_abs": 0.032695698235000674,
+      "ci_low": 0.030912786854667078,
+      "ci_high": 0.034601027198670295,
+      "share": 0.015295689458306951
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.23178331882514483,
+      "ci_low": 0.22338557720733587,
+      "ci_high": 0.2403027592708678,
+      "share": 0.1084327865055332
+     }
+    },
+    "ranking": [
+     "cellphone_access",
+     "education_level",
+     "country",
+     "age_of_respondent",
+     "job_type",
+     "location_type",
+     "gender_of_respondent",
+     "relationship_with_head",
+     "household_size",
+     "marital_status"
+    ]
+   }
+  },
+  "kernel_shap__mlp": {
+   "pooled": {
+    "n": 1000,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.5972175255372492,
+      "ci_low": 0.5754852397715718,
+      "ci_high": 0.6174954314502537,
+      "share": 0.1708053296760152
+     },
+     "location_type": {
+      "mean_abs": 0.19624181185936254,
+      "ci_low": 0.18808998041718653,
+      "ci_high": 0.20543349319841256,
+      "share": 0.05612552535310074
+     },
+     "cellphone_access": {
+      "mean_abs": 0.7666720992533815,
+      "ci_low": 0.7388180684114559,
+      "ci_high": 0.7920025888018134,
+      "share": 0.21926965480219965
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.2394595309066296,
+      "ci_low": 0.23388044465533156,
+      "ci_high": 0.24494525432722775,
+      "share": 0.06848587385940631
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.14509500684459403,
+      "ci_low": 0.1385226459720973,
+      "ci_high": 0.15206527040070808,
+      "share": 0.041497443425057054
+     },
+     "marital_status": {
+      "mean_abs": 0.11336796885515835,
+      "ci_low": 0.10872104607587194,
+      "ci_high": 0.11801715605579885,
+      "share": 0.03242345119993937
+     },
+     "education_level": {
+      "mean_abs": 0.5978639052444888,
+      "ci_low": 0.5651298364198917,
+      "ci_high": 0.6341498158184262,
+      "share": 0.17099019548163877
+     },
+     "job_type": {
+      "mean_abs": 0.4401078033424351,
+      "ci_low": 0.41827759874507636,
+      "ci_high": 0.46575982606557925,
+      "share": 0.1258716551816979
+     },
+     "household_size": {
+      "mean_abs": 0.052759380782332686,
+      "ci_low": 0.0495321131840297,
+      "ci_high": 0.055810068495781816,
+      "share": 0.0150892816146379
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.34769559049108073,
+      "ci_low": 0.33302908638836515,
+      "ci_high": 0.36317361122174485,
+      "share": 0.09944158940630703
+     }
+    },
+    "ranking": [
+     "cellphone_access",
+     "education_level",
+     "country",
+     "job_type",
+     "age_of_respondent",
+     "gender_of_respondent",
+     "location_type",
+     "relationship_with_head",
+     "marital_status",
+     "household_size"
+    ]
+   },
+   "uganda": {
+    "n": 2101,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.8389269731020846,
+      "ci_low": 0.8299971485154306,
+      "ci_high": 0.8473914161679691,
+      "share": 0.21502195623947826
+     },
+     "location_type": {
+      "mean_abs": 0.2609505449169482,
+      "ci_low": 0.2532522130471036,
+      "ci_high": 0.2696922407518118,
+      "share": 0.06688317153795018
+     },
+     "cellphone_access": {
+      "mean_abs": 0.7862136471750123,
+      "ci_low": 0.7691970280425409,
+      "ci_high": 0.8023149995494109,
+      "share": 0.2015112183276707
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.18933283897994516,
+      "ci_low": 0.18602036909040784,
+      "ci_high": 0.19287221477919206,
+      "share": 0.0485271289672648
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.16064611330710354,
+      "ci_low": 0.15651387312272177,
+      "ci_high": 0.16481576121606226,
+      "share": 0.04117455112670337
+     },
+     "marital_status": {
+      "mean_abs": 0.07975439564741249,
+      "ci_low": 0.07738212578517961,
+      "ci_high": 0.08213957377088472,
+      "share": 0.020441524376540933
+     },
+     "education_level": {
+      "mean_abs": 0.6346750142834233,
+      "ci_low": 0.6128093120035083,
+      "ci_high": 0.6578306265620895,
+      "share": 0.16267096841924317
+     },
+     "job_type": {
+      "mean_abs": 0.5032430122935478,
+      "ci_low": 0.49255908267609244,
+      "ci_high": 0.5142736911804652,
+      "share": 0.1289841672000206
+     },
+     "household_size": {
+      "mean_abs": 0.07945482432695286,
+      "ci_low": 0.07585189889708446,
+      "ci_high": 0.08341969451969343,
+      "share": 0.02036474247129322
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.3683901192836422,
+      "ci_low": 0.3581658824031849,
+      "ci_high": 0.3790113268695604,
+      "share": 0.09442057133383479
+     }
+    },
+    "ranking": [
+     "country",
+     "cellphone_access",
+     "education_level",
+     "job_type",
+     "age_of_respondent",
+     "location_type",
+     "gender_of_respondent",
+     "relationship_with_head",
+     "marital_status",
+     "household_size"
+    ]
+   }
+  },
+  "gradient_shap__mlp": {
+   "pooled": {
+    "n": 1000,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.5860505309583811,
+      "ci_low": 0.5614825176401966,
+      "ci_high": 0.6085728142488741,
+      "share": 0.1723405284815606
+     },
+     "location_type": {
+      "mean_abs": 0.197072709521493,
+      "ci_low": 0.18827018944803442,
+      "ci_high": 0.20665272558806777,
+      "share": 0.05795338987695438
+     },
+     "cellphone_access": {
+      "mean_abs": 0.7663393864933485,
+      "ci_low": 0.7383583634537779,
+      "ci_high": 0.7932442446197754,
+      "share": 0.22535827183454557
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.22849452202202578,
+      "ci_low": 0.22226965603874613,
+      "ci_high": 0.23460550593973056,
+      "share": 0.06719363706747333
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.14039695803651217,
+      "ci_low": 0.1336402904741399,
+      "ci_high": 0.14736804992636787,
+      "share": 0.041286688889518815
+     },
+     "marital_status": {
+      "mean_abs": 0.12677310192811672,
+      "ci_low": 0.12136621464244263,
+      "ci_high": 0.1319929206413651,
+      "share": 0.03728030644014543
+     },
+     "education_level": {
+      "mean_abs": 0.5557364672577848,
+      "ci_low": 0.524315699929573,
+      "ci_high": 0.5907739983986373,
+      "share": 0.16342603820707696
+     },
+     "job_type": {
+      "mean_abs": 0.4332046366615479,
+      "ci_low": 0.41077098154009045,
+      "ci_high": 0.45774561723436724,
+      "share": 0.1273929671231977
+     },
+     "household_size": {
+      "mean_abs": 0.06213586307985499,
+      "ci_low": 0.05848743775691625,
+      "ci_high": 0.06578099348950076,
+      "share": 0.0182723620492728
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.30433391059487624,
+      "ci_low": 0.291395312997266,
+      "ci_high": 0.3183784451075123,
+      "share": 0.08949581003025438
+     }
+    },
+    "ranking": [
+     "cellphone_access",
+     "country",
+     "education_level",
+     "job_type",
+     "age_of_respondent",
+     "gender_of_respondent",
+     "location_type",
+     "relationship_with_head",
+     "marital_status",
+     "household_size"
+    ]
+   },
+   "uganda": {
+    "n": 2101,
+    "ci_level": 0.95,
+    "bootstrap_reps": 1000,
+    "features": {
+     "country": {
+      "mean_abs": 0.8086712448393901,
+      "ci_low": 0.7988138678907509,
+      "ci_high": 0.8185580072952946,
+      "share": 0.21677144092968328
+     },
+     "location_type": {
+      "mean_abs": 0.252974516882621,
+      "ci_low": 0.2443618308249868,
+      "ci_high": 0.26240805073730883,
+      "share": 0.06781204462640135
+     },
+     "cellphone_access": {
+      "mean_abs": 0.783259631102417,
+      "ci_low": 0.7655554148995569,
+      "ci_high": 0.7999419842714148,
+      "share": 0.20995963432562106
+     },
+     "gender_of_respondent": {
+      "mean_abs": 0.17273431557862148,
+      "ci_low": 0.16905714295768487,
+      "ci_high": 0.17682094203444806,
+      "share": 0.04630295280675787
+     },
+     "relationship_with_head": {
+      "mean_abs": 0.15265837232118667,
+      "ci_low": 0.14867541658738073,
+      "ci_high": 0.15659102749759102,
+      "share": 0.04092141961176832
+     },
+     "marital_status": {
+      "mean_abs": 0.08924399055912684,
+      "ci_low": 0.08673550277724253,
+      "ci_high": 0.0917254440950517,
+      "share": 0.02392263673436192
+     },
+     "education_level": {
+      "mean_abs": 0.5978065462729709,
+      "ci_low": 0.5767072998093241,
+      "ci_high": 0.6201521909247567,
+      "share": 0.16024730353621836
+     },
+     "job_type": {
+      "mean_abs": 0.46848979559901277,
+      "ci_low": 0.4579102238569189,
+      "ci_high": 0.4795845521547246,
+      "share": 0.12558281093946977
+     },
+     "household_size": {
+      "mean_abs": 0.09117274860465784,
+      "ci_low": 0.087019780278553,
+      "ci_high": 0.0956810966671826,
+      "share": 0.02443965729543988
+     },
+     "age_of_respondent": {
+      "mean_abs": 0.31351367754162784,
+      "ci_low": 0.30343953971333854,
+      "ci_high": 0.32338030367291254,
+      "share": 0.08404009919427817
+     }
+    },
+    "ranking": [
+     "country",
+     "cellphone_access",
+     "education_level",
+     "job_type",
+     "age_of_respondent",
+     "location_type",
+     "gender_of_respondent",
+     "relationship_with_head",
+     "household_size",
+     "marital_status"
+    ]
+   }
+  }
+ },
+ "local_examples": {
+  "confident_tp": {
+   "rule": "has an account, predicted Yes: the highest score among such rows",
+   "chosen_with": "XGBoost score and threshold; pooled sample (focus example: all focus rows)",
+   "row": 946,
+   "country": "Kenya",
+   "has_account": true,
+   "features": {
+    "country": "Kenya",
+    "location_type": "Urban",
+    "cellphone_access": "Yes",
+    "gender_of_respondent": "Male",
+    "relationship_with_head": "Head of Household",
+    "marital_status": "Married/Living together",
+    "education_level": "Tertiary education",
+    "job_type": "Formally employed Private",
+    "household_size": 1,
+    "age_of_respondent": 35
+   },
+   "xgboost": {
+    "score": 0.9251444419566291,
+    "threshold": 0.45514804124832153,
+    "predicted": "Yes",
+    "logit": 2.514389636924879,
+    "attributions": {
+     "country": 0.36833457777549483,
+     "location_type": 0.2267446527611446,
+     "cellphone_access": 0.5975561423391628,
+     "gender_of_respondent": 0.12028125557917066,
+     "relationship_with_head": 0.0877397412613135,
+     "marital_status": 0.04086795038473611,
+     "education_level": 1.3705531533618796,
+     "job_type": 0.7147913013139351,
+     "household_size": 0.04433063699808372,
+     "age_of_respondent": 0.19054024446562834
+    }
+   },
+   "mlp": {
+    "score": 0.9787929098279095,
+    "threshold": 0.6823532581329346,
+    "predicted": "Yes",
+    "logit": 3.831984996795655,
+    "attributions": {
+     "country": 0.46151741438981697,
+     "location_type": 0.35113639871320146,
+     "cellphone_access": 0.39635537246838026,
+     "gender_of_respondent": 0.24368118487134383,
+     "relationship_with_head": 0.14681106047518452,
+     "marital_status": -0.01997053302002729,
+     "education_level": 2.0963695626388192,
+     "job_type": 1.3210459110654174,
+     "household_size": 0.06546613159262976,
+     "age_of_respondent": 0.020439065824492175
+    }
+   }
+  },
+  "confident_tn": {
+   "rule": "no account, predicted No: the lowest score among such rows",
+   "chosen_with": "XGBoost score and threshold; pooled sample (focus example: all focus rows)",
+   "row": 17886,
+   "country": "Tanzania",
+   "has_account": false,
+   "features": {
+    "country": "Tanzania",
+    "location_type": "Urban",
+    "cellphone_access": "No",
+    "gender_of_respondent": "Female",
+    "relationship_with_head": "Spouse",
+    "marital_status": "Single/Never Married",
+    "education_level": "Primary education",
+    "job_type": "Informally employed",
+    "household_size": 2,
+    "age_of_respondent": 20
+   },
+   "xgboost": {
+    "score": 0.02787560543930712,
+    "threshold": 0.45514804124832153,
+    "predicted": "No",
+    "logit": -3.5517323356999575,
+    "attributions": {
+     "country": -0.41547269434085143,
+     "location_type": 0.03957000216592632,
+     "cellphone_access": -0.9754790104078711,
+     "gender_of_respondent": -0.08799342549410993,
+     "relationship_with_head": -0.09417785381819158,
+     "marital_status": -0.019763055442890615,
+     "education_level": -0.18502529280535784,
+     "job_type": -0.1643847859639209,
+     "household_size": -0.028895600518571884,
+     "age_of_respondent": -0.3727605997584487
+    }
+   },
+   "mlp": {
+    "score": 0.003664105437525105,
+    "threshold": 0.6823532581329346,
+    "predicted": "No",
+    "logit": -5.6055006980896,
+    "attributions": {
+     "country": -1.0122746983678,
+     "location_type": 0.126943848640768,
+     "cellphone_access": -1.6854719046988345,
+     "gender_of_respondent": -0.20255238546028947,
+     "relationship_with_head": -0.3322722258656436,
+     "marital_status": 0.09915543063394587,
+     "education_level": -0.14735624491021268,
+     "job_type": -0.6280051497118385,
+     "household_size": -0.07952807451072967,
+     "age_of_respondent": -0.4932727216153614
+    }
+   }
+  },
+  "false_negative": {
+   "rule": "has an account, predicted No: the lowest score among such rows (the most confident miss)",
+   "chosen_with": "XGBoost score and threshold; pooled sample (focus example: all focus rows)",
+   "row": 18896,
+   "country": "Tanzania",
+   "has_account": true,
+   "features": {
+    "country": "Tanzania",
+    "location_type": "Urban",
+    "cellphone_access": "No",
+    "gender_of_respondent": "Male",
+    "relationship_with_head": "Other relative",
+    "marital_status": "Divorced/Seperated",
+    "education_level": "Primary education",
+    "job_type": "Self employed",
+    "household_size": 2,
+    "age_of_respondent": 32
+   },
+   "xgboost": {
+    "score": 0.08800574746449157,
+    "threshold": 0.45514804124832153,
+    "predicted": "No",
+    "logit": -2.338231558788463,
+    "attributions": {
+     "country": -0.3779062996892753,
+     "location_type": -0.023753523655368553,
+     "cellphone_access": -1.0803655075651477,
+     "gender_of_respondent": 0.20930719118381602,
+     "relationship_with_head": 0.04954252550141064,
+     "marital_status": -0.016061052991317413,
+     "education_level": -0.1421819449961913,
+     "job_type": 0.09606956579682446,
+     "household_size": -0.014846094542335778,
+     "age_of_respondent": 0.20931360148479145
+    }
+   },
+   "mlp": {
+    "score": 0.024812301686133405,
+    "threshold": 0.6823532581329346,
+    "predicted": "No",
+    "logit": -3.6712908744812016,
+    "attributions": {
+     "country": -1.061514645450053,
+     "location_type": -0.1657655821397135,
+     "cellphone_access": -1.4858009589879895,
+     "gender_of_respondent": 0.3228150347246078,
+     "relationship_with_head": 0.12418506329092793,
+     "marital_status": -0.18915049390714223,
+     "education_level": -0.17060564217806715,
+     "job_type": 0.2920907144519602,
+     "household_size": -0.03952306726545467,
+     "age_of_respondent": -0.04715472479667371
+    }
+   }
+  },
+  "false_positive": {
+   "rule": "no account, predicted Yes: the highest score among such rows (the most confident false alarm)",
+   "chosen_with": "XGBoost score and threshold; pooled sample (focus example: all focus rows)",
+   "row": 16210,
+   "country": "Tanzania",
+   "has_account": false,
+   "features": {
+    "country": "Tanzania",
+    "location_type": "Rural",
+    "cellphone_access": "Yes",
+    "gender_of_respondent": "Male",
+    "relationship_with_head": "Head of Household",
+    "marital_status": "Single/Never Married",
+    "education_level": "Tertiary education",
+    "job_type": "Formally employed Private",
+    "household_size": 2,
+    "age_of_respondent": 26
+   },
+   "xgboost": {
+    "score": 0.8799493772152083,
+    "threshold": 0.45514804124832153,
+    "predicted": "Yes",
+    "logit": 1.9919505672585252,
+    "attributions": {
+     "country": -0.09684924706062703,
+     "location_type": 0.03111099083218505,
+     "cellphone_access": 0.5757468172357767,
+     "gender_of_respondent": 0.10155938492445785,
+     "relationship_with_head": 0.10759591691152309,
+     "marital_status": 0.024969962592426783,
+     "education_level": 1.4624436739436897,
+     "job_type": 0.9650256839842586,
+     "household_size": 0.041636743763338015,
+     "age_of_respondent": 0.02606065944716647
+    }
+   },
+   "mlp": {
+    "score": 0.9587315404130599,
+    "threshold": 0.6823532581329346,
+    "predicted": "Yes",
+    "logit": 3.145512580871582,
+    "attributions": {
+     "country": -0.3726053248772647,
+     "location_type": 0.059004430687010084,
+     "cellphone_access": 0.4545428044296997,
+     "gender_of_respondent": 0.23558232389737896,
+     "relationship_with_head": 0.21798307880526482,
+     "marital_status": 0.23098995997306057,
+     "education_level": 2.176698651011115,
+     "job_type": 1.6514713846887838,
+     "household_size": 0.05483872329183481,
+     "age_of_respondent": -0.3121268788116973
+    }
+   }
+  },
+  "focus_typical": {
+   "rule": "focus-country row whose score is closest to that country's median score",
+   "chosen_with": "XGBoost score and threshold; pooled sample (focus example: all focus rows)",
+   "row": 22829,
+   "country": "Uganda",
+   "has_account": false,
+   "features": {
+    "country": "Uganda",
+    "location_type": "Urban",
+    "cellphone_access": "Yes",
+    "gender_of_respondent": "Female",
+    "relationship_with_head": "Other relative",
+    "marital_status": "Single/Never Married",
+    "education_level": "No formal education",
+    "job_type": "Self employed",
+    "household_size": 6,
+    "age_of_respondent": 24
+   },
+   "xgboost": {
+    "score": 0.1673952749265892,
+    "threshold": 0.45514804124832153,
+    "predicted": "No",
+    "logit": -1.6042013108213602,
+    "attributions": {
+     "country": -0.2746080844312746,
+     "location_type": 0.39402907320228225,
+     "cellphone_access": 0.2380908197670942,
+     "gender_of_respondent": -0.11385789931756335,
+     "relationship_with_head": -0.06186025877994325,
+     "marital_status": -0.04325136599534744,
+     "education_level": -0.4539343442476638,
+     "job_type": 0.09148978262906893,
+     "household_size": -0.041201682452169736,
+     "age_of_respondent": -0.09174733188017399
+    }
+   },
+   "mlp": {
+    "score": 0.1442337911594124,
+    "threshold": 0.6823532581329346,
+    "predicted": "No",
+    "logit": -1.7805618047714233,
+    "attributions": {
+     "country": -0.49680171931997713,
+     "location_type": 0.7270797661835893,
+     "cellphone_access": 0.5125709090562807,
+     "gender_of_respondent": -0.189323243708417,
+     "relationship_with_head": -0.11979866193110689,
+     "marital_status": -0.09874017018293375,
+     "education_level": -0.9600021667228209,
+     "job_type": 0.3934296716598592,
+     "household_size": 0.10646349475150643,
+     "age_of_respondent": -0.40457311233379933
+    }
+   }
+  }
+ },
+ "dependence": {
+  "rule": "top 3 features by pooled mean |tree_shap| on xgboost",
+  "features": {
+   "cellphone_access": {
+    "No": {
+     "n": 243,
+     "mean_attribution": -1.1019923740710602,
+     "std_attribution": 0.1658697708303764
+    },
+    "Yes": {
+     "n": 757,
+     "mean_attribution": 0.3947816978461541,
+     "std_attribution": 0.07639997178048831
+    }
+   },
+   "education_level": {
+    "No formal education": {
+     "n": 184,
+     "mean_attribution": -0.5531038422151281,
+     "std_attribution": 0.1786799663427936
+    },
+    "Other/Dont know/RTA": {
+     "n": 4,
+     "mean_attribution": 0.3198712660189358,
+     "std_attribution": 0.12696175143257463
+    },
+    "Primary education": {
+     "n": 544,
+     "mean_attribution": -0.17979319230813695,
+     "std_attribution": 0.0369514824129864
+    },
+    "Secondary education": {
+     "n": 188,
+     "mean_attribution": 0.5402921868231286,
+     "std_attribution": 0.1169234682688891
+    },
+    "Tertiary education": {
+     "n": 49,
+     "mean_attribution": 1.3890840004048446,
+     "std_attribution": 0.16426855661842582
+    },
+    "Vocational/Specialised training": {
+     "n": 31,
+     "mean_attribution": 1.1486027891957016,
+     "std_attribution": 0.14489534719510075
+    }
+   },
+   "country": {
+    "Kenya": {
+     "n": 258,
+     "mean_attribution": 0.4512763950747726,
+     "std_attribution": 0.11223031020018408
+    },
+    "Rwanda": {
+     "n": 372,
+     "mean_attribution": 0.026490709419080716,
+     "std_attribution": 0.09136399860196844
+    },
+    "Tanzania": {
+     "n": 281,
+     "mean_attribution": -0.37641064770157895,
+     "std_attribution": 0.18006225694566783
+    },
+    "Uganda": {
+     "n": 89,
+     "mean_attribution": -0.4288649938655619,
+     "std_attribution": 0.16869297450288076
+    }
+   }
+  }
+ }
+}

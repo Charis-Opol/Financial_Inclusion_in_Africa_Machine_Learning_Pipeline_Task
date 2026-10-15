@@ -38,6 +38,14 @@ same ID further down.
 | D2.6 | Pooled results use the 1,000-row sample; Uganda results use all 2,101 Uganda rows. |
 | D2.7 | The MLP's "unknown" embeddings turned out to be almost all zeros. |
 | D2.8 | Cut-offs: XGBoost 0.4551, MLP 0.6824. |
+| D3.1 | Every SHAP method uses the same 200 reference rows and replaces a missing field independently of the others ("interventional"). |
+| D3.2 | Result: grouped TreeSHAP is close to the exact values but not identical (average gap 2.1%). KernelSHAP with all coalitions is identical. |
+| D3.3 | So exact KernelSHAP is also run on XGBoost for every row, to have ground truth everywhere. |
+| D3.4 | The MLP's main SHAP result is exact KernelSHAP. GradientSHAP is kept as a second, approximate one whose contributions do not add up exactly. |
+| D3.5 | TreeSHAP was silently using only 100 of the 200 reference rows; fixed by passing the full set explicitly. |
+| D3.6 | The five local examples are picked by written rules applied to XGBoost, and the same five rows are used for both models. |
+| D3.7 | Dependence plots show the top three features by importance, whichever they turn out to be. |
+| D3.8 | Categories with no natural order are drawn grey in beeswarm plots instead of shaded. |
 
 ## Phase 0 — Reconnaissance (findings that constrain later choices)
 
@@ -228,3 +236,111 @@ corresponds to no respondent the model was trained on.
 XGBoost 0.4551 (shipped), MLP 0.6824 (median of its per-fold F1-optimal
 thresholds). At those thresholds 20.6% and 14.9% of training rows are
 predicted "Yes".
+
+## Phase 3 — SHAP (Task 1)
+
+All numbers below are from `reports/xai/shap_summary.json`, written by
+`scripts/run_xai_shap.py`.
+
+**D3.1 — One reference and one value function for every SHAP method.**
+Reference: the 200 background rows (D2.5); base value −1.247 logits for
+XGBoost and −1.251 for the MLP. Value function: interventional — a feature
+that is "absent" takes its value from a background row, independently of the
+other features. This breaks correlations between features, so the model is
+asked about some hybrid respondents that do not exist (for example a
+background row's marital status with the instance's relationship to the
+household head). It was chosen because it needs no model of the joint
+feature distribution and is what TreeSHAP, KernelSHAP and the brute-force
+oracle can all compute identically, which is what makes them comparable.
+
+**D3.2 — The oracle result: grouped TreeSHAP is close to, but not equal to, exact raw-feature Shapley values.**
+On the 50 oracle rows (seeded draw from the pooled sample), against
+brute-force Shapley over all 1,024 coalitions of the 10 raw features:
+
+- KernelSHAP with all 1,022 non-trivial coalitions enumerated matches the
+  oracle to floating-point precision (max |difference| 2.4e-15 for XGBoost,
+  4.8e-8 for the MLP, whose arithmetic is float32).
+- Grouped TreeSHAP differs from it: mean |difference| 0.0042 logits, max
+  0.043, which is 2.1% of the mean |attribution| (0.20). The sign agrees for
+  99.2% of the 500 values and the top feature agrees on all 50 rows. Base
+  values are identical.
+- The gap is largest for `education_level` (0.0105) and `country` (0.0075),
+  the multi-level categoricals the model leans on most, and smallest for
+  `household_size` (0.0007).
+
+This is the outcome D1.6 anticipated, and it is a difference between two
+games, not an error in either computation: a unit test confirms the two
+agree to 1e-4 when the trees have depth 1 (no interactions possible).
+"Grouped TreeSHAP matches the oracle numerically" is therefore true only
+approximately for the shipped depth-8 model, and is reported that way.
+
+**D3.3 — Exact KernelSHAP is run on XGBoost for all 3,012 rows as well.**
+Because TreeSHAP is only approximately the raw-feature Shapley value, and
+KernelSHAP with full enumeration is exactly it (D3.2), the exact values are
+computed for every explained row of both models. TreeSHAP remains the
+headline SHAP result for XGBoost (it is the method the assignment names);
+the exact values are the ground truth later phases compare against. At the
+global level the two are almost indistinguishable: the pooled importance
+ranking is identical and shares differ by at most 0.003.
+
+**D3.4 — MLP: exact KernelSHAP is the SHAP result; GradientSHAP is reported as an approximation.**
+`shap.GradientExplainer` works on the MLP after the embedding lookup (51
+inputs, summed to raw features). Two separate things were measured on the
+oracle rows as its sample count rises from 200 to 1,000 to 5,000:
+
+- its efficiency error falls (mean 0.145 → 0.076 → 0.027 logits): that part
+  is sampling noise;
+- its distance from the oracle barely moves (mean 0.050 → 0.040 → 0.036):
+  that part is not noise. Expected gradients integrates along straight paths
+  in embedding space and is a different quantity from the Shapley value.
+
+At the default 200 samples used for the full run, attributions fail the
+0.05-logit efficiency tolerance on 2,360 of 3,012 rows (max error 0.66).
+This is recorded as a failed check, not hidden; GradientSHAP is not used for
+any conclusion that needs attributions to add up.
+
+**D3.5 — TreeSHAP's background is passed as an explicit masker.**
+Given a plain array, `shap.TreeExplainer` silently subsamples the background
+to 100 rows. A first smoke test showed its base value 0.015 logits away from
+the other methods for that reason. The background is now wrapped in
+`shap.maskers.Independent(..., max_samples=200)`; a test with a 150-row
+background guards it.
+
+**D3.6 — Local examples are chosen by rule, on XGBoost, and reused for the MLP.**
+Rules (`sampling.LOCAL_EXAMPLE_RULES`): highest-scoring true positive,
+lowest-scoring true negative, lowest-scoring false negative, highest-scoring
+false positive (all within the pooled sample, at XGBoost's 0.4551
+threshold), and the Uganda row whose score is closest to Uganda's median
+score. Ties go to the lowest row position. The rules use XGBoost because it
+is the shipped model; the same five rows are explained for the MLP so the
+two can be compared respondent by respondent. All five happen to get the
+same predicted label from both models. Rows: 946, 17886, 18896, 16210,
+22829.
+
+**D3.7 — Dependence plots: the top three features by pooled mean |TreeSHAP|.**
+Chosen by rank rather than by expectation. They turned out to be
+`cellphone_access`, `education_level` and `country` — the three the project
+plan expected. KernelSHAP's `nsamples=20` is kept in the convergence table
+although its result is invalid (singular regression): with 10 features, 20
+coalitions do not determine the fit.
+
+**D3.8 — Beeswarm colouring.**
+Numeric and two-level features are shaded by value on a single-hue ramp;
+multi-level categoricals are grey. The usual SHAP beeswarm colours every
+feature by its numeric code, which for `country` or `job_type` would display
+an ordering that does not exist.
+
+**Findings worth carrying forward (pooled sample, n = 1,000).**
+
+- XGBoost importance shares: `cellphone_access` 0.27, `education_level`
+  0.19, `country` 0.14, `age_of_respondent` 0.11, `job_type` 0.09.
+- MLP importance shares: `cellphone_access` 0.22, `education_level` 0.17,
+  `country` 0.17, `job_type` 0.13, `age_of_respondent` 0.10. Same top three;
+  `job_type` and `age_of_respondent` swap places.
+- Uganda only (n = 2,101): `country` rises for both models (XGBoost share
+  0.14 → 0.19; MLP 0.17 → 0.22, where it becomes the top feature). This is
+  partly built in: every Uganda row has the same country, which the pooled
+  reference mostly does not, so its attribution never averages out.
+- The MLP's attributions are larger in absolute terms (mean |attribution| of
+  the top feature 0.77 vs 0.57 logits). Its logits are more spread out;
+  shares, not magnitudes, are comparable across models (D1.7).

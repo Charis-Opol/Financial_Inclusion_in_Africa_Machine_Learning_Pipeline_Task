@@ -42,7 +42,12 @@ which rows serve as the reference, so every method uses the same ones.
 | `attribution.py` | The `Attribution` result: the numbers, plus which model, method and reference they belong to. Saves to and loads from `.npz`. |
 | `grouping.py` | Adds encoded columns back together into the 10 raw features, and turns importances into shares. |
 | `checks.py` | Verifies that contributions + base value = the model's score. |
-| `sampling.py` | Picks the background (reference) rows and the rows to explain. |
+| `sampling.py` | Picks the background (reference) rows, the rows to explain, and the local examples (by rule). |
+| `workspace.py` | Loads data, both models and the sample sets together, and checks they belong together. |
+| `shapley.py` | Exact Shapley values by brute force over all 1,024 coalitions. The ground truth. |
+| `shap_explainers.py` | The `shap` library methods: TreeSHAP, KernelSHAP, GradientSHAP. |
+| `bootstrap.py` | Confidence intervals by resampling respondents. |
+| `plots.py` | All figures, in one visual style. |
 | `shap_analysis.py` | The original Phase 4 SHAP plots. Left as it was; not used by the newer code. |
 
 ## Words used throughout
@@ -63,6 +68,12 @@ which rows serve as the reference, so every method uses the same ones.
 - **Efficiency / completeness** — the property in the line above. The first
   name is used for SHAP, the second for Integrated Gradients; `checks.py`
   tests it for both.
+- **Coalition** — a subset of the features treated as "known". A Shapley
+  value averages a feature's effect over every coalition it could join.
+- **Interventional** — how a feature is made "unknown": it is replaced by
+  its value in a reference row, without touching the other features.
+- **Oracle** — the brute-force exact answer other methods are checked
+  against.
 - **Raw feature** — one of the 10 survey fields. An **encoded column** is
   what a model actually receives (for example `country_Uganda`, or one
   dimension of an embedding).
@@ -73,19 +84,23 @@ which rows serve as the reference, so every method uses the same ones.
 1. `attribution.py` — the result everything else produces or consumes.
 2. `model_adapters.py` — how a model is asked for a score.
 3. `grouping.py`, then `checks.py`.
-4. `sampling.py`.
-5. `scripts/run_xai_models.py` — the first script that uses them.
+4. `sampling.py`, then `workspace.py`.
+5. `shapley.py` — the definition of a Shapley value, in a few dozen lines.
+6. `shap_explainers.py`.
+7. `scripts/run_xai_models.py`, then `scripts/run_xai_shap.py`.
 
 ## Scripts and what they write
 
 | Script | Writes |
 |---|---|
 | `scripts/run_xai_models.py` | `reports/xai/model_verification.json` (do the models perform as reported?), `reports/xai/sample_sets.json` (which rows), `models/xai/` (the retrained MLP) |
+| `scripts/run_xai_shap.py` | `reports/xai/attributions/*.npz` (SHAP values per row), `reports/xai/shap_summary.json` (every number quoted), `reports/figures/xai/shap_*.png` |
 
-Run them from the XAI environment (see `requirements-xai.txt`):
+Run them in this order from the XAI environment (see `requirements-xai.txt`):
 
 ```bash
-.venv-xai/Scripts/python scripts/run_xai_models.py
+.venv-xai/Scripts/python scripts/run_xai_models.py   # about 5 minutes
+.venv-xai/Scripts/python scripts/run_xai_shap.py     # about 35 minutes; reuses saved attributions afterwards
 ```
 
 Every choice that was not obvious, and why it was made, is in

@@ -133,6 +133,52 @@ def build_sample_sets(
     )
 
 
+LOCAL_EXAMPLE_RULES: dict[str, str] = {
+    "confident_tp": "has an account, predicted Yes: the highest score among such rows",
+    "confident_tn": "no account, predicted No: the lowest score among such rows",
+    "false_negative": "has an account, predicted No: the lowest score among such rows (the most confident miss)",
+    "false_positive": "no account, predicted Yes: the highest score among such rows (the most confident false alarm)",
+    "focus_typical": "focus-country row whose score is closest to that country's median score",
+}
+"""The rule behind each local example. Examples are picked by these rules,
+never by how their explanation looks; ties go to the lowest row position."""
+
+
+def select_local_examples(
+    candidates: np.ndarray,
+    focus_candidates: np.ndarray,
+    y_binary: np.ndarray,
+    score: np.ndarray,
+    threshold: float,
+) -> dict[str, int]:
+    """Row positions of the five local examples, chosen by `LOCAL_EXAMPLE_RULES`.
+
+    `y_binary` and `score` are indexed by row position (full training
+    frame). The four confusion-matrix examples come from `candidates`, the
+    focus-country example from `focus_candidates`.
+    """
+    candidates, focus_candidates = np.sort(candidates), np.sort(focus_candidates)
+    actual = y_binary[candidates] == 1
+    predicted = score[candidates] >= threshold
+
+    def pick(mask: np.ndarray, highest: bool, name: str) -> int:
+        if not mask.any():
+            raise ValueError(f"No candidate row satisfies the rule for {name!r}")
+        pool = candidates[mask]
+        scores = score[pool]
+        # argmax/argmin return the first extreme, and `pool` is sorted, so ties go to the lowest position
+        return int(pool[np.argmax(scores) if highest else np.argmin(scores)])
+
+    focus_scores = score[focus_candidates]
+    return {
+        "confident_tp": pick(actual & predicted, True, "confident_tp"),
+        "confident_tn": pick(~actual & ~predicted, False, "confident_tn"),
+        "false_negative": pick(actual & ~predicted, False, "false_negative"),
+        "false_positive": pick(~actual & predicted, True, "false_positive"),
+        "focus_typical": int(focus_candidates[np.argmin(np.abs(focus_scores - np.median(focus_scores)))]),
+    }
+
+
 def composition_table(positions: np.ndarray, country: pd.Series, target: pd.Series) -> dict[str, dict[str, int]]:
     """Row counts per country and target level in a selection, for the log."""
     selected = pd.DataFrame(

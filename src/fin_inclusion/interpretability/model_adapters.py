@@ -34,6 +34,13 @@ from fin_inclusion.serving.encoder import FeatureEncoder, UnknownCategoryError
 MLP_WEIGHTS_FILE = "mlp.pt"
 MLP_METADATA_FILE = "mlp_metadata.json"
 
+UNKNOWN_CODE = -1
+"""A categorical code meaning "a category the model never saw". It exists
+only so an "unknown" BASELINE can be expressed in codes: XGBoost encodes it
+as an all-zero one-hot block, the MLP as embedding index 0 -- exactly what
+each training pipeline does with an unseen category. `to_codes` never
+produces it: real input with an unseen category is still an error."""
+
 
 class ArtifactError(RuntimeError):
     """A model artifact is missing, corrupt, or inconsistent with its metadata."""
@@ -79,9 +86,46 @@ class RawFeatureModel(ABC):
     """Score cut-off for a "Yes" prediction, on the sigmoid scale. Model-
     specific: each model's own median per-fold F1-optimal threshold."""
 
+    # --- "Codes": raw rows as one plain number per raw feature ---------------
+    #
+    # Perturbation methods (exact Shapley, KernelSHAP, Feature Ablation) build
+    # millions of hybrid rows by swapping single fields between a respondent
+    # and a reference row. Doing that on DataFrames of strings is slow, so a
+    # raw row is also representable as a float vector with one entry per raw
+    # feature: a categorical holds the position of its level in
+    # `categorical_levels[column]`, a numeric holds its value. Swapping an
+    # entry between two code vectors is exactly swapping that survey field.
+
+    def to_codes(self, X_raw: pd.DataFrame) -> np.ndarray:
+        """`[n, n_raw_features]` float64 codes for raw rows, in `raw_features` order."""
+        _require_columns(X_raw, self.raw_features)
+        columns = []
+        for feature in self.raw_features:
+            if feature in self.categorical_levels:
+                table = {level: i for i, level in enumerate(self.categorical_levels[feature])}
+                columns.append(_lookup(X_raw, feature, table).astype(np.float64))
+            else:
+                columns.append(X_raw[feature].to_numpy(dtype=np.float64))
+        return np.column_stack(columns)
+
+    def from_codes(self, codes: np.ndarray) -> pd.DataFrame:
+        """Inverse of `to_codes`: codes back to readable raw rows."""
+        codes = np.asarray(codes)
+        frame = {}
+        for j, feature in enumerate(self.raw_features):
+            if feature in self.categorical_levels:
+                frame[feature] = np.asarray(self.categorical_levels[feature], dtype=object)[codes[:, j].astype(np.int64)]
+            else:
+                frame[feature] = codes[:, j]
+        return pd.DataFrame(frame)
+
     @abstractmethod
+    def predict_logit_codes(self, codes: np.ndarray) -> np.ndarray:
+        """Pre-sigmoid model output for `[n, n_raw_features]` codes, one float64 per row."""
+
     def predict_logit(self, X_raw: pd.DataFrame) -> np.ndarray:
         """Pre-sigmoid model output, one float64 per row of `X_raw`."""
+        return self.predict_logit_codes(self.to_codes(X_raw))
 
     def predict_score(self, X_raw: pd.DataFrame) -> np.ndarray:
         """Sigmoid of the logit: a ranking score in [0, 1], not a calibrated probability."""
@@ -109,10 +153,12 @@ class XGBoostRawModel(RawFeatureModel):
         self._numeric_index = dict(encoder.numeric_index)
         self._outlier_index = encoder.outlier_index
         self._outlier_threshold = encoder.household_size_outlier_threshold
+        # Per categorical: one-hot column position of each level, indexed by level code.
         self._slot = {
-            column: {raw: index for (col, raw), index in encoder.onehot_index.items() if col == column}
-            for column in self.categorical_columns
+            column: np.array([encoder.onehot_index[(column, level)] for level in levels], dtype=np.int64)
+            for column, levels in self.categorical_levels.items()
         }
+        self._feature_position = {feature: j for j, feature in enumerate(self.raw_features)}
 
     @classmethod
     def load(cls, model_dir: Path) -> "XGBoostRawModel":
@@ -136,14 +182,21 @@ class XGBoostRawModel(RawFeatureModel):
         """`[n, 40]` float32 matrix in the booster's column order. Vectorised
         equivalent of `FeatureEncoder.encode_batch` (parity is tested), since
         perturbation methods score millions of rows."""
-        _require_columns(X_raw, self.raw_features)
-        matrix = np.zeros((len(X_raw), len(self.feature_columns)), dtype=np.float32)
+        return self.encode_codes(self.to_codes(X_raw))
+
+    def encode_codes(self, codes: np.ndarray) -> np.ndarray:
+        codes = np.asarray(codes, dtype=np.float64)
+        position = self._feature_position
+        matrix = np.zeros((len(codes), len(self.feature_columns)), dtype=np.float32)
         for column, index in self._numeric_index.items():
-            matrix[:, index] = X_raw[column].to_numpy()
-        matrix[:, self._outlier_index] = X_raw["household_size"].to_numpy() > self._outlier_threshold
-        rows = np.arange(len(X_raw))
+            matrix[:, index] = codes[:, position[column]]
+        # The outlier flag is recomputed from whatever household_size the row
+        # now holds, so a perturbed household_size never keeps a stale flag.
+        matrix[:, self._outlier_index] = codes[:, position["household_size"]] > self._outlier_threshold
         for column in self.categorical_columns:
-            matrix[rows, _lookup(X_raw, column, self._slot[column])] = 1.0
+            level = codes[:, position[column]].astype(np.int64)
+            known = level != UNKNOWN_CODE  # unknown: leave the whole block at zero
+            matrix[np.flatnonzero(known), self._slot[column][level[known]]] = 1.0
         if not np.isfinite(matrix).all():
             raise ValueError("Encoded feature matrix contains NaN/Inf")
         return matrix
@@ -152,8 +205,8 @@ class XGBoostRawModel(RawFeatureModel):
         margin = self.booster.inplace_predict(matrix, predict_type="margin", validate_features=False)
         return np.asarray(margin, dtype=np.float64)
 
-    def predict_logit(self, X_raw: pd.DataFrame) -> np.ndarray:
-        return self.predict_logit_encoded(self.encode(X_raw))
+    def predict_logit_codes(self, codes: np.ndarray) -> np.ndarray:
+        return self.predict_logit_encoded(self.encode_codes(codes))
 
 
 class MLPRawModel(RawFeatureModel):
@@ -191,6 +244,12 @@ class MLPRawModel(RawFeatureModel):
             self._index[column] = raw_table
             levels[column] = tuple(sorted(raw_table))
         self.categorical_levels = levels
+        # Per categorical: embedding index of each level, indexed by level code.
+        self._embedding_index = {
+            column: np.array([self._index[column][level] for level in levels[column]], dtype=np.int64)
+            for column in self.categorical_columns
+        }
+        self._feature_position = {feature: j for j, feature in enumerate(self.raw_features)}
 
     @classmethod
     def from_fitted(cls, model, pipeline, decision_threshold: float, metadata: Mapping | None = None) -> "MLPRawModel":
@@ -224,25 +283,34 @@ class MLPRawModel(RawFeatureModel):
     def encode(self, X_raw: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
         """`(cat [n, 8] int64 embedding indices, num [n, 3] float32)`, in the
         column orders `_MLPNet.forward` expects."""
-        _require_columns(X_raw, self.raw_features)
-        cat = np.column_stack([_lookup(X_raw, c, self._index[c]) for c in self.categorical_columns])
-        return cat, self.encode_numeric(X_raw)
+        return self.encode_codes(self.to_codes(X_raw))
 
-    def encode_numeric(self, X_raw: pd.DataFrame) -> np.ndarray:
+    def encode_codes(self, codes: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        codes = np.asarray(codes, dtype=np.float64)
+        position = self._feature_position
+        unknown_index = int(self.preprocessing["unknown_index"])
+        columns = []
+        for c in self.categorical_columns:
+            level = codes[:, position[c]].astype(np.int64)
+            # UNKNOWN_CODE -> the reserved never-seen index; known codes -> their embedding row.
+            columns.append(np.where(level == UNKNOWN_CODE, unknown_index,
+                                    self._embedding_index[c][np.maximum(level, 0)]))
+        cat = np.column_stack(columns)
         mean, scale = self.preprocessing["numeric_mean"], self.preprocessing["numeric_scale"]
         threshold = self.preprocessing["household_size_outlier_threshold"]
-        columns = []
+        numeric = []
         for name in self.numeric_inputs:
             if name == "household_size_outlier":
-                columns.append((X_raw["household_size"].to_numpy() > threshold).astype(np.float64))
+                # Recomputed from the row's current household_size (never stale).
+                numeric.append((codes[:, position["household_size"]] > threshold).astype(np.float64))
             else:
-                columns.append((X_raw[name].to_numpy(dtype=np.float64) - mean[name]) / scale[name])
-        return np.column_stack(columns).astype(np.float32)
+                numeric.append((codes[:, position[name]] - mean[name]) / scale[name])
+        return cat, np.column_stack(numeric).astype(np.float32)
 
-    def predict_logit(self, X_raw: pd.DataFrame) -> np.ndarray:
+    def predict_logit_codes(self, codes: np.ndarray) -> np.ndarray:
         import torch
 
-        cat, num = self.encode(X_raw)
+        cat, num = self.encode_codes(codes)
         net = self.net
         net.eval()  # dropout off: explanations must be of the deterministic model
         with torch.no_grad():

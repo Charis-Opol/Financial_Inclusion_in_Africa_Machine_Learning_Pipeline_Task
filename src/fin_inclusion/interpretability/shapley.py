@@ -1,0 +1,116 @@
+"""Exact Shapley values by brute force: the ground truth other methods are checked against.
+
+With only 10 raw features there are 2^10 = 1,024 coalitions, few enough to
+evaluate every one. No sampling, no regression, no tree-specific algorithm:
+this is the definition of the Shapley value computed directly, so when a
+library method disagrees with it, the library method (or the game it is
+playing) is what needs explaining.
+
+The game, stated exactly:
+
+  - Players: the raw survey features (not encoded columns).
+  - Value of a coalition S for respondent x (INTERVENTIONAL value function):
+        v(S) = mean over background rows b of f(x_S, b_notS)
+    i.e. the features in S take the respondent's values, the rest take a
+    background row's values, and the model's logit is averaged over the
+    background. Features are replaced independently of each other, which
+    breaks correlations between them: the model is asked about hybrid rows
+    that may not exist in the population (a known limitation of the
+    interventional choice, and the price of not needing a density model).
+  - Shapley value of feature j:
+        phi_j = sum over S not containing j of
+                |S|! (M - |S| - 1)! / M!  *  ( v(S + j) - v(S) )
+  - Base value: v(empty set) = mean logit over the background.
+
+Efficiency holds exactly: sum_j phi_j + v(empty) = v(all) = f(x).
+"""
+from __future__ import annotations
+
+from collections.abc import Callable
+from math import factorial
+
+import numpy as np
+import pandas as pd
+
+from fin_inclusion.interpretability.attribution import LOGIT_SPACE, Attribution
+from fin_inclusion.interpretability.base import Explainer
+from fin_inclusion.interpretability.model_adapters import RawFeatureModel
+
+MAX_PLAYERS = 16
+"""2^M coalitions x background rows are scored per instance; beyond this the
+brute force stops being a sensible tool."""
+
+
+def coalition_masks(n_players: int) -> np.ndarray:
+    """`[2^M, M]` boolean matrix; row `s` has player `j` in the coalition iff bit `j` of `s` is set."""
+    return ((np.arange(2**n_players)[:, None] >> np.arange(n_players)) & 1).astype(bool)
+
+
+def shapley_from_coalition_values(values: np.ndarray, n_players: int) -> np.ndarray:
+    """Shapley values from `values[s]` = v(coalition with bitmask `s`), for all 2^M coalitions."""
+    masks = coalition_masks(n_players)
+    sizes = masks.sum(axis=1)
+    weight = np.array(
+        [factorial(s) * factorial(n_players - s - 1) / factorial(n_players) for s in range(n_players)]
+    )
+    phi = np.empty(n_players)
+    for j in range(n_players):
+        without_j = np.flatnonzero(~masks[:, j])
+        phi[j] = np.sum(weight[sizes[without_j]] * (values[without_j | (1 << j)] - values[without_j]))
+    return phi
+
+
+def exact_shapley_values(
+    predict: Callable[[np.ndarray], np.ndarray], X: np.ndarray, background: np.ndarray
+) -> tuple[np.ndarray, float]:
+    """Exact interventional Shapley values of `predict` for each row of `X`.
+
+    `X` is `[n, M]`, `background` is `[b, M]`; a feature is "absent" by
+    taking a background row's value in that column. Returns `([n, M] values,
+    base value)`.
+    """
+    X, background = np.asarray(X, dtype=np.float64), np.asarray(background, dtype=np.float64)
+    n_players = X.shape[1]
+    if background.ndim != 2 or background.shape[1] != n_players or len(background) == 0:
+        raise ValueError(f"background must be [b, {n_players}] with b >= 1, got {background.shape}")
+    if n_players > MAX_PLAYERS:
+        raise ValueError(f"Brute-force Shapley over {n_players} players is intractable (limit {MAX_PLAYERS})")
+
+    masks = coalition_masks(n_players)[:, None, :]  # [2^M, 1, M]
+    phi = np.empty((len(X), n_players))
+    for i, x in enumerate(X):
+        hybrids = np.where(masks, x, background[None, :, :])  # [2^M, b, M]
+        outputs = predict(hybrids.reshape(-1, n_players)).reshape(len(masks), len(background))
+        phi[i] = shapley_from_coalition_values(outputs.mean(axis=1), n_players)
+    # v(empty set) is the same for every instance: no feature comes from x.
+    base_value = float(np.mean(predict(background)))
+    return phi, base_value
+
+
+class ExactShapleyExplainer(Explainer):
+    """Brute-force interventional Shapley values on the raw features of `model`."""
+
+    method = "exact_shapley"
+
+    def __init__(self, model: RawFeatureModel, background_raw: pd.DataFrame):
+        self.model = model
+        self.background_codes = model.to_codes(background_raw)
+
+    def explain(self, X_raw: pd.DataFrame) -> Attribution:
+        values, base_value = exact_shapley_values(
+            self.model.predict_logit_codes, self.model.to_codes(X_raw), self.background_codes
+        )
+        return Attribution(
+            values=values,
+            base_value=base_value,
+            feature_names=self.model.raw_features,
+            method=self.method,
+            model_name=self.model.name,
+            target_space=LOGIT_SPACE,
+            baseline_description=(
+                f"mean logit over {len(self.background_codes)} background rows; interventional value "
+                f"function (absent features take background values), exact over all "
+                f"{2 ** len(self.model.raw_features)} coalitions of raw features"
+            ),
+            metadata={"n_background": len(self.background_codes), "n_coalitions": 2 ** len(self.model.raw_features)},
+        )
