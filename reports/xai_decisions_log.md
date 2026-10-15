@@ -53,6 +53,12 @@ same ID further down.
 | D4.5 | Result: switching the reference barely changes which features matter overall, but changes the explanation for an individual respondent a lot. |
 | D4.6 | Hidden units: none unused, computation fairly spread out. They describe how the network computes, not respondents. |
 | D4.7 | Dropout is off and every Captum method is deterministic. |
+| D5.1 | Neither model has attention, so no attention map is drawn. The substitutes are real internals: embedding projections and interaction values. |
+| D5.2 | All ten attribution sets are shown on one scale (share of importance, plus rank). Only phone access is top 3 under every method pooled; for Uganda, country, phone and education are. |
+| D5.3 | Heatmaps use the exact Shapley values, with one colour scale for every heatmap. |
+| D5.4 | What separates confident yes from confident no is mostly education, not phone access. |
+| D5.5 | The MLP's learned category vectors, flattened to 2-D and coloured by their effect. Position alone means nothing. |
+| D5.6 | Exact interaction values: about 40-45% of attribution is shared between pairs. The strongest pair for both models is country with rural/urban. |
 
 ## Phase 0 — Reconnaissance (findings that constrain later choices)
 
@@ -358,6 +364,7 @@ All numbers below are from `reports/xai/captum_summary.json`, written by
 `scripts/run_xai_captum.py`.
 
 **D4.1 — Two baselines, both run for every method; numerics at the training mean in both.**
+
 - *Unknown*: every categorical set to a never-seen category (MLP: embedding
   index 0; XGBoost: an all-zero one-hot block — what each training pipeline
   does with an unseen value). Expressed as a special code, `UNKNOWN_CODE`,
@@ -452,3 +459,88 @@ results describe how the network computes, not anything about respondents.
 The MLP is put in `eval()` (dropout off) by every explainer; Integrated
 Gradients, Feature Ablation and conductance are deterministic given the
 inputs (re-running gives identical numbers).
+
+## Phase 5 — Visualising internals (Task 3)
+
+All numbers below are from `reports/xai/internals_summary.json`, written by
+`scripts/run_xai_internals.py`.
+
+**D5.1 — Attention maps: not applicable, and none is drawn.**
+Neither model has an attention mechanism: XGBoost is a tree ensemble, and
+the PyTorch model is an MLP over category embeddings. The statement is
+recorded in the summary artifact and printed in the caption of both
+substitute figures. Substitutes, chosen because they are real internals of
+these models rather than look-alikes: 2-D projections of the MLP's learned
+category embeddings (D5.5), and exact Shapley interaction values (D5.6).
+
+**D5.2 — "Rank-normalised" global importance = each feature's share of its own method's total, plus its rank.**
+Ten attribution sets are compared side by side: TreeSHAP and exact SHAP on
+XGBoost, Feature Ablation on XGBoost (two baselines), exact SHAP and
+GradientSHAP on the MLP, and IG and Feature Ablation on the MLP (two
+baselines each). Rows are ordered by mean rank across all ten (pooled), and
+that order is reused for Uganda so a row is the same feature in both
+figures.
+
+- Pooled: only `cellphone_access` is in the top 3 under every method (rank
+  1–3). `country` and `education_level` range over ranks 1–4 and 2–4.
+  `job_type` ranges from 1 to 6: it is 1st under three of the four IG and
+  ablation views of the MLP (2nd under the fourth), and 4th–6th under every
+  SHAP view and under ablation on XGBoost.
+- Uganda: `country`, `cellphone_access` and `education_level` are the top 3
+  under all ten methods.
+
+**D5.3 — Heatmaps use the exact Shapley values, one shared colour scale.**
+Respondents × features, sorted by score, one figure per model per sample
+(4 figures). The attribution shown is exact raw-feature SHAP (the ground
+truth from Phase 3, not an approximation), so heatmaps of the two models
+are directly comparable. The colour scale is symmetric about zero and
+clipped at ±1.49 logits — the 99th percentile of |attribution| over all four
+matrices — and is identical in every heatmap. Each figure carries the
+model's own threshold line and strips for score and actual label.
+
+**D5.4 — TP vs TN: the feature that separates them best is not the most important one overall.**
+Mean exact-SHAP attribution for true positives minus true negatives (at each
+model's own threshold; in-sample, D2.3), with 95% bootstrap intervals:
+
+| Model, sample | TP / TN | Largest TP − TN | Second | Third |
+| --- | --- | --- | --- | --- |
+| XGBoost, pooled | 99 / 746 | education 1.07 [0.97, 1.16] | cellphone 0.59 [0.54, 0.65] | job type 0.48 [0.40, 0.56] |
+| XGBoost, Uganda | 115 / 1,807 | education 1.21 [1.11, 1.31] | cellphone 0.58 [0.55, 0.62] | job type 0.39 [0.33, 0.45] |
+| MLP, pooled | 87 / 791 | education 1.51 [1.34, 1.69] | job type 1.01 [0.84, 1.17] | country 0.52 [0.43, 0.61] |
+| MLP, Uganda | 101 / 1,843 | education 1.82 [1.68, 1.96] | job type 0.69 [0.59, 0.79] | cellphone 0.61 [0.56, 0.66] |
+
+`cellphone_access` has the largest *average* effect (Phase 3), mostly by
+pushing down the many respondents without a phone; `education_level`
+contributes most to the difference between the respondents each model
+confidently places on either side of its threshold.
+
+**D5.5 — Embedding projections: PCA of the trained rows, the unknown row projected but not fitted.**
+For `job_type`, `country` and `education_level` (the three named in the
+brief), each level's 6-dim embedding is projected onto the first two
+principal components of that feature's trained rows. Two components hold
+72%, 90% and 83% of the variance respectively. Points are coloured by the
+level's mean exact-SHAP attribution for the MLP. The never-used "unknown"
+row (D2.7) is marked separately. Distances in this space are not effects:
+what a vector contributes depends on the layers after it, which is why
+colour, not position, carries the attribution.
+
+**D5.6 — Interactions: exact Shapley interaction values, same game as the attributions.**
+`shap`'s TreeExplainer only computes interaction values with the
+tree-path-dependent value function, which would not match anything else
+here. Instead, the Shapley interaction index is computed by brute force over
+all 1,024 coalitions with the same interventional game, background and raw
+features as the Shapley values. Each matrix's rows sum to that respondent's
+Shapley values (verified: max error 2.9e-15 for XGBoost, 9.5e-8 for the MLP).
+Computed on the pooled sample (1,000 rows per model, about 5 minutes each);
+not computed for the Uganda set.
+
+- Share of absolute attribution carried by off-diagonal (pairwise) terms:
+  41.6% (XGBoost), 45.4% (MLP). These are absolute values and can cancel, so
+  this measures how much of the explanation is entangled in pairs, not a net
+  effect.
+- The strongest pair is `country` × `location_type` for both models (mean
+  |interaction| per half 0.091 and 0.198), followed by `country` × `job_type`
+  (0.058, 0.100). Faceted plots of `country`'s attribution by location type
+  show how the country effect shifts between rural and urban respondents.
+- This is direct evidence for Phase 6: pairs are where a one-at-a-time method
+  (ablation) and a coalition-averaging method (Shapley) should part ways.

@@ -329,3 +329,189 @@ def plot_unit_profiles(
         _style(ax, grid_axis="y")
     fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
     _save(fig, path, f"{caption} Grey: units with zero activation on every explained row.")
+
+
+# --- Phase 5: internals ----------------------------------------------------------
+
+DIVERGING = LinearSegmentedColormap.from_list("signed", [NEGATIVE, "#f0efec", POSITIVE])
+SEQUENTIAL = LinearSegmentedColormap.from_list("magnitude", ["#f0efec", "#86b6ef", "#2a78d6", "#104281"])
+
+
+def plot_share_grid(
+    panels: Mapping[str, np.ndarray], feature_names: Sequence[str], order: Sequence[int], path: Path,
+    title: str, caption: str, ncols: int = 5,
+) -> None:
+    """Small multiples: one panel per method, each feature's share of that
+    method's total importance. Same feature order and same x-scale in every
+    panel, so panels can be compared bar for bar."""
+    nrows = int(np.ceil(len(panels) / ncols))
+    fig, axes = plt.subplots(nrows, ncols, figsize=(2.9 * ncols + 1.6, 3.0 * nrows + 0.4), sharex=True, sharey=True)
+    axes = np.atleast_1d(axes).ravel()
+    labels = [feature_names[i] for i in order][::-1]
+    top = max(float(np.max(v)) for v in panels.values())
+    for ax, (panel_title, shares) in zip(axes, panels.items()):
+        ax.barh(labels, np.asarray(shares)[list(order)][::-1], height=0.62, color=MAGNITUDE)
+        ax.set_title(panel_title, loc="left", fontsize=8.5)
+        ax.set_xlim(0, top * 1.08)
+        _style(ax)
+    for ax in axes[len(panels):]:
+        ax.set_visible(False)
+    for ax in axes[-ncols:]:
+        ax.set_xlabel("share of importance")
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, caption)
+
+
+def plot_rank_table(
+    ranks: np.ndarray, shares: np.ndarray, feature_names: Sequence[str], columns: Sequence[str], path: Path,
+    title: str, caption: str,
+) -> None:
+    """Features x methods; each cell is the feature's rank under that method
+    (1 = most important), shaded darker for a higher rank, share in brackets."""
+    n_features, n_columns = ranks.shape
+    fig, ax = plt.subplots(figsize=(1.05 * n_columns + 2.6, 0.42 * n_features + 1.9))
+    ax.imshow(n_features + 1 - ranks, cmap=SEQUENTIAL, vmin=1, vmax=n_features, aspect="auto")
+    for i in range(n_features):
+        for j in range(n_columns):
+            dark = ranks[i, j] <= n_features / 3
+            ax.text(j, i, f"{int(ranks[i, j])}\n({shares[i, j]:.2f})", ha="center", va="center", fontsize=7,
+                    color=SURFACE if dark else INK)
+    ax.set_xticks(range(n_columns), columns, rotation=35, ha="right", fontsize=7.5)
+    ax.set_yticks(range(n_features), feature_names, fontsize=8)
+    ax.tick_params(length=0)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    ax.set_title(title, loc="left")
+    _save(fig, path, caption)
+
+
+def plot_attribution_heatmap(
+    values: np.ndarray, feature_names: Sequence[str], score: np.ndarray, actual: np.ndarray, threshold: float,
+    vmax: float, path: Path, title: str, caption: str,
+) -> None:
+    """Respondents (rows, sorted by score, highest at the top) x features,
+    coloured by signed attribution on a symmetric scale centred at zero.
+    Two strips on the right show each respondent's score and actual label."""
+    order = np.argsort(-score, kind="stable")
+    fig = plt.figure(figsize=(8.6, 6.4))
+    grid = fig.add_gridspec(1, 4, width_ratios=[len(feature_names), 0.7, 0.7, 0.45], wspace=0.08)
+    ax = fig.add_subplot(grid[0])
+    image = ax.imshow(values[order], cmap=DIVERGING, vmin=-vmax, vmax=vmax, aspect="auto", interpolation="nearest")
+    ax.set_xticks(range(len(feature_names)), feature_names, rotation=40, ha="right", fontsize=7.5)
+    ax.set_ylabel(f"respondents, highest score at top (n = {len(values):,})")
+    ax.set_yticks([])
+    cut = int((score >= threshold).sum()) - 0.5
+    ax.axhline(cut, color=INK, linewidth=0.8)
+    ax.set_title(title, loc="left")
+    for k, (column, label) in enumerate([(score[order], "score"), (actual[order].astype(float), "has\naccount")]):
+        strip = fig.add_subplot(grid[k + 1], sharey=ax)
+        strip.imshow(column[:, None], cmap=SEQUENTIAL, vmin=0, vmax=1, aspect="auto", interpolation="nearest")
+        strip.axhline(cut, color=INK, linewidth=0.8)
+        strip.set_xticks([0], [label], fontsize=7.5)
+        strip.tick_params(length=0, labelleft=False)
+        for spine in strip.spines.values():
+            spine.set_visible(False)
+    colorbar = fig.colorbar(image, cax=fig.add_subplot(grid[3]))
+    colorbar.set_label("attribution (logits)", fontsize=7.5)
+    colorbar.outline.set_visible(False)
+    _save(fig, path, f"{caption} Black line: the model's decision threshold ({threshold:.4f}); respondents above it "
+                     f"are predicted \"has an account\". Score strip: light = 0, dark = 1. Account strip: dark = yes. "
+                     f"Attribution colour scale clipped at +/-{vmax:.2f} logits, the same in every heatmap.")
+
+
+def plot_matrix_panels(
+    panels: Mapping[str, np.ndarray], row_names: Sequence[str], column_names: Sequence[str], path: Path,
+    title: str, caption: str, diverging: bool, vmax: float, fmt: str = "{:+.2f}",
+) -> None:
+    """Annotated matrices side by side on ONE shared colour scale."""
+    n_rows, n_columns = len(row_names), len(column_names)
+    fig, axes = plt.subplots(1, len(panels), figsize=(0.62 * n_columns * len(panels) + 2.8, 0.4 * n_rows + 2.2),
+                             sharey=True)
+    cmap, low = (DIVERGING, -vmax) if diverging else (SEQUENTIAL, 0.0)
+    for ax, (panel_title, matrix) in zip(np.atleast_1d(axes), panels.items()):
+        ax.imshow(matrix, cmap=cmap, vmin=low, vmax=vmax, aspect="auto")
+        for i in range(n_rows):
+            for j in range(n_columns):
+                if np.isnan(matrix[i, j]):
+                    continue
+                strong = abs(matrix[i, j]) > 0.6 * vmax
+                ax.text(j, i, fmt.format(matrix[i, j]), ha="center", va="center", fontsize=6.8,
+                        color=SURFACE if strong else INK)
+        ax.set_xticks(range(n_columns), column_names, rotation=40, ha="right", fontsize=7.5)
+        ax.set_yticks(range(n_rows), row_names, fontsize=8)
+        ax.tick_params(length=0)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.set_title(panel_title, loc="left", fontsize=9)
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, caption)
+
+
+def plot_embedding_projection(
+    panels: Mapping[str, Mapping], vmax: float, path: Path, title: str, caption: str
+) -> None:
+    """Each categorical's learned embedding vectors projected to 2-D (PCA),
+    one point per level, coloured by that level's mean attribution. Each
+    panel dict holds `coords [L, 2]`, `labels`, `colour [L]`, `unknown [2]`
+    (the never-seen index, projected but not used to fit the PCA) and
+    `explained` (variance share of the two components)."""
+    # A dedicated colour-bar column: a colour bar stolen from the panels
+    # overlaps them once the figure is laid out.
+    fig = plt.figure(figsize=(4.9 * len(panels) + 0.8, 4.8))
+    grid = fig.add_gridspec(1, len(panels) + 1, width_ratios=[1] * len(panels) + [0.05], wspace=0.32)
+    for k, (feature, panel) in enumerate(panels.items()):
+        ax = fig.add_subplot(grid[k])
+        coords = panel["coords"]
+        points = ax.scatter(coords[:, 0], coords[:, 1], c=panel["colour"], cmap=DIVERGING, vmin=-vmax, vmax=vmax,
+                            s=70, edgecolors=INK_MUTED, linewidths=0.6, zorder=3)
+        for (x, y), label in zip(coords, panel["labels"]):
+            ax.annotate(label, (x, y), xytext=(5, 4), textcoords="offset points", fontsize=7, color=INK_SECONDARY,
+                        annotation_clip=False)
+        ux, uy = panel["unknown"]
+        ax.scatter([ux], [uy], marker="x", color=INK, s=40, zorder=3)
+        ax.annotate("unknown (index 0)", (ux, uy), xytext=(5, -10), textcoords="offset points", fontsize=7,
+                    color=INK_MUTED, annotation_clip=False)
+        ax.set_title(f"{feature}  (2 components: {panel['explained']:.0%} of variance)", loc="left", fontsize=9)
+        ax.set_xlabel("component 1")
+        ax.set_ylabel("component 2")
+        # Room on the right for labels written to the right of their point.
+        x_low, x_high = coords[:, 0].min(), coords[:, 0].max()
+        y_low, y_high = coords[:, 1].min(), coords[:, 1].max()
+        ax.set_xlim(x_low - 0.15 * (x_high - x_low), x_high + 0.6 * (x_high - x_low))
+        ax.set_ylim(y_low - 0.2 * (y_high - y_low), y_high + 0.2 * (y_high - y_low))
+        _style(ax, grid_axis="both")
+    colorbar = fig.colorbar(points, cax=fig.add_subplot(grid[-1]))
+    colorbar.set_label("mean attribution of the level (logits)", fontsize=7.5)
+    colorbar.outline.set_visible(False)
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, caption)
+
+
+def plot_interaction_facets(
+    feature: str, raw_values: np.ndarray, attributions: np.ndarray, partner: str, partner_values: np.ndarray,
+    path: Path, title: str, caption: str, seed: int = 42,
+) -> None:
+    """Attribution of a categorical `feature` by its own level, one panel per
+    level of `partner`. If the two do not interact, every panel looks the
+    same; differences between panels are the interaction."""
+    rng = np.random.default_rng(seed)
+    partner_levels = sorted(set(partner_values))
+    levels = sorted(set(raw_values), key=lambda lv: attributions[raw_values == lv].mean())
+    fig, axes = plt.subplots(1, len(partner_levels), sharex=True, sharey=True,
+                             figsize=(3.0 * len(partner_levels) + 1.8, 0.42 * len(levels) + 2.2))
+    for ax, partner_level in zip(np.atleast_1d(axes), partner_levels):
+        in_panel = partner_values == partner_level
+        for row, level in enumerate(levels):
+            mask = in_panel & (raw_values == level)
+            if not mask.any():
+                continue
+            ax.scatter(attributions[mask], row + rng.uniform(-0.28, 0.28, size=mask.sum()),
+                       c=np.where(attributions[mask] >= 0, POSITIVE, NEGATIVE), s=6, linewidths=0, alpha=0.5)
+            ax.plot([attributions[mask].mean()] * 2, [row - 0.38, row + 0.38], color=INK, linewidth=2)
+        ax.axvline(0, color=AXIS, linewidth=1)
+        ax.set_title(f"{partner} = {partner_level}\n(n = {int(in_panel.sum()):,})", loc="left", fontsize=8.5)
+        ax.set_xlabel(f"attribution of {feature}")
+        _style(ax)
+    np.atleast_1d(axes)[0].set_yticks(range(len(levels)), levels, fontsize=7.5)
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, f"{caption} One dot per respondent; black bar: mean for that level in that panel.")

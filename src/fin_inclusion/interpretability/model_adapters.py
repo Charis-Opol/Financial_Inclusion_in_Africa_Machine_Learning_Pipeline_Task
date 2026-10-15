@@ -272,6 +272,10 @@ class MLPRawModel(RawFeatureModel):
         }
         return cls(model, preprocessing, decision_threshold, metadata)
 
+    def embedding_rows(self, column: str) -> dict[str, int]:
+        """Raw level -> its row in `column`'s embedding table (row 0 is the never-seen bucket)."""
+        return dict(self._index[column])
+
     @property
     def net(self):
         """The underlying `nn.Module` (embeddings + MLP), for gradient-based

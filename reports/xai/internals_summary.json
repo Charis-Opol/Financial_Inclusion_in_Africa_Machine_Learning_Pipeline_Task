@@ -1,0 +1,1433 @@
+{
+ "attention_maps": "Attention maps: not applicable. Neither model has an attention mechanism (XGBoost is a tree ensemble; the PyTorch model is an MLP over category embeddings), so no attention map exists and none is drawn. Substitutes: 2-D projections of the learned category embeddings, and exact Shapley interaction values.",
+ "note": "attributions describe the models, not causes; scores are ranking scores, not calibrated probabilities; every explained row is a training row",
+ "global_importance_all_methods": {
+  "pooled": {
+   "n": 1000,
+   "methods": [
+    "TreeSHAP \u00b7 XGB",
+    "Exact SHAP \u00b7 XGB",
+    "Ablation modal \u00b7 XGB",
+    "Ablation unknown \u00b7 XGB",
+    "Exact SHAP \u00b7 MLP",
+    "GradientSHAP \u00b7 MLP",
+    "IG modal \u00b7 MLP",
+    "IG unknown \u00b7 MLP",
+    "Ablation modal \u00b7 MLP",
+    "Ablation unknown \u00b7 MLP"
+   ],
+   "ranks": {
+    "country": {
+     "TreeSHAP \u00b7 XGB": 3,
+     "Exact SHAP \u00b7 XGB": 3,
+     "Ablation modal \u00b7 XGB": 1,
+     "Ablation unknown \u00b7 XGB": 3,
+     "Exact SHAP \u00b7 MLP": 3,
+     "GradientSHAP \u00b7 MLP": 2,
+     "IG modal \u00b7 MLP": 2,
+     "IG unknown \u00b7 MLP": 4,
+     "Ablation modal \u00b7 MLP": 1,
+     "Ablation unknown \u00b7 MLP": 4
+    },
+    "location_type": {
+     "TreeSHAP \u00b7 XGB": 7,
+     "Exact SHAP \u00b7 XGB": 7,
+     "Ablation modal \u00b7 XGB": 6,
+     "Ablation unknown \u00b7 XGB": 4,
+     "Exact SHAP \u00b7 MLP": 7,
+     "GradientSHAP \u00b7 MLP": 7,
+     "IG modal \u00b7 MLP": 6,
+     "IG unknown \u00b7 MLP": 7,
+     "Ablation modal \u00b7 MLP": 6,
+     "Ablation unknown \u00b7 MLP": 6
+    },
+    "cellphone_access": {
+     "TreeSHAP \u00b7 XGB": 1,
+     "Exact SHAP \u00b7 XGB": 1,
+     "Ablation modal \u00b7 XGB": 3,
+     "Ablation unknown \u00b7 XGB": 1,
+     "Exact SHAP \u00b7 MLP": 1,
+     "GradientSHAP \u00b7 MLP": 1,
+     "IG modal \u00b7 MLP": 3,
+     "IG unknown \u00b7 MLP": 3,
+     "Ablation modal \u00b7 MLP": 3,
+     "Ablation unknown \u00b7 MLP": 2
+    },
+    "gender_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 6,
+     "Exact SHAP \u00b7 XGB": 6,
+     "Ablation modal \u00b7 XGB": 7,
+     "Ablation unknown \u00b7 XGB": 7,
+     "Exact SHAP \u00b7 MLP": 6,
+     "GradientSHAP \u00b7 MLP": 6,
+     "IG modal \u00b7 MLP": 5,
+     "IG unknown \u00b7 MLP": 9,
+     "Ablation modal \u00b7 MLP": 7,
+     "Ablation unknown \u00b7 MLP": 8
+    },
+    "relationship_with_head": {
+     "TreeSHAP \u00b7 XGB": 8,
+     "Exact SHAP \u00b7 XGB": 8,
+     "Ablation modal \u00b7 XGB": 8,
+     "Ablation unknown \u00b7 XGB": 8,
+     "Exact SHAP \u00b7 MLP": 8,
+     "GradientSHAP \u00b7 MLP": 8,
+     "IG modal \u00b7 MLP": 9,
+     "IG unknown \u00b7 MLP": 6,
+     "Ablation modal \u00b7 MLP": 9,
+     "Ablation unknown \u00b7 MLP": 9
+    },
+    "marital_status": {
+     "TreeSHAP \u00b7 XGB": 9,
+     "Exact SHAP \u00b7 XGB": 9,
+     "Ablation modal \u00b7 XGB": 9,
+     "Ablation unknown \u00b7 XGB": 9,
+     "Exact SHAP \u00b7 MLP": 9,
+     "GradientSHAP \u00b7 MLP": 9,
+     "IG modal \u00b7 MLP": 8,
+     "IG unknown \u00b7 MLP": 8,
+     "Ablation modal \u00b7 MLP": 8,
+     "Ablation unknown \u00b7 MLP": 7
+    },
+    "education_level": {
+     "TreeSHAP \u00b7 XGB": 2,
+     "Exact SHAP \u00b7 XGB": 2,
+     "Ablation modal \u00b7 XGB": 2,
+     "Ablation unknown \u00b7 XGB": 2,
+     "Exact SHAP \u00b7 MLP": 2,
+     "GradientSHAP \u00b7 MLP": 3,
+     "IG modal \u00b7 MLP": 4,
+     "IG unknown \u00b7 MLP": 2,
+     "Ablation modal \u00b7 MLP": 4,
+     "Ablation unknown \u00b7 MLP": 3
+    },
+    "job_type": {
+     "TreeSHAP \u00b7 XGB": 5,
+     "Exact SHAP \u00b7 XGB": 5,
+     "Ablation modal \u00b7 XGB": 4,
+     "Ablation unknown \u00b7 XGB": 6,
+     "Exact SHAP \u00b7 MLP": 4,
+     "GradientSHAP \u00b7 MLP": 4,
+     "IG modal \u00b7 MLP": 1,
+     "IG unknown \u00b7 MLP": 1,
+     "Ablation modal \u00b7 MLP": 2,
+     "Ablation unknown \u00b7 MLP": 1
+    },
+    "household_size": {
+     "TreeSHAP \u00b7 XGB": 10,
+     "Exact SHAP \u00b7 XGB": 10,
+     "Ablation modal \u00b7 XGB": 10,
+     "Ablation unknown \u00b7 XGB": 10,
+     "Exact SHAP \u00b7 MLP": 10,
+     "GradientSHAP \u00b7 MLP": 10,
+     "IG modal \u00b7 MLP": 10,
+     "IG unknown \u00b7 MLP": 10,
+     "Ablation modal \u00b7 MLP": 10,
+     "Ablation unknown \u00b7 MLP": 10
+    },
+    "age_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 4,
+     "Exact SHAP \u00b7 XGB": 4,
+     "Ablation modal \u00b7 XGB": 5,
+     "Ablation unknown \u00b7 XGB": 5,
+     "Exact SHAP \u00b7 MLP": 5,
+     "GradientSHAP \u00b7 MLP": 5,
+     "IG modal \u00b7 MLP": 7,
+     "IG unknown \u00b7 MLP": 5,
+     "Ablation modal \u00b7 MLP": 5,
+     "Ablation unknown \u00b7 MLP": 5
+    }
+   },
+   "shares": {
+    "country": {
+     "TreeSHAP \u00b7 XGB": 0.1368232161017602,
+     "Exact SHAP \u00b7 XGB": 0.13630825116764034,
+     "Ablation modal \u00b7 XGB": 0.16976785831256147,
+     "Ablation unknown \u00b7 XGB": 0.1285688702359598,
+     "Exact SHAP \u00b7 MLP": 0.1708053296760152,
+     "GradientSHAP \u00b7 MLP": 0.1723405284815606,
+     "IG modal \u00b7 MLP": 0.18816442626709765,
+     "IG unknown \u00b7 MLP": 0.1317007940502508,
+     "Ablation modal \u00b7 MLP": 0.21457011905401688,
+     "Ablation unknown \u00b7 MLP": 0.14565858893922726
+    },
+    "location_type": {
+     "TreeSHAP \u00b7 XGB": 0.05301605758199349,
+     "Exact SHAP \u00b7 XGB": 0.05367168340745736,
+     "Ablation modal \u00b7 XGB": 0.08583393002346772,
+     "Ablation unknown \u00b7 XGB": 0.1032322493417121,
+     "Exact SHAP \u00b7 MLP": 0.05612552535310074,
+     "GradientSHAP \u00b7 MLP": 0.05795338987695438,
+     "IG modal \u00b7 MLP": 0.06982961469302881,
+     "IG unknown \u00b7 MLP": 0.04948977469577487,
+     "Ablation modal \u00b7 MLP": 0.09102710025647008,
+     "Ablation unknown \u00b7 MLP": 0.0718512448325804
+    },
+    "cellphone_access": {
+     "TreeSHAP \u00b7 XGB": 0.269175896051659,
+     "Exact SHAP \u00b7 XGB": 0.26565757041610233,
+     "Ablation modal \u00b7 XGB": 0.15384448819292426,
+     "Ablation unknown \u00b7 XGB": 0.2236432749548601,
+     "Exact SHAP \u00b7 MLP": 0.21926965480219965,
+     "GradientSHAP \u00b7 MLP": 0.22535827183454557,
+     "IG modal \u00b7 MLP": 0.16033531955528174,
+     "IG unknown \u00b7 MLP": 0.18419451544699358,
+     "Ablation modal \u00b7 MLP": 0.13225328953924115,
+     "Ablation unknown \u00b7 MLP": 0.1750756454522516
+    },
+    "gender_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 0.07279380873878395,
+     "Exact SHAP \u00b7 XGB": 0.07331367592960297,
+     "Ablation modal \u00b7 XGB": 0.06815540439781859,
+     "Ablation unknown \u00b7 XGB": 0.06402128648213894,
+     "Exact SHAP \u00b7 MLP": 0.06848587385940631,
+     "GradientSHAP \u00b7 MLP": 0.06719363706747333,
+     "IG modal \u00b7 MLP": 0.08470718670685931,
+     "IG unknown \u00b7 MLP": 0.03641218847879095,
+     "Ablation modal \u00b7 MLP": 0.060456578971427095,
+     "Ablation unknown \u00b7 MLP": 0.05145866338371956
+    },
+    "relationship_with_head": {
+     "TreeSHAP \u00b7 XGB": 0.03948789692960168,
+     "Exact SHAP \u00b7 XGB": 0.03898355525203009,
+     "Ablation modal \u00b7 XGB": 0.03695049966279251,
+     "Ablation unknown \u00b7 XGB": 0.041188919436548364,
+     "Exact SHAP \u00b7 MLP": 0.041497443425057054,
+     "GradientSHAP \u00b7 MLP": 0.041286688889518815,
+     "IG modal \u00b7 MLP": 0.030604638314852224,
+     "IG unknown \u00b7 MLP": 0.06366375056391571,
+     "Ablation modal \u00b7 MLP": 0.044331639273893844,
+     "Ablation unknown \u00b7 MLP": 0.047050442809829784
+    },
+    "marital_status": {
+     "TreeSHAP \u00b7 XGB": 0.020617497710688715,
+     "Exact SHAP \u00b7 XGB": 0.021494794235207858,
+     "Ablation modal \u00b7 XGB": 0.03240589957621734,
+     "Ablation unknown \u00b7 XGB": 0.025590784068501037,
+     "Exact SHAP \u00b7 MLP": 0.03242345119993937,
+     "GradientSHAP \u00b7 MLP": 0.03728030644014543,
+     "IG modal \u00b7 MLP": 0.04723702325224914,
+     "IG unknown \u00b7 MLP": 0.04335124529752854,
+     "Ablation modal \u00b7 MLP": 0.05622723158646761,
+     "Ablation unknown \u00b7 MLP": 0.060063159759938735
+    },
+    "education_level": {
+     "TreeSHAP \u00b7 XGB": 0.19291756270167945,
+     "Exact SHAP \u00b7 XGB": 0.19333140682795116,
+     "Ablation modal \u00b7 XGB": 0.15609343944451837,
+     "Ablation unknown \u00b7 XGB": 0.20982732834277265,
+     "Exact SHAP \u00b7 MLP": 0.17099019548163877,
+     "GradientSHAP \u00b7 MLP": 0.16342603820707696,
+     "IG modal \u00b7 MLP": 0.14156613014103017,
+     "IG unknown \u00b7 MLP": 0.1922970342391306,
+     "Ablation modal \u00b7 MLP": 0.1242797718020207,
+     "Ablation unknown \u00b7 MLP": 0.16035923231581833
+    },
+    "job_type": {
+     "TreeSHAP \u00b7 XGB": 0.09295373600281127,
+     "Exact SHAP \u00b7 XGB": 0.09360353954946782,
+     "Ablation modal \u00b7 XGB": 0.15147788647556237,
+     "Ablation unknown \u00b7 XGB": 0.083637243331647,
+     "Exact SHAP \u00b7 MLP": 0.1258716551816979,
+     "GradientSHAP \u00b7 MLP": 0.1273929671231977,
+     "IG modal \u00b7 MLP": 0.19277218022036474,
+     "IG unknown \u00b7 MLP": 0.193899570261647,
+     "Ablation modal \u00b7 MLP": 0.15799609751548568,
+     "Ablation unknown \u00b7 MLP": 0.18877839120531575
+    },
+    "household_size": {
+     "TreeSHAP \u00b7 XGB": 0.013705717266354197,
+     "Exact SHAP \u00b7 XGB": 0.013923532745162063,
+     "Ablation modal \u00b7 XGB": 0.027621743483455988,
+     "Ablation unknown \u00b7 XGB": 0.02284049747937577,
+     "Exact SHAP \u00b7 MLP": 0.0150892816146379,
+     "GradientSHAP \u00b7 MLP": 0.0182723620492728,
+     "IG modal \u00b7 MLP": 0.026443905538414216,
+     "IG unknown \u00b7 MLP": 0.023846838695282424,
+     "Ablation modal \u00b7 MLP": 0.0274632833843098,
+     "Ablation unknown \u00b7 MLP": 0.023037680102750754
+    },
+    "age_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 0.10850861091466808,
+     "Exact SHAP \u00b7 XGB": 0.109711990469378,
+     "Ablation modal \u00b7 XGB": 0.11784885043068123,
+     "Ablation unknown \u00b7 XGB": 0.09744954632648417,
+     "Exact SHAP \u00b7 MLP": 0.09944158940630703,
+     "GradientSHAP \u00b7 MLP": 0.08949581003025438,
+     "IG modal \u00b7 MLP": 0.058339575310821894,
+     "IG unknown \u00b7 MLP": 0.08114428827068558,
+     "Ablation modal \u00b7 MLP": 0.09139488861666714,
+     "Ablation unknown \u00b7 MLP": 0.07666695119856767
+    }
+   },
+   "features_ranked_top3_by_every_method": [
+    "cellphone_access"
+   ]
+  },
+  "uganda": {
+   "n": 2101,
+   "methods": [
+    "TreeSHAP \u00b7 XGB",
+    "Exact SHAP \u00b7 XGB",
+    "Ablation modal \u00b7 XGB",
+    "Ablation unknown \u00b7 XGB",
+    "Exact SHAP \u00b7 MLP",
+    "GradientSHAP \u00b7 MLP",
+    "IG modal \u00b7 MLP",
+    "IG unknown \u00b7 MLP",
+    "Ablation modal \u00b7 MLP",
+    "Ablation unknown \u00b7 MLP"
+   ],
+   "ranks": {
+    "country": {
+     "TreeSHAP \u00b7 XGB": 3,
+     "Exact SHAP \u00b7 XGB": 3,
+     "Ablation modal \u00b7 XGB": 1,
+     "Ablation unknown \u00b7 XGB": 3,
+     "Exact SHAP \u00b7 MLP": 1,
+     "GradientSHAP \u00b7 MLP": 1,
+     "IG modal \u00b7 MLP": 1,
+     "IG unknown \u00b7 MLP": 1,
+     "Ablation modal \u00b7 MLP": 1,
+     "Ablation unknown \u00b7 MLP": 1
+    },
+    "location_type": {
+     "TreeSHAP \u00b7 XGB": 6,
+     "Exact SHAP \u00b7 XGB": 6,
+     "Ablation modal \u00b7 XGB": 5,
+     "Ablation unknown \u00b7 XGB": 4,
+     "Exact SHAP \u00b7 MLP": 6,
+     "GradientSHAP \u00b7 MLP": 6,
+     "IG modal \u00b7 MLP": 4,
+     "IG unknown \u00b7 MLP": 6,
+     "Ablation modal \u00b7 MLP": 5,
+     "Ablation unknown \u00b7 MLP": 6
+    },
+    "cellphone_access": {
+     "TreeSHAP \u00b7 XGB": 1,
+     "Exact SHAP \u00b7 XGB": 1,
+     "Ablation modal \u00b7 XGB": 3,
+     "Ablation unknown \u00b7 XGB": 2,
+     "Exact SHAP \u00b7 MLP": 2,
+     "GradientSHAP \u00b7 MLP": 2,
+     "IG modal \u00b7 MLP": 2,
+     "IG unknown \u00b7 MLP": 3,
+     "Ablation modal \u00b7 MLP": 3,
+     "Ablation unknown \u00b7 MLP": 3
+    },
+    "gender_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 7,
+     "Exact SHAP \u00b7 XGB": 7,
+     "Ablation modal \u00b7 XGB": 7,
+     "Ablation unknown \u00b7 XGB": 6,
+     "Exact SHAP \u00b7 MLP": 7,
+     "GradientSHAP \u00b7 MLP": 7,
+     "IG modal \u00b7 MLP": 7,
+     "IG unknown \u00b7 MLP": 10,
+     "Ablation modal \u00b7 MLP": 9,
+     "Ablation unknown \u00b7 MLP": 9
+    },
+    "relationship_with_head": {
+     "TreeSHAP \u00b7 XGB": 8,
+     "Exact SHAP \u00b7 XGB": 8,
+     "Ablation modal \u00b7 XGB": 8,
+     "Ablation unknown \u00b7 XGB": 8,
+     "Exact SHAP \u00b7 MLP": 8,
+     "GradientSHAP \u00b7 MLP": 8,
+     "IG modal \u00b7 MLP": 9,
+     "IG unknown \u00b7 MLP": 7,
+     "Ablation modal \u00b7 MLP": 7,
+     "Ablation unknown \u00b7 MLP": 7
+    },
+    "marital_status": {
+     "TreeSHAP \u00b7 XGB": 10,
+     "Exact SHAP \u00b7 XGB": 10,
+     "Ablation modal \u00b7 XGB": 10,
+     "Ablation unknown \u00b7 XGB": 10,
+     "Exact SHAP \u00b7 MLP": 9,
+     "GradientSHAP \u00b7 MLP": 10,
+     "IG modal \u00b7 MLP": 10,
+     "IG unknown \u00b7 MLP": 8,
+     "Ablation modal \u00b7 MLP": 10,
+     "Ablation unknown \u00b7 MLP": 8
+    },
+    "education_level": {
+     "TreeSHAP \u00b7 XGB": 2,
+     "Exact SHAP \u00b7 XGB": 2,
+     "Ablation modal \u00b7 XGB": 2,
+     "Ablation unknown \u00b7 XGB": 1,
+     "Exact SHAP \u00b7 MLP": 3,
+     "GradientSHAP \u00b7 MLP": 3,
+     "IG modal \u00b7 MLP": 3,
+     "IG unknown \u00b7 MLP": 2,
+     "Ablation modal \u00b7 MLP": 2,
+     "Ablation unknown \u00b7 MLP": 2
+    },
+    "job_type": {
+     "TreeSHAP \u00b7 XGB": 5,
+     "Exact SHAP \u00b7 XGB": 5,
+     "Ablation modal \u00b7 XGB": 6,
+     "Ablation unknown \u00b7 XGB": 7,
+     "Exact SHAP \u00b7 MLP": 4,
+     "GradientSHAP \u00b7 MLP": 4,
+     "IG modal \u00b7 MLP": 5,
+     "IG unknown \u00b7 MLP": 4,
+     "Ablation modal \u00b7 MLP": 6,
+     "Ablation unknown \u00b7 MLP": 4
+    },
+    "household_size": {
+     "TreeSHAP \u00b7 XGB": 9,
+     "Exact SHAP \u00b7 XGB": 9,
+     "Ablation modal \u00b7 XGB": 9,
+     "Ablation unknown \u00b7 XGB": 9,
+     "Exact SHAP \u00b7 MLP": 10,
+     "GradientSHAP \u00b7 MLP": 9,
+     "IG modal \u00b7 MLP": 8,
+     "IG unknown \u00b7 MLP": 9,
+     "Ablation modal \u00b7 MLP": 8,
+     "Ablation unknown \u00b7 MLP": 10
+    },
+    "age_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 4,
+     "Exact SHAP \u00b7 XGB": 4,
+     "Ablation modal \u00b7 XGB": 4,
+     "Ablation unknown \u00b7 XGB": 5,
+     "Exact SHAP \u00b7 MLP": 5,
+     "GradientSHAP \u00b7 MLP": 5,
+     "IG modal \u00b7 MLP": 6,
+     "IG unknown \u00b7 MLP": 5,
+     "Ablation modal \u00b7 MLP": 4,
+     "Ablation unknown \u00b7 MLP": 5
+    }
+   },
+   "shares": {
+    "country": {
+     "TreeSHAP \u00b7 XGB": 0.18733817403496505,
+     "Exact SHAP \u00b7 XGB": 0.19037441773731173,
+     "Ablation modal \u00b7 XGB": 0.2945727876547447,
+     "Ablation unknown \u00b7 XGB": 0.16115896204805552,
+     "Exact SHAP \u00b7 MLP": 0.21502195623947826,
+     "GradientSHAP \u00b7 MLP": 0.21677144092968328,
+     "IG modal \u00b7 MLP": 0.39492106753751455,
+     "IG unknown \u00b7 MLP": 0.2455694110869368,
+     "Ablation modal \u00b7 MLP": 0.3424820744375067,
+     "Ablation unknown \u00b7 MLP": 0.1921436602169854
+    },
+    "location_type": {
+     "TreeSHAP \u00b7 XGB": 0.06365834567890069,
+     "Exact SHAP \u00b7 XGB": 0.06430714375197769,
+     "Ablation modal \u00b7 XGB": 0.07022092167757754,
+     "Ablation unknown \u00b7 XGB": 0.12025144188229034,
+     "Exact SHAP \u00b7 MLP": 0.06688317153795018,
+     "GradientSHAP \u00b7 MLP": 0.06781204462640135,
+     "IG modal \u00b7 MLP": 0.08714981016568431,
+     "IG unknown \u00b7 MLP": 0.059938782090211896,
+     "Ablation modal \u00b7 MLP": 0.07233061944426075,
+     "Ablation unknown \u00b7 MLP": 0.08577291313977471
+    },
+    "cellphone_access": {
+     "TreeSHAP \u00b7 XGB": 0.25280779279864407,
+     "Exact SHAP \u00b7 XGB": 0.24672262519599486,
+     "Ablation modal \u00b7 XGB": 0.1403615609834822,
+     "Ablation unknown \u00b7 XGB": 0.19246919857448255,
+     "Exact SHAP \u00b7 MLP": 0.2015112183276707,
+     "GradientSHAP \u00b7 MLP": 0.20995963432562106,
+     "IG modal \u00b7 MLP": 0.15258953942333214,
+     "IG unknown \u00b7 MLP": 0.18367952810178803,
+     "Ablation modal \u00b7 MLP": 0.1338638142716491,
+     "Ablation unknown \u00b7 MLP": 0.17925795826809882
+    },
+    "gender_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 0.060250723787939046,
+     "Exact SHAP \u00b7 XGB": 0.059641774503391566,
+     "Ablation modal \u00b7 XGB": 0.039647407699193955,
+     "Ablation unknown \u00b7 XGB": 0.05212724108898415,
+     "Exact SHAP \u00b7 MLP": 0.0485271289672648,
+     "GradientSHAP \u00b7 MLP": 0.04630295280675787,
+     "IG modal \u00b7 MLP": 0.0457694510752011,
+     "IG unknown \u00b7 MLP": 0.024507138993648644,
+     "Ablation modal \u00b7 MLP": 0.03146769343814926,
+     "Ablation unknown \u00b7 MLP": 0.0361674044044782
+    },
+    "relationship_with_head": {
+     "TreeSHAP \u00b7 XGB": 0.034522712615426075,
+     "Exact SHAP \u00b7 XGB": 0.033905905652403125,
+     "Ablation modal \u00b7 XGB": 0.03804692970989078,
+     "Ablation unknown \u00b7 XGB": 0.03667212281557178,
+     "Exact SHAP \u00b7 MLP": 0.04117455112670337,
+     "GradientSHAP \u00b7 MLP": 0.04092141961176832,
+     "IG modal \u00b7 MLP": 0.019345130274836808,
+     "IG unknown \u00b7 MLP": 0.05965413572352134,
+     "Ablation modal \u00b7 MLP": 0.046520633401561866,
+     "Ablation unknown \u00b7 MLP": 0.045242406469832644
+    },
+    "marital_status": {
+     "TreeSHAP \u00b7 XGB": 0.01122088033955087,
+     "Exact SHAP \u00b7 XGB": 0.011528172741326802,
+     "Ablation modal \u00b7 XGB": 0.011923166345425283,
+     "Ablation unknown \u00b7 XGB": 0.01857630381366864,
+     "Exact SHAP \u00b7 MLP": 0.020441524376540933,
+     "GradientSHAP \u00b7 MLP": 0.02392263673436192,
+     "IG modal \u00b7 MLP": 0.016518412010008098,
+     "IG unknown \u00b7 MLP": 0.03300913390861815,
+     "Ablation modal \u00b7 MLP": 0.024695766447306183,
+     "Ablation unknown \u00b7 MLP": 0.044072985163911345
+    },
+    "education_level": {
+     "TreeSHAP \u00b7 XGB": 0.1934094962875458,
+     "Exact SHAP \u00b7 XGB": 0.195882896034494,
+     "Ablation modal \u00b7 XGB": 0.19558496366741943,
+     "Ablation unknown \u00b7 XGB": 0.23126659731598415,
+     "Exact SHAP \u00b7 MLP": 0.16267096841924317,
+     "GradientSHAP \u00b7 MLP": 0.16024730353621836,
+     "IG modal \u00b7 MLP": 0.12955899519284436,
+     "IG unknown \u00b7 MLP": 0.18875362930665,
+     "Ablation modal \u00b7 MLP": 0.14314356410078952,
+     "Ablation unknown \u00b7 MLP": 0.1881692285505184
+    },
+    "job_type": {
+     "TreeSHAP \u00b7 XGB": 0.07407685465808589,
+     "Exact SHAP \u00b7 XGB": 0.07390858841926021,
+     "Ablation modal \u00b7 XGB": 0.051614725770407266,
+     "Ablation unknown \u00b7 XGB": 0.051569498234120076,
+     "Exact SHAP \u00b7 MLP": 0.1289841672000206,
+     "GradientSHAP \u00b7 MLP": 0.12558281093946977,
+     "IG modal \u00b7 MLP": 0.06645004873284702,
+     "IG unknown \u00b7 MLP": 0.08847235032827798,
+     "Ablation modal \u00b7 MLP": 0.06732636331319863,
+     "Ablation unknown \u00b7 MLP": 0.10479429383986476
+    },
+    "household_size": {
+     "TreeSHAP \u00b7 XGB": 0.014949683823332869,
+     "Exact SHAP \u00b7 XGB": 0.015295689458306951,
+     "Ablation modal \u00b7 XGB": 0.03345011079541696,
+     "Ablation unknown \u00b7 XGB": 0.028768143665745864,
+     "Exact SHAP \u00b7 MLP": 0.02036474247129322,
+     "GradientSHAP \u00b7 MLP": 0.02443965729543988,
+     "IG modal \u00b7 MLP": 0.03129075123161455,
+     "IG unknown \u00b7 MLP": 0.0325791418751235,
+     "Ablation modal \u00b7 MLP": 0.0326750556558965,
+     "Ablation unknown \u00b7 MLP": 0.02941384672923982
+    },
+    "age_of_respondent": {
+     "TreeSHAP \u00b7 XGB": 0.1077653359756097,
+     "Exact SHAP \u00b7 XGB": 0.1084327865055332,
+     "Ablation modal \u00b7 XGB": 0.12457742569644188,
+     "Ablation unknown \u00b7 XGB": 0.10714049056109702,
+     "Exact SHAP \u00b7 MLP": 0.09442057133383479,
+     "GradientSHAP \u00b7 MLP": 0.08404009919427817,
+     "IG modal \u00b7 MLP": 0.056406794356117014,
+     "IG unknown \u00b7 MLP": 0.08383674858522375,
+     "Ablation modal \u00b7 MLP": 0.10549441548968146,
+     "Ablation unknown \u00b7 MLP": 0.09496530321729597
+    }
+   },
+   "features_ranked_top3_by_every_method": [
+    "country",
+    "cellphone_access",
+    "education_level"
+   ]
+  },
+  "consensus_order": [
+   "cellphone_access",
+   "country",
+   "education_level",
+   "job_type",
+   "age_of_respondent",
+   "location_type",
+   "gender_of_respondent",
+   "relationship_with_head",
+   "marital_status",
+   "household_size"
+  ]
+ },
+ "heatmaps": {
+  "colour_scale_max_abs_logits": 1.4882995917426152,
+  "clip_percentile": 99,
+  "attribution": {
+   "xgboost": "kernel_shap__xgboost",
+   "mlp": "kernel_shap__mlp"
+  }
+ },
+ "tp_vs_tn": {
+  "xgboost": {
+   "pooled": {
+    "n_tp": 99,
+    "n_tn": 746,
+    "threshold": 0.45514804124832153,
+    "features": {
+     "country": {
+      "mean_tp": 0.28974409970837284,
+      "mean_tn": -0.098772850731787,
+      "difference": 0.3885169504401598,
+      "difference_ci": [
+       0.32805322509844576,
+       0.44748437004911834
+      ]
+     },
+     "location_type": {
+      "mean_tp": 0.14642855584250944,
+      "mean_tn": -0.0253297035063088,
+      "difference": 0.17175825934881825,
+      "difference_ci": [
+       0.14243242955345728,
+       0.20603023712788823
+      ]
+     },
+     "cellphone_access": {
+      "mean_tp": 0.48769293819543563,
+      "mean_tn": -0.10564045514390293,
+      "difference": 0.5933333933393385,
+      "difference_ci": [
+       0.5399792267941094,
+       0.6468046234028311
+      ]
+     },
+     "gender_of_respondent": {
+      "mean_tp": 0.05741151851466524,
+      "mean_tn": -0.006440672995937497,
+      "difference": 0.06385219151060274,
+      "difference_ci": [
+       0.033610432596774605,
+       0.09252518562478919
+      ]
+     },
+     "relationship_with_head": {
+      "mean_tp": 0.05414773587701854,
+      "mean_tn": -0.011100926610576524,
+      "difference": 0.06524866248759506,
+      "difference_ci": [
+       0.04652680067692708,
+       0.082991303171157
+      ]
+     },
+     "marital_status": {
+      "mean_tp": 0.031501342227256444,
+      "mean_tn": -0.007421706759239184,
+      "difference": 0.03892304898649563,
+      "difference_ci": [
+       0.02458448798877165,
+       0.051958213591839233
+      ]
+     },
+     "education_level": {
+      "mean_tp": 0.8903280071196663,
+      "mean_tn": -0.17926712475513956,
+      "difference": 1.0695951318748058,
+      "difference_ci": [
+       0.965270789746904,
+       1.1606667864684275
+      ]
+     },
+     "job_type": {
+      "mean_tp": 0.42632200077141974,
+      "mean_tn": -0.05031760113164899,
+      "difference": 0.47663960190306875,
+      "difference_ci": [
+       0.3978729915719789,
+       0.55731243344692
+      ]
+     },
+     "household_size": {
+      "mean_tp": 0.024441821307770124,
+      "mean_tn": -0.0027054866240331715,
+      "difference": 0.027147307931803297,
+      "difference_ci": [
+       0.0197976217070378,
+       0.03416194991036901
+      ]
+     },
+     "age_of_respondent": {
+      "mean_tp": 0.12471277720605474,
+      "mean_tn": -0.03381641734985653,
+      "difference": 0.15852919455591127,
+      "difference_ci": [
+       0.12058990976273164,
+       0.19824303699013596
+      ]
+     }
+    }
+   },
+   "uganda": {
+    "n_tp": 115,
+    "n_tn": 1807,
+    "threshold": 0.45514804124832153,
+    "features": {
+     "country": {
+      "mean_tp": -0.21096407050288424,
+      "mean_tn": -0.42527509272705877,
+      "difference": 0.21431102222417453,
+      "difference_ci": [
+       0.1902920952038862,
+       0.23700293544220666
+      ]
+     },
+     "location_type": {
+      "mean_tp": 0.23412124478445998,
+      "mean_tn": 0.00035732713205795724,
+      "difference": 0.233763917652402,
+      "difference_ci": [
+       0.20311627783959724,
+       0.26405638145012766
+      ]
+     },
+     "cellphone_access": {
+      "mean_tp": 0.46640702547341034,
+      "mean_tn": -0.11776103928923574,
+      "difference": 0.584168064762646,
+      "difference_ci": [
+       0.5525655700853712,
+       0.6168260588614217
+      ]
+     },
+     "gender_of_respondent": {
+      "mean_tp": 0.03910889708911511,
+      "mean_tn": -0.022565796952112045,
+      "difference": 0.06167469404122715,
+      "difference_ci": [
+       0.03410708246395325,
+       0.09078826035430801
+      ]
+     },
+     "relationship_with_head": {
+      "mean_tp": 0.0355635389063413,
+      "mean_tn": -0.013752825944097262,
+      "difference": 0.04931636485043856,
+      "difference_ci": [
+       0.0302537433966039,
+       0.06618059788119965
+      ]
+     },
+     "marital_status": {
+      "mean_tp": 0.012825202618101062,
+      "mean_tn": 0.0036068283871329215,
+      "difference": 0.009218374230968142,
+      "difference_ci": [
+       0.002752467279546403,
+       0.015368363806940337
+      ]
+     },
+     "education_level": {
+      "mean_tp": 1.1160350979394924,
+      "mean_tn": -0.0936732626763126,
+      "difference": 1.209708360615805,
+      "difference_ci": [
+       1.1053815115277044,
+       1.3078543459423926
+      ]
+     },
+     "job_type": {
+      "mean_tp": 0.48656595619111337,
+      "mean_tn": 0.09960350792465204,
+      "difference": 0.3869624482664613,
+      "difference_ci": [
+       0.3269537796477087,
+       0.4525313233843619
+      ]
+     },
+     "household_size": {
+      "mean_tp": 0.016214762314014766,
+      "mean_tn": 0.0209353833810184,
+      "difference": -0.004720621067003633,
+      "difference_ci": [
+       -0.01012123014036257,
+       0.0006521663904970596
+      ]
+     },
+     "age_of_respondent": {
+      "mean_tp": 0.08497097469963966,
+      "mean_tn": -0.061575182699491915,
+      "difference": 0.14654615739913157,
+      "difference_ci": [
+       0.10968357724486505,
+       0.1797996467765835
+      ]
+     }
+    }
+   }
+  },
+  "mlp": {
+   "pooled": {
+    "n_tp": 87,
+    "n_tn": 791,
+    "threshold": 0.6823532581329346,
+    "features": {
+     "country": {
+      "mean_tp": 0.4079302673340508,
+      "mean_tn": -0.11608219535404277,
+      "difference": 0.5240124626880935,
+      "difference_ci": [
+       0.43253785060612415,
+       0.6099431891081523
+      ]
+     },
+     "location_type": {
+      "mean_tp": 0.24735240490830257,
+      "mean_tn": -0.046105933202023594,
+      "difference": 0.2934583381103262,
+      "difference_ci": [
+       0.24315250175415423,
+       0.3453732265098726
+      ]
+     },
+     "cellphone_access": {
+      "mean_tp": 0.45883473724650464,
+      "mean_tn": -0.054466318579685834,
+      "difference": 0.5133010558261905,
+      "difference_ci": [
+       0.4450928492813631,
+       0.5881334736403576
+      ]
+     },
+     "gender_of_respondent": {
+      "mean_tp": 0.10028399751401117,
+      "mean_tn": 0.0009744068514908023,
+      "difference": 0.09930959066252036,
+      "difference_ci": [
+       0.05411157556494223,
+       0.1452777751127844
+      ]
+     },
+     "relationship_with_head": {
+      "mean_tp": 0.10367732300974236,
+      "mean_tn": -0.032189457849165964,
+      "difference": 0.13586678085890833,
+      "difference_ci": [
+       0.10067245054689357,
+       0.16915501702887248
+      ]
+     },
+     "marital_status": {
+      "mean_tp": 0.04902182026749254,
+      "mean_tn": -0.005552208395327192,
+      "difference": 0.05457402866281973,
+      "difference_ci": [
+       0.03335849317214872,
+       0.07592025891146802
+      ]
+     },
+     "education_level": {
+      "mean_tp": 1.320641208801985,
+      "mean_tn": -0.1920471291342227,
+      "difference": 1.5126883379362077,
+      "difference_ci": [
+       1.3436770417173476,
+       1.6902505601270141
+      ]
+     },
+     "job_type": {
+      "mean_tp": 0.9251368287714088,
+      "mean_tn": -0.08448946279784263,
+      "difference": 1.0096262915692513,
+      "difference_ci": [
+       0.8419659208269764,
+       1.167017377290942
+      ]
+     },
+     "household_size": {
+      "mean_tp": 0.026841849587443425,
+      "mean_tn": -0.004252337470315239,
+      "difference": 0.031094187057758665,
+      "difference_ci": [
+       0.021480275536470538,
+       0.040745869052078935
+      ]
+     },
+     "age_of_respondent": {
+      "mean_tp": 0.061545790502945466,
+      "mean_tn": 0.00796339332475003,
+      "difference": 0.053582397178195434,
+      "difference_ci": [
+       -0.00835589549073272,
+       0.11396355548110337
+      ]
+     }
+    }
+   },
+   "uganda": {
+    "n_tp": 101,
+    "n_tn": 1843,
+    "threshold": 0.6823532581329346,
+    "features": {
+     "country": {
+      "mean_tp": -0.5551742694578294,
+      "mean_tn": -0.8678708708295912,
+      "difference": 0.3126966013717618,
+      "difference_ci": [
+       0.2862861324059445,
+       0.3394516595350872
+      ]
+     },
+     "location_type": {
+      "mean_tp": 0.44043590620807394,
+      "mean_tn": 0.0024477653015719295,
+      "difference": 0.437988140906502,
+      "difference_ci": [
+       0.38104200021218204,
+       0.48896435289952106
+      ]
+     },
+     "cellphone_access": {
+      "mean_tp": 0.4922371870569101,
+      "mean_tn": -0.116826669206348,
+      "difference": 0.6090638562632581,
+      "difference_ci": [
+       0.5567874475949783,
+       0.657175697107812
+      ]
+     },
+     "gender_of_respondent": {
+      "mean_tp": 0.05274190205699587,
+      "mean_tn": -0.024345117950871402,
+      "difference": 0.07708702000786727,
+      "difference_ci": [
+       0.04106407835964447,
+       0.11547679682874185
+      ]
+     },
+     "relationship_with_head": {
+      "mean_tp": 0.0721021910396862,
+      "mean_tn": -0.06092913044685309,
+      "difference": 0.1330313214865393,
+      "difference_ci": [
+       0.087591000007637,
+       0.18086991922323525
+      ]
+     },
+     "marital_status": {
+      "mean_tp": 0.012239415947420337,
+      "mean_tn": -0.030401371057759807,
+      "difference": 0.04264078700518015,
+      "difference_ci": [
+       0.024274970659214943,
+       0.05808369505105612
+      ]
+     },
+     "education_level": {
+      "mean_tp": 1.7437053452495366,
+      "mean_tn": -0.0809083880946115,
+      "difference": 1.8246137333441481,
+      "difference_ci": [
+       1.6834474135814053,
+       1.9635035423098268
+      ]
+     },
+     "job_type": {
+      "mean_tp": 0.9869475669919472,
+      "mean_tn": 0.29600835594480956,
+      "difference": 0.6909392110471376,
+      "difference_ci": [
+       0.5936797993675772,
+       0.7907977644241312
+      ]
+     },
+     "household_size": {
+      "mean_tp": 0.0395862880024087,
+      "mean_tn": 0.04820104275146079,
+      "difference": -0.008614754749052086,
+      "difference_ci": [
+       -0.026371029151400417,
+       0.013128024292376117
+      ]
+     },
+     "age_of_respondent": {
+      "mean_tp": 0.0035284728141345635,
+      "mean_tn": -0.06997876201498247,
+      "difference": 0.07350723482911704,
+      "difference_ci": [
+       0.012804943986220436,
+       0.13064351624626627
+      ]
+     }
+    }
+   }
+  }
+ },
+ "embedding_projections": {
+  "job_type": {
+   "variance_explained_by_2_components": 0.7234539707915534,
+   "levels": {
+    "Farming and Fishing": {
+     "pc1": -2.428053765519585,
+     "pc2": 0.12979293983322418,
+     "mean_attribution_pooled": -0.012662431959630018,
+     "n_pooled": 236
+    },
+    "Formally employed Government": {
+     "pc1": 1.4551864854976455,
+     "pc2": 1.138504308929918,
+     "mean_attribution_pooled": 1.9060682886079603,
+     "n_pooled": 18
+    },
+    "Formally employed Private": {
+     "pc1": -0.3658027402453222,
+     "pc2": -0.35621096210094627,
+     "mean_attribution_pooled": 1.3742373887677277,
+     "n_pooled": 53
+    },
+    "Government Dependent": {
+     "pc1": -0.6799826360241025,
+     "pc2": -1.6611328866164772,
+     "mean_attribution_pooled": 1.0937383952169901,
+     "n_pooled": 10
+    },
+    "Informally employed": {
+     "pc1": 2.0536958661832747,
+     "pc2": -0.9234605502093965,
+     "mean_attribution_pooled": -0.5389662256887229,
+     "n_pooled": 221
+    },
+    "No Income": {
+     "pc1": 1.8615964516852919,
+     "pc2": 0.059348499316399954,
+     "mean_attribution_pooled": -0.7399111372136147,
+     "n_pooled": 28
+    },
+    "Other Income": {
+     "pc1": -2.2332640495153737,
+     "pc2": -0.7222334849641658,
+     "mean_attribution_pooled": 0.6577161781525901,
+     "n_pooled": 48
+    },
+    "Remittance Dependent": {
+     "pc1": 0.6136594569649005,
+     "pc2": 1.8211076216897457,
+     "mean_attribution_pooled": -0.4568413920964228,
+     "n_pooled": 98
+    },
+    "Self employed": {
+     "pc1": 0.6891926581758647,
+     "pc2": -1.8418126387953493,
+     "mean_attribution_pooled": 0.3149102016967356,
+     "n_pooled": 280
+    },
+    "Dont Know/Refuse to answer": {
+     "pc1": -0.9662277272025952,
+     "pc2": 2.3560971529170476,
+     "mean_attribution_pooled": -0.009421519414661482,
+     "n_pooled": 8
+    }
+   },
+   "unknown_index_projection": [
+    0.4698059032555191,
+    0.18213262397379357
+   ]
+  },
+  "country": {
+   "variance_explained_by_2_components": 0.9008121494795459,
+   "levels": {
+    "Kenya": {
+     "pc1": 2.7077087962482422,
+     "pc2": 0.6109195318218069,
+     "mean_attribution_pooled": 0.6695771933305285,
+     "n_pooled": 258
+    },
+    "Rwanda": {
+     "pc1": 0.9916645235314357,
+     "pc2": -1.3902880963481266,
+     "mean_attribution_pooled": 0.30298363099433184,
+     "n_pooled": 372
+    },
+    "Tanzania": {
+     "pc1": -1.4198706866403006,
+     "pc2": 1.7461890448113329,
+     "mean_attribution_pooled": -0.8250765193671387,
+     "n_pooled": 281
+    },
+    "Uganda": {
+     "pc1": -2.2795026331393777,
+     "pc2": -0.9668204802850134,
+     "mean_attribution_pooled": -0.8740252775880708,
+     "n_pooled": 89
+    }
+   },
+   "unknown_index_projection": [
+    0.035669584960178274,
+    1.1410874029837286
+   ]
+  },
+  "education_level": {
+   "variance_explained_by_2_components": 0.8278123859040781,
+   "levels": {
+    "No formal education": {
+     "pc1": -1.6656248156164903,
+     "pc2": -1.8841968741517008,
+     "mean_attribution_pooled": -1.0146986518990444,
+     "n_pooled": 184
+    },
+    "Primary education": {
+     "pc1": 3.6967690601350354,
+     "pc2": -0.5091015539993602,
+     "mean_attribution_pooled": -0.17794648711538374,
+     "n_pooled": 544
+    },
+    "Secondary education": {
+     "pc1": -1.0480443962609913,
+     "pc2": 1.174833666588227,
+     "mean_attribution_pooled": 0.7880882744619727,
+     "n_pooled": 188
+    },
+    "Tertiary education": {
+     "pc1": -0.9047726610020965,
+     "pc2": -0.7363827115597971,
+     "mean_attribution_pooled": 2.1188609966951493,
+     "n_pooled": 49
+    },
+    "Vocational/Specialised training": {
+     "pc1": -0.9734689351311285,
+     "pc2": 1.306414925576232,
+     "mean_attribution_pooled": 1.8401179690308596,
+     "n_pooled": 31
+    },
+    "Other/Dont know/RTA": {
+     "pc1": 0.8951417478756717,
+     "pc2": 0.6484325475463988,
+     "mean_attribution_pooled": 1.0042132176748948,
+     "n_pooled": 4
+    }
+   },
+   "unknown_index_projection": [
+    -0.03910487478585892,
+    -0.19905478482506822
+   ]
+  }
+ },
+ "interactions": {
+  "xgboost": {
+   "n": 1000,
+   "rows_sum_to_shapley_values_max_abs_error": 2.903927098785175e-15,
+   "share_of_abs_attribution_in_interactions": 0.41618963869330283,
+   "top_pairs_mean_abs": [
+    {
+     "pair": [
+      "country",
+      "location_type"
+     ],
+     "mean_abs_each_half": 0.09067700646856737
+    },
+    {
+     "pair": [
+      "country",
+      "job_type"
+     ],
+     "mean_abs_each_half": 0.05808692921435589
+    },
+    {
+     "pair": [
+      "cellphone_access",
+      "education_level"
+     ],
+     "mean_abs_each_half": 0.04970469064746035
+    },
+    {
+     "pair": [
+      "cellphone_access",
+      "age_of_respondent"
+     ],
+     "mean_abs_each_half": 0.04212249897628388
+    },
+    {
+     "pair": [
+      "education_level",
+      "age_of_respondent"
+     ],
+     "mean_abs_each_half": 0.028451202779925758
+    }
+   ],
+   "mean_abs_matrix": {
+    "country": {
+     "country": 0.25840833906313954,
+     "location_type": 0.09067700646856737,
+     "cellphone_access": 0.026561964726637417,
+     "gender_of_respondent": 0.012614174220324244,
+     "relationship_with_head": 0.009384651817036235,
+     "marital_status": 0.012921347558146007,
+     "education_level": 0.027768251945448384,
+     "job_type": 0.05808692921435589,
+     "household_size": 0.02078076490511722,
+     "age_of_respondent": 0.02333490053555277
+    },
+    "location_type": {
+     "country": 0.09067700646856737,
+     "location_type": 0.10411605092051314,
+     "cellphone_access": 0.008906884750970583,
+     "gender_of_respondent": 0.004210888577099257,
+     "relationship_with_head": 0.004661905745236263,
+     "marital_status": 0.00933957032218641,
+     "education_level": 0.02283451656613679,
+     "job_type": 0.014845414093848161,
+     "household_size": 0.006113780915099806,
+     "age_of_respondent": 0.012175638719482875
+    },
+    "cellphone_access": {
+     "country": 0.026561964726637417,
+     "location_type": 0.008906884750970583,
+     "cellphone_access": 0.5482465758497957,
+     "gender_of_respondent": 0.007173799403807142,
+     "relationship_with_head": 0.010175175373144598,
+     "marital_status": 0.012728661453007807,
+     "education_level": 0.04970469064746035,
+     "job_type": 0.025749264860477454,
+     "household_size": 0.010125039983549387,
+     "age_of_respondent": 0.04212249897628388
+    },
+    "gender_of_respondent": {
+     "country": 0.012614174220324244,
+     "location_type": 0.004210888577099257,
+     "cellphone_access": 0.007173799403807142,
+     "gender_of_respondent": 0.1527769502411534,
+     "relationship_with_head": 0.010189494114996,
+     "marital_status": 0.0062877767067670625,
+     "education_level": 0.011189611996254612,
+     "job_type": 0.014246908708942699,
+     "household_size": 0.003629753105033422,
+     "age_of_respondent": 0.01255344791049595
+    },
+    "relationship_with_head": {
+     "country": 0.009384651817036235,
+     "location_type": 0.004661905745236263,
+     "cellphone_access": 0.010175175373144598,
+     "gender_of_respondent": 0.010189494114996,
+     "relationship_with_head": 0.08040918259147954,
+     "marital_status": 0.009497030004120185,
+     "education_level": 0.009167408730574984,
+     "job_type": 0.007807980747586459,
+     "household_size": 0.0027084779624935457,
+     "age_of_respondent": 0.006583847229215467
+    },
+    "marital_status": {
+     "country": 0.012921347558146007,
+     "location_type": 0.00933957032218641,
+     "cellphone_access": 0.012728661453007807,
+     "gender_of_respondent": 0.0062877767067670625,
+     "relationship_with_head": 0.009497030004120185,
+     "marital_status": 0.039617108390327435,
+     "education_level": 0.011071888099462517,
+     "job_type": 0.007204997400292645,
+     "household_size": 0.002800192126268647,
+     "age_of_respondent": 0.006113128372513492
+    },
+    "education_level": {
+     "country": 0.027768251945448384,
+     "location_type": 0.02283451656613679,
+     "cellphone_access": 0.04970469064746035,
+     "gender_of_respondent": 0.011189611996254612,
+     "relationship_with_head": 0.009167408730574984,
+     "marital_status": 0.011071888099462517,
+     "education_level": 0.41618785403075037,
+     "job_type": 0.015078367539188585,
+     "household_size": 0.00899011311409604,
+     "age_of_respondent": 0.028451202779925758
+    },
+    "job_type": {
+     "country": 0.05808692921435589,
+     "location_type": 0.014845414093848161,
+     "cellphone_access": 0.025749264860477454,
+     "gender_of_respondent": 0.014246908708942699,
+     "relationship_with_head": 0.007807980747586459,
+     "marital_status": 0.007204997400292645,
+     "education_level": 0.015078367539188585,
+     "job_type": 0.19484580850621586,
+     "household_size": 0.00477619510580176,
+     "age_of_respondent": 0.013732269835552785
+    },
+    "household_size": {
+     "country": 0.02078076490511722,
+     "location_type": 0.006113780915099806,
+     "cellphone_access": 0.010125039983549387,
+     "gender_of_respondent": 0.003629753105033422,
+     "relationship_with_head": 0.0027084779624935457,
+     "marital_status": 0.002800192126268647,
+     "education_level": 0.00899011311409604,
+     "job_type": 0.00477619510580176,
+     "household_size": 0.02176901387065023,
+     "age_of_respondent": 0.009327233171440916
+    },
+    "age_of_respondent": {
+     "country": 0.02333490053555277,
+     "location_type": 0.012175638719482875,
+     "cellphone_access": 0.04212249897628388,
+     "gender_of_respondent": 0.01255344791049595,
+     "relationship_with_head": 0.006583847229215467,
+     "marital_status": 0.006113128372513492,
+     "education_level": 0.028451202779925758,
+     "job_type": 0.013732269835552785,
+     "household_size": 0.009327233171440916,
+     "age_of_respondent": 0.2159426777856271
+    }
+   },
+   "plotted_pair": {
+    "feature": "country",
+    "faceted_by": "location_type"
+   }
+  },
+  "mlp": {
+   "n": 1000,
+   "rows_sum_to_shapley_values_max_abs_error": 9.536743550420113e-08,
+   "share_of_abs_attribution_in_interactions": 0.4536203966089645,
+   "top_pairs_mean_abs": [
+    {
+     "pair": [
+      "country",
+      "location_type"
+     ],
+     "mean_abs_each_half": 0.1982188010195445
+    },
+    {
+     "pair": [
+      "country",
+      "job_type"
+     ],
+     "mean_abs_each_half": 0.10035097697413492
+    },
+    {
+     "pair": [
+      "country",
+      "marital_status"
+     ],
+     "mean_abs_each_half": 0.06899078539054619
+    },
+    {
+     "pair": [
+      "country",
+      "cellphone_access"
+     ],
+     "mean_abs_each_half": 0.058365263399275766
+    },
+    {
+     "pair": [
+      "country",
+      "education_level"
+     ],
+     "mean_abs_each_half": 0.052753213590752475
+    }
+   ],
+   "mean_abs_matrix": {
+    "country": {
+     "country": 0.5689495196199911,
+     "location_type": 0.1982188010195445,
+     "cellphone_access": 0.058365263399275766,
+     "gender_of_respondent": 0.03799429020621372,
+     "relationship_with_head": 0.03859799488524614,
+     "marital_status": 0.06899078539054619,
+     "education_level": 0.052753213590752475,
+     "job_type": 0.10035097697413492,
+     "household_size": 0.03440066492945591,
+     "age_of_respondent": 0.04274962592020413
+    },
+    "location_type": {
+     "country": 0.1982188010195445,
+     "location_type": 0.1895812239386936,
+     "cellphone_access": 0.019179243907886705,
+     "gender_of_respondent": 0.017755830893510443,
+     "relationship_with_head": 0.022345908784178223,
+     "marital_status": 0.02064559722672742,
+     "education_level": 0.04319454066205181,
+     "job_type": 0.021887401073776135,
+     "household_size": 0.007988130214658436,
+     "age_of_respondent": 0.04235264705081428
+    },
+    "cellphone_access": {
+     "country": 0.058365263399275766,
+     "location_type": 0.019179243907886705,
+     "cellphone_access": 0.7774222121033008,
+     "gender_of_respondent": 0.03317921578702606,
+     "relationship_with_head": 0.008878468097708286,
+     "marital_status": 0.016138289046439342,
+     "education_level": 0.03963266460034296,
+     "job_type": 0.04435151441896217,
+     "household_size": 0.018934795220338464,
+     "age_of_respondent": 0.01702533757235788
+    },
+    "gender_of_respondent": {
+     "country": 0.03799429020621372,
+     "location_type": 0.017755830893510443,
+     "cellphone_access": 0.03317921578702606,
+     "gender_of_respondent": 0.2443010780486915,
+     "relationship_with_head": 0.024244952206811013,
+     "marital_status": 0.029676593319001184,
+     "education_level": 0.015564519806330617,
+     "job_type": 0.020168827276353864,
+     "household_size": 0.01603391388211272,
+     "age_of_respondent": 0.020316642781254383
+    },
+    "relationship_with_head": {
+     "country": 0.03859799488524614,
+     "location_type": 0.022345908784178223,
+     "cellphone_access": 0.008878468097708286,
+     "gender_of_respondent": 0.024244952206811013,
+     "relationship_with_head": 0.14273606911512426,
+     "marital_status": 0.018933347788498957,
+     "education_level": 0.016944312363442588,
+     "job_type": 0.023041873053554957,
+     "household_size": 0.007701746445509595,
+     "age_of_respondent": 0.014374113942545364
+    },
+    "marital_status": {
+     "country": 0.06899078539054619,
+     "location_type": 0.02064559722672742,
+     "cellphone_access": 0.016138289046439342,
+     "gender_of_respondent": 0.029676593319001184,
+     "relationship_with_head": 0.018933347788498957,
+     "marital_status": 0.06282659201157517,
+     "education_level": 0.03316305570322927,
+     "job_type": 0.02276355067124694,
+     "household_size": 0.006679260459054922,
+     "age_of_respondent": 0.03731737354459239
+    },
+    "education_level": {
+     "country": 0.052753213590752475,
+     "location_type": 0.04319454066205181,
+     "cellphone_access": 0.03963266460034296,
+     "gender_of_respondent": 0.015564519806330617,
+     "relationship_with_head": 0.016944312363442588,
+     "marital_status": 0.03316305570322927,
+     "education_level": 0.6257101341328126,
+     "job_type": 0.027618609204735918,
+     "household_size": 0.012257022287490954,
+     "age_of_respondent": 0.043098148693825764
+    },
+    "job_type": {
+     "country": 0.10035097697413492,
+     "location_type": 0.021887401073776135,
+     "cellphone_access": 0.04435151441896217,
+     "gender_of_respondent": 0.020168827276353864,
+     "relationship_with_head": 0.023041873053554957,
+     "marital_status": 0.02276355067124694,
+     "education_level": 0.027618609204735918,
+     "job_type": 0.4677993422002466,
+     "household_size": 0.0093198197861054,
+     "age_of_respondent": 0.023089943285835524
+    },
+    "household_size": {
+     "country": 0.03440066492945591,
+     "location_type": 0.007988130214658436,
+     "cellphone_access": 0.018934795220338464,
+     "gender_of_respondent": 0.01603391388211272,
+     "relationship_with_head": 0.007701746445509595,
+     "marital_status": 0.006679260459054922,
+     "education_level": 0.012257022287490954,
+     "job_type": 0.0093198197861054,
+     "household_size": 0.038131851583006776,
+     "age_of_respondent": 0.0096513599781753
+    },
+    "age_of_respondent": {
+     "country": 0.04274962592020413,
+     "location_type": 0.04235264705081428,
+     "cellphone_access": 0.01702533757235788,
+     "gender_of_respondent": 0.020316642781254383,
+     "relationship_with_head": 0.014374113942545364,
+     "marital_status": 0.03731737354459239,
+     "education_level": 0.043098148693825764,
+     "job_type": 0.023089943285835524,
+     "household_size": 0.0096513599781753,
+     "age_of_respondent": 0.34633217965377
+    }
+   },
+   "plotted_pair": {
+    "feature": "country",
+    "faceted_by": "location_type"
+   }
+  }
+ }
+}

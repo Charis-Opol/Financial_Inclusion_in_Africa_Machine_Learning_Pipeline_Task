@@ -114,3 +114,58 @@ class ExactShapleyExplainer(Explainer):
             ),
             metadata={"n_background": len(self.background_codes), "n_coalitions": 2 ** len(self.model.raw_features)},
         )
+
+
+# --- Pairwise interactions -----------------------------------------------------
+#
+# The Shapley interaction index splits each feature's Shapley value into a
+# part it earns alone (the diagonal, its "main effect") and parts it earns
+# only together with one other feature (off-diagonal, shared equally between
+# the pair). Same game as above -- interventional, raw features, same
+# background -- so the matrices are directly comparable with the attributions.
+
+
+def interactions_from_coalition_values(values: np.ndarray, n_players: int) -> np.ndarray:
+    """`[M, M]` Shapley interaction matrix from v(S) for all 2^M coalitions.
+
+    Off-diagonal: Phi_ij = sum over S without i, j of
+        |S|! (M - |S| - 2)! / (2 (M - 1)!) * [v(S+i+j) - v(S+i) - v(S+j) + v(S)]
+    (the pair's joint effect, split equally between Phi_ij and Phi_ji).
+    Diagonal: Phi_ii = phi_i - sum_{j != i} Phi_ij, so row i sums to feature
+    i's Shapley value and the whole matrix sums to f(x) - base value.
+    """
+    masks = coalition_masks(n_players)
+    sizes = masks.sum(axis=1)
+    weight = np.array(
+        [factorial(s) * factorial(n_players - s - 2) / (2 * factorial(n_players - 1)) for s in range(n_players - 1)]
+    )
+    matrix = np.zeros((n_players, n_players))
+    for i in range(n_players):
+        for j in range(i + 1, n_players):
+            without = np.flatnonzero(~masks[:, i] & ~masks[:, j])
+            bit_i, bit_j = 1 << i, 1 << j
+            joint = values[without | bit_i | bit_j] - values[without | bit_i] - values[without | bit_j] + values[without]
+            matrix[i, j] = matrix[j, i] = np.sum(weight[sizes[without]] * joint)
+    phi = shapley_from_coalition_values(values, n_players)
+    np.fill_diagonal(matrix, phi - (matrix.sum(axis=1) - np.diag(matrix)))
+    return matrix
+
+
+def exact_shapley_interactions(
+    predict: Callable[[np.ndarray], np.ndarray], X: np.ndarray, background: np.ndarray
+) -> tuple[np.ndarray, float]:
+    """`([n, M, M] interaction matrices, base value)` for each row of `X`,
+    by brute force over all coalitions (same game as `exact_shapley_values`)."""
+    X, background = np.asarray(X, dtype=np.float64), np.asarray(background, dtype=np.float64)
+    n_players = X.shape[1]
+    if background.ndim != 2 or background.shape[1] != n_players or len(background) == 0:
+        raise ValueError(f"background must be [b, {n_players}] with b >= 1, got {background.shape}")
+    if not 2 <= n_players <= MAX_PLAYERS:
+        raise ValueError(f"Interactions need 2..{MAX_PLAYERS} players, got {n_players}")
+    masks = coalition_masks(n_players)[:, None, :]
+    result = np.empty((len(X), n_players, n_players))
+    for i, x in enumerate(X):
+        hybrids = np.where(masks, x, background[None, :, :])
+        outputs = predict(hybrids.reshape(-1, n_players)).reshape(len(masks), len(background))
+        result[i] = interactions_from_coalition_values(outputs.mean(axis=1), n_players)
+    return result, float(np.mean(predict(background)))

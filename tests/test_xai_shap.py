@@ -332,3 +332,40 @@ def test_every_plot_writes_a_non_empty_file(tmp_path):
 
     for name in ("bars", "beeswarm", "waterfall", "dep_cat", "dep_num"):
         assert (tmp_path / f"{name}.png").stat().st_size > 5000
+
+
+# --- Shapley interactions ------------------------------------------------------
+
+
+def test_interaction_matrix_rows_sum_to_shapley_values_and_matrix_to_the_output():
+    from fin_inclusion.interpretability.shapley import exact_shapley_interactions
+
+    rng = np.random.default_rng(4)
+    X, background = rng.normal(size=(5, 4)), rng.normal(size=(20, 4))
+
+    def predict(rows):
+        return rows[:, 0] * rows[:, 1] + np.tanh(rows[:, 2] - rows[:, 3]) + 0.5 * rows[:, 3]
+
+    interactions, base_value = exact_shapley_interactions(predict, X, background)
+    phi, _ = exact_shapley_values(predict, X, background)
+
+    np.testing.assert_allclose(interactions.sum(axis=2), phi, atol=1e-12)
+    np.testing.assert_allclose(interactions.sum(axis=(1, 2)) + base_value, predict(X), atol=1e-12)
+    np.testing.assert_allclose(interactions, np.transpose(interactions, (0, 2, 1)), atol=1e-12)
+
+
+def test_interaction_of_a_product_matches_hand_computation_and_additive_terms_do_not_interact():
+    from fin_inclusion.interpretability.shapley import exact_shapley_interactions
+
+    # f = x0 * x1 with one background row: joint effect 15 - 6 - 5 + 2 = 6, split 3 / 3.
+    x, b = np.array([[3.0, 5.0, 9.0]]), np.array([[1.0, 2.0, 4.0]])
+    interactions, _ = exact_shapley_interactions(lambda rows: rows[:, 0] * rows[:, 1], x, b)
+    assert interactions[0, 0, 1] == pytest.approx(3.0) and interactions[0, 1, 0] == pytest.approx(3.0)
+    assert interactions[0, 0, 0] == pytest.approx(4.0)  # phi_0 = 7 = 4 alone + 3 shared
+    assert interactions[0, 2].tolist() == pytest.approx([0.0, 0.0, 0.0])
+
+    rng = np.random.default_rng(5)
+    additive, _ = exact_shapley_interactions(lambda r: r[:, 0] ** 2 + np.sin(r[:, 1]) - r[:, 2],
+                                             rng.normal(size=(3, 3)), rng.normal(size=(10, 3)))
+    off_diagonal = additive[:, ~np.eye(3, dtype=bool)]
+    np.testing.assert_allclose(off_diagonal, 0.0, atol=1e-12)
