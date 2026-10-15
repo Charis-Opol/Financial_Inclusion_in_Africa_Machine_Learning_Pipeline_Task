@@ -249,17 +249,11 @@ def check_all_efficiency(ws: Workspace, attributions: dict, oracles: dict[str, A
 # --- Step 5: global importance -------------------------------------------------
 
 
-def sample_masks(ws: Workspace) -> dict[str, np.ndarray]:
-    """Row masks into the explanation set: pooled sample, and the focus country."""
-    rows = ws.sets.explanation
-    return {"pooled": np.isin(rows, ws.sets.pooled), ws.sets.focus_country.lower(): np.isin(rows, ws.sets.focus)}
-
-
 def global_importance(ws: Workspace, attributions: dict, settings: Settings) -> tuple[dict, dict]:
     """Mean |attribution| per raw feature, with bootstrap intervals, per method, model and sample."""
     report, results = {}, {}
     for (method, key), attribution in attributions.items():
-        for sample, mask in sample_masks(ws).items():
+        for sample, mask in ws.sample_masks.items():
             subset = attribution.select(mask)
             boot = bootstrap_mean_abs_importance(subset.values, settings.xai.bootstrap_reps, settings.seed)
             share = importance_share(mean_abs_importance(subset))
@@ -291,7 +285,7 @@ def plot_global_figures(ws: Workspace, attributions: dict, importance: dict, fig
     ordered = {name: "dark = larger" for name in ws.raw_features if name not in ws.xgboost.categorical_levels}
     ordered |= {name: f"dark = {levels[1]}" for name, levels in ws.xgboost.categorical_levels.items() if len(levels) == 2}
     codes = ws.xgboost.to_codes(ws.rows(ws.sets.explanation))
-    masks = sample_masks(ws)
+    masks = ws.sample_masks
 
     for key, method in PRIMARY_METHOD.items():
         attribution = attributions[(method, key)]
@@ -357,7 +351,7 @@ def plot_dependence_figures(ws: Workspace, attributions: dict, importance_report
     key, method = "xgboost", PRIMARY_METHOD["xgboost"]
     attribution = attributions[(method, key)]
     top = importance_report[f"{method}__{key}"]["pooled"]["ranking"][:N_DEPENDENCE_PLOTS]
-    mask = sample_masks(ws)["pooled"]
+    mask = ws.sample_masks["pooled"]
     rows = ws.rows(ws.sets.explanation[mask])
     report = {"rule": f"top {N_DEPENDENCE_PLOTS} features by pooled mean |{method}| on {key}", "features": {}}
     for feature in top:

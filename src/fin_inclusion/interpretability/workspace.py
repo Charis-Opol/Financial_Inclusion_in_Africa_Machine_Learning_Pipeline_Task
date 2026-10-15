@@ -64,6 +64,15 @@ class Workspace:
     def rows(self, positions: np.ndarray) -> pd.DataFrame:
         return self.X_raw.iloc[positions]
 
+    @property
+    def sample_masks(self) -> dict[str, np.ndarray]:
+        """Boolean masks over the explanation set: the pooled sample, and the
+        focus country (key: its lower-case name). Pooled statistics use only
+        the pooled sample (decisions log D2.6)."""
+        rows = self.sets.explanation
+        return {"pooled": np.isin(rows, self.sets.pooled),
+                self.sets.focus_country.lower(): np.isin(rows, self.sets.focus)}
+
 
 def load_workspace(
     raw_train_path: Path, raw_test_path: Path, production_dir: Path, xai_model_dir: Path, artifacts_dir: Path

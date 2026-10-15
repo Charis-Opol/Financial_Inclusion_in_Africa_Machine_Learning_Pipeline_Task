@@ -46,6 +46,13 @@ same ID further down.
 | D3.6 | The five local examples are picked by written rules applied to XGBoost, and the same five rows are used for both models. |
 | D3.7 | Dependence plots show the top three features by importance, whichever they turn out to be. |
 | D3.8 | Categories with no natural order are drawn grey in beeswarm plots instead of shaded. |
+| D4.1 | Captum methods compare each respondent with one reference point. Two are used: "unknown" (never-seen categories) and "modal" (most common answers). Neither is a typical respondent. |
+| D4.2 | Integrated Gradients moves through the MLP's embedding vectors, since category numbers cannot be moved smoothly. |
+| D4.3 | Integration steps: 256, chosen by a rule set in advance. A few rows (0.4%) still miss the target slightly; reported, not retuned. |
+| D4.4 | Feature Ablation removes one field at a time, on both models. Its results do not add up, by design. |
+| D4.5 | Result: switching the reference barely changes which features matter overall, but changes the explanation for an individual respondent a lot. |
+| D4.6 | Hidden units: none unused, computation fairly spread out. They describe how the network computes, not respondents. |
+| D4.7 | Dropout is off and every Captum method is deterministic. |
 
 ## Phase 0 — Reconnaissance (findings that constrain later choices)
 
@@ -344,3 +351,104 @@ an ordering that does not exist.
 - The MLP's attributions are larger in absolute terms (mean |attribution| of
   the top feature 0.77 vs 0.57 logits). Its logits are more spread out;
   shares, not magnitudes, are comparable across models (D1.7).
+
+## Phase 4 — Captum (Task 2)
+
+All numbers below are from `reports/xai/captum_summary.json`, written by
+`scripts/run_xai_captum.py`.
+
+**D4.1 — Two baselines, both run for every method; numerics at the training mean in both.**
+- *Unknown*: every categorical set to a never-seen category (MLP: embedding
+  index 0; XGBoost: an all-zero one-hot block — what each training pipeline
+  does with an unseen value). Expressed as a special code, `UNKNOWN_CODE`,
+  that real input can never produce.
+- *Modal*: every categorical at its most frequent training level. This is a
+  Rwandan, rural, female head of household, married, with a phone, primary
+  education, self-employed, household size 3.80, age 38.81.
+
+Neither is a neutral reference. Against a mean training logit of −1.21
+(XGBoost) and −1.16 (MLP), the baselines score: unknown −0.69 (XGBoost) and
+**+0.66 (MLP)**; modal −0.58 and −0.08. The MLP rates a respondent who is
+"unknown" on every field above the average actual respondent, a
+consequence of the near-zero unknown embeddings (D2.7) meeting the MLP's
+biases, not of anything in the data. These differ from SHAP's reference (the
+mean logit over 200 background rows, −1.25), so Captum and SHAP numbers
+answer "compared with what?" differently; Phase 6 aligns references before
+comparing methods.
+
+**D4.2 — Integrated Gradients is LayerIntegratedGradients on the 8 embedding layers plus a named identity layer on the numeric inputs, integrated jointly.**
+Category indices cannot be interpolated, so the straight-line path runs
+between embedding vectors. The numeric inputs pass through an `nn.Identity`
+layer added in a wrapper that shares the MLP's weights (verified to give
+identical output), so all 11 inputs are interpolated together and
+completeness holds over all of them. The 51 per-dimension attributions are
+summed per raw feature. The outlier flag is interpolated from the
+respondent's value to the baseline's (0) along with the rest of the numeric
+inputs and is counted under `household_size`.
+
+**D4.3 — Integration steps chosen by a rule fixed in advance: 256.**
+Rule: the smallest step count on {32, 64, …, 1024} whose largest
+|convergence delta| on the 50 oracle rows is ≤ 0.01 logits for both
+baselines. Worst delta at 128 steps was 0.012 (unknown) / 0.022 (modal); at
+256, 0.0064 / 0.0074. On the full 3,012 rows at 256 steps: unknown max
+|delta| 0.0100 (every row within 0.01); modal max 0.0144, with 12 rows
+(0.4%) above 0.01 and a mean of 0.0021. Reported as found; the step count
+was not raised after the fact to make the full run pass.
+
+**D4.4 — Feature Ablation removes one raw feature at a time, on both models.**
+Through the raw-feature wrapper, so ablating `education_level` resets the
+whole categorical and ablating `household_size` resets the outlier flag with
+it. Each feature is removed *alone*, with all others at the respondent's
+values — no averaging over coalitions — so the attributions are not meant to
+add up. Measured: their sum misses f(x) − f(baseline) by 0.61–0.63 logits on
+average for XGBoost and 0.81–1.16 for the MLP, i.e. both models are far from
+additive in their raw features. This is the main value-function difference
+from SHAP for Phase 6.
+
+**D4.5 — Result: the baseline barely moves global rankings but changes local explanations a lot.**
+Unknown vs modal baseline, pooled sample (n = 1,000):
+
+| | Global Spearman [95% CI] | Same top feature per respondent | Per-respondent Spearman, median |
+| --- | --- | --- | --- |
+| IG, MLP | 0.77 [0.71, 0.78] | 49% | 0.27 |
+| Ablation, MLP | 0.92 [0.89, 0.93] | 40% | 0.30 |
+| Ablation, XGBoost | 0.90 [0.79, 0.94] | 47% | 0.18 |
+
+For 73–82% of respondents the two baselines' feature orderings correlate
+below 0.5. A local explanation from these methods is therefore mostly a
+statement about the baseline. The global picture is steadier: the same
+four features lead under both baselines for every method, in different
+orders.
+
+The clearest single case is `country` for Uganda: with the modal baseline it
+takes 0.39 of IG importance (and 0.34 of MLP ablation, 0.29 of XGBoost
+ablation); with the unknown baseline 0.25, 0.19 and 0.16. The modal baseline
+is a Rwandan, so for a Ugandan respondent "country" measures Uganda versus
+Rwanda; the unknown baseline measures Uganda versus no country at all.
+
+**D4.6 — Layer attribution: hidden units, and embedding dimensions.**
+LayerConductance (how much of f(x) − f(baseline) flows through each unit,
+256 steps) and LayerGradientXActivation (activation × local gradient, no
+baseline) on the ReLU outputs of both hidden layers, on the
+embedded-input view of the network:
+
+- No unit is dead on the explained rows. Layer 1: 63 units, the top 10
+  carry 38–39% of mean |conductance|, the median unit is active for 24% of
+  respondents. Layer 2: 103 units, top 10 carry 23–25%, median unit active
+  for 57%.
+- Conductance completeness holds per layer up to max |error| 0.013 (layer
+  1) and 0.0005 (layer 2).
+- The two methods rank units similarly (Spearman 0.76–0.92 in layer 1,
+  0.93–0.97 in layer 2).
+- Embedding dimensions: within each categorical, attribution is spread
+  across the 6 dimensions (the largest dimension carries 26–33%), except
+  `gender_of_respondent` (60%). No dimension corresponds to a nameable
+  property.
+
+Hidden units and embedding dimensions have no meaning of their own; these
+results describe how the network computes, not anything about respondents.
+
+**D4.7 — Determinism.**
+The MLP is put in `eval()` (dropout off) by every explainer; Integrated
+Gradients, Feature Ablation and conductance are deterministic given the
+inputs (re-running gives identical numbers).

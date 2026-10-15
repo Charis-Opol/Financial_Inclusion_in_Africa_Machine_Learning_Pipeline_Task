@@ -40,6 +40,9 @@ NEGATIVE = "#2a78d6"  # pushes the logit down
 MAGNITUDE = "#2a78d6"
 UNORDERED = "#898781"
 VALUE_RAMP = LinearSegmentedColormap.from_list("value", ["#cde2fb", "#3987e5", "#0d366b"])
+# Identity colours for a small number of named series, always in this order
+# (validated categorical slots 1-3; colour follows the series, never its rank).
+SERIES = ["#2a78d6", "#eb6834", "#1baf7a"]
 
 SCORE_NOTE = "Unit: logits (pre-sigmoid model output). The score is a ranking score, not a calibrated probability."
 CAUSAL_NOTE = "Attributions describe the model, not causes of account ownership."
@@ -247,3 +250,82 @@ def plot_dependence(
     ax.set_title(title, loc="left")
     _save(fig, path, f"{caption} One dot per respondent (n = {len(attributions):,}); red = positive, "
                      f"blue = negative. {mark}")
+
+
+def plot_convergence(
+    x: Sequence[float], series: Mapping[str, Sequence[float]], path: Path, title: str, xlabel: str,
+    ylabel: str, caption: str, threshold: float | None = None,
+) -> None:
+    """One line per named series on log-log axes, each labelled at its end;
+    an optional horizontal threshold line."""
+    fig, ax = plt.subplots(figsize=(7.2, 4.2))
+    for color, (name, values) in zip(SERIES, series.items()):
+        ax.plot(x, values, color=color, linewidth=2, marker="o", markersize=5, label=name)
+        ax.annotate(name, (x[-1], values[-1]), xytext=(6, 0), textcoords="offset points",
+                    va="center", fontsize=8, color=INK_SECONDARY)
+    if threshold is not None:
+        ax.axhline(threshold, color=INK_MUTED, linewidth=1)
+        ax.annotate(f"target {threshold:g}", (x[0], threshold), xytext=(0, 4), textcoords="offset points",
+                    fontsize=7.5, color=INK_MUTED)
+    ax.set_xscale("log", base=2)
+    ax.set_yscale("log")
+    ax.set_xticks(list(x), [str(v) for v in x])
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title, loc="left")
+    ax.legend(frameon=False, fontsize=8, loc="upper right")
+    ax.margins(x=0.15)
+    _style(ax, grid_axis="y")
+    _save(fig, path, caption)
+
+
+def plot_paired_shares(
+    panels: Mapping[str, tuple[Sequence[str], Mapping[str, np.ndarray]]], path: Path, title: str, caption: str
+) -> None:
+    """For each panel, every feature's importance share under two (or three)
+    alternatives, as dots joined by a line: a long line is a feature whose
+    importance depends on the choice. Features are ordered by the first
+    alternative of the first panel, and keep that row in every panel."""
+    first_names, first_series = next(iter(panels.values()))
+    order = np.argsort(next(iter(first_series.values())))
+    labels = [first_names[i] for i in order]
+    fig, axes = plt.subplots(1, len(panels), figsize=(4.0 * len(panels) + 1.2, 4.4), sharey=True, sharex=True)
+    for ax, (panel_title, (names, series)) in zip(np.atleast_1d(axes), panels.items()):
+        if list(names) != list(first_names):
+            raise ValueError("Every panel must cover the same features in the same order")
+        stacked = np.vstack([values[order] for values in series.values()])
+        rows = np.arange(len(order))
+        ax.hlines(rows, stacked.min(axis=0), stacked.max(axis=0), color=AXIS, linewidth=1.5)
+        for color, (name, values) in zip(SERIES, series.items()):
+            ax.scatter(values[order], rows, color=color, s=34, zorder=3, label=name,
+                       edgecolors=SURFACE, linewidths=1)
+        ax.set_yticks(rows, labels)
+        ax.set_title(panel_title, loc="left")
+        ax.set_xlabel("share of total importance")
+        _style(ax)
+    np.atleast_1d(axes)[0].legend(frameon=False, fontsize=8, loc="lower right")
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, caption)
+
+
+def plot_unit_profiles(
+    layers: Mapping[str, tuple[np.ndarray, np.ndarray]], path: Path, title: str, caption: str
+) -> None:
+    """Hidden units of each layer sorted by mean |attribution|, one bar per
+    unit; units that never activate on the explained rows are marked.
+    Shows how concentrated the network's computation is."""
+    fig, axes = plt.subplots(1, len(layers), figsize=(5.2 * len(layers), 3.8))
+    for ax, (name, (importance, dead)) in zip(np.atleast_1d(axes), layers.items()):
+        order = np.argsort(-importance)
+        ax.bar(np.arange(len(order)), importance[order], width=0.8,
+               color=np.where(dead[order], UNORDERED, MAGNITUDE))
+        top10 = importance[order][:10].sum() / importance.sum()
+        ax.set_title(f"{name}: {len(order)} units, {int(dead.sum())} never active", loc="left")
+        ax.text(0.98, 0.92, f"top 10 units carry {top10:.0%}", transform=ax.transAxes, ha="right",
+                fontsize=8, color=INK_SECONDARY)
+        ax.set_xlabel("units, sorted")
+        ax.set_ylabel("mean |conductance| (logits)")
+        ax.set_xticks([])
+        _style(ax, grid_axis="y")
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, f"{caption} Grey: units with zero activation on every explained row.")

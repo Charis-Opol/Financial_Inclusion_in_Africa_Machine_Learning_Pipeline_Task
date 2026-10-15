@@ -46,6 +46,8 @@ which rows serve as the reference, so every method uses the same ones.
 | `workspace.py` | Loads data, both models and the sample sets together, and checks they belong together. |
 | `shapley.py` | Exact Shapley values by brute force over all 1,024 coalitions. The ground truth. |
 | `shap_explainers.py` | The `shap` library methods: TreeSHAP, KernelSHAP, GradientSHAP. |
+| `captum_explainers.py` | The Captum methods: Integrated Gradients, Feature Ablation, hidden-unit attribution. Also the two baselines. |
+| `comparison.py` | How much two explanations of the same respondents agree. |
 | `bootstrap.py` | Confidence intervals by resampling respondents. |
 | `plots.py` | All figures, in one visual style. |
 | `shap_analysis.py` | The original Phase 4 SHAP plots. Left as it was; not used by the newer code. |
@@ -87,7 +89,8 @@ which rows serve as the reference, so every method uses the same ones.
 4. `sampling.py`, then `workspace.py`.
 5. `shapley.py` — the definition of a Shapley value, in a few dozen lines.
 6. `shap_explainers.py`.
-7. `scripts/run_xai_models.py`, then `scripts/run_xai_shap.py`.
+7. `captum_explainers.py`, then `comparison.py`.
+8. `scripts/run_xai_models.py`, then `scripts/run_xai_shap.py`, then `scripts/run_xai_captum.py`.
 
 ## Scripts and what they write
 
@@ -95,12 +98,14 @@ which rows serve as the reference, so every method uses the same ones.
 |---|---|
 | `scripts/run_xai_models.py` | `reports/xai/model_verification.json` (do the models perform as reported?), `reports/xai/sample_sets.json` (which rows), `models/xai/` (the retrained MLP) |
 | `scripts/run_xai_shap.py` | `reports/xai/attributions/*.npz` (SHAP values per row), `reports/xai/shap_summary.json` (every number quoted), `reports/figures/xai/shap_*.png` |
+| `scripts/run_xai_captum.py` | `reports/xai/attributions/*.npz` (Captum values per row), `reports/xai/captum_summary.json`, `reports/figures/xai/captum_*.png` |
 
 Run them in this order from the XAI environment (see `requirements-xai.txt`):
 
 ```bash
 .venv-xai/Scripts/python scripts/run_xai_models.py   # about 5 minutes
 .venv-xai/Scripts/python scripts/run_xai_shap.py     # about 35 minutes; reuses saved attributions afterwards
+.venv-xai/Scripts/python scripts/run_xai_captum.py   # about 3 minutes
 ```
 
 Every choice that was not obvious, and why it was made, is in

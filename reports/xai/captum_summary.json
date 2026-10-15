@@ -1,0 +1,1586 @@
+{
+ "target_space": "logit",
+ "note": "each method compares a respondent with ONE baseline point; attributions describe the models, not causes; scores are ranking scores, not calibrated probabilities; every explained row is a training row; MLP in eval mode (dropout off)",
+ "baselines": {
+  "unknown": {
+   "description": "unknown baseline: every categorical set to a never-seen category; numerics at the training mean (household_size=3.80, age_of_respondent=38.81)",
+   "logit": {
+    "xgboost": -0.6866493225097656,
+    "mlp": 0.65959632396698
+   }
+  },
+  "modal": {
+   "description": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed); numerics at the training mean (household_size=3.80, age_of_respondent=38.81)",
+   "logit": {
+    "xgboost": -0.5808839797973633,
+    "mlp": -0.07882143557071686
+   }
+  },
+  "mean_training_logit": {
+   "xgboost": -1.2095455264127646,
+   "mlp": -1.1622039299843716
+  }
+ },
+ "integrated_gradients": {
+  "n_steps": {
+   "grid": [
+    32,
+    64,
+    128,
+    256,
+    512,
+    1024
+   ],
+   "target_max_abs_delta": 0.01,
+   "rows": [
+    1334,
+    1431,
+    1731,
+    1768,
+    2001,
+    3018,
+    3863,
+    4198,
+    4708,
+    5300,
+    6522,
+    8737,
+    8890,
+    9697,
+    10034,
+    10073,
+    10660,
+    10674,
+    10715,
+    10788,
+    11778,
+    12019,
+    12153,
+    12900,
+    13062,
+    14594,
+    14680,
+    14762,
+    15989,
+    16198,
+    16469,
+    16532,
+    16918,
+    17436,
+    17490,
+    18110,
+    18308,
+    18383,
+    18594,
+    19115,
+    19304,
+    19437,
+    19504,
+    20002,
+    20537,
+    21000,
+    21193,
+    21973,
+    22701,
+    23092
+   ],
+   "by_baseline": {
+    "unknown": {
+     "32": {
+      "max_abs_delta": 0.03829503059387207,
+      "mean_abs_delta": 0.016393082737922667
+     },
+     "64": {
+      "max_abs_delta": 0.033019065856933594,
+      "mean_abs_delta": 0.007974013686180115
+     },
+     "128": {
+      "max_abs_delta": 0.012154817581176758,
+      "mean_abs_delta": 0.004071260690689087
+     },
+     "256": {
+      "max_abs_delta": 0.006370902061462402,
+      "mean_abs_delta": 0.0018840312957763671
+     },
+     "512": {
+      "max_abs_delta": 0.003323793411254883,
+      "mean_abs_delta": 0.000921398401260376
+     },
+     "1024": {
+      "max_abs_delta": 0.001516103744506836,
+      "mean_abs_delta": 0.0005553263425827026
+     }
+    },
+    "modal": {
+     "32": {
+      "max_abs_delta": 0.0760500431060791,
+      "mean_abs_delta": 0.018323943614959717
+     },
+     "64": {
+      "max_abs_delta": 0.03729645907878876,
+      "mean_abs_delta": 0.01139506846666336
+     },
+     "128": {
+      "max_abs_delta": 0.022130846977233887,
+      "mean_abs_delta": 0.005357839465141297
+     },
+     "256": {
+      "max_abs_delta": 0.00738215446472168,
+      "mean_abs_delta": 0.0022367572784423827
+     },
+     "512": {
+      "max_abs_delta": 0.0035371780395507812,
+      "mean_abs_delta": 0.0009967416524887085
+     },
+     "1024": {
+      "max_abs_delta": 0.0027403831481933594,
+      "mean_abs_delta": 0.0007477611303329468
+     }
+    }
+   },
+   "chosen": 256
+  },
+  "full_run": {
+   "unknown": {
+    "base_value": 0.65959632396698,
+    "max_abs_delta": 0.009984254837036133,
+    "mean_abs_delta": 0.001967536505672878,
+    "share_rows_within_target": 1.0,
+    "completeness_check": {
+     "method": "integrated_gradients",
+     "model_name": "pytorch_mlp",
+     "n_instances": 3012,
+     "atol": 0.01,
+     "max_abs_error": 0.009984574047848582,
+     "mean_abs_error": 0.0019675316365690056,
+     "n_violations": 0,
+     "passed": true
+    }
+   },
+   "modal": {
+    "base_value": -0.07882143557071686,
+    "max_abs_delta": 0.014394283294677734,
+    "mean_abs_delta": 0.002084504318229389,
+    "share_rows_within_target": 0.9960159362549801,
+    "completeness_check": {
+     "method": "integrated_gradients",
+     "model_name": "pytorch_mlp",
+     "n_instances": 3012,
+     "atol": 0.01,
+     "max_abs_error": 0.014394447091035545,
+     "mean_abs_error": 0.0020845029804333597,
+     "n_violations": 12,
+     "passed": false
+    }
+   }
+  }
+ },
+ "feature_ablation": {
+  "xgboost__unknown": {
+   "base_value": -0.6866493225097656,
+   "non_additivity_mean_abs": 0.6120161028015507,
+   "non_additivity_max_abs": 3.6442706137895584,
+   "mean_abs_logit_minus_base": 1.1967921076035732
+  },
+  "xgboost__modal": {
+   "base_value": -0.5808839797973633,
+   "non_additivity_mean_abs": 0.627176313355468,
+   "non_additivity_max_abs": 5.657539486885071,
+   "mean_abs_logit_minus_base": 1.2559750409287265
+  },
+  "mlp__unknown": {
+   "base_value": 0.65959632396698,
+   "non_additivity_mean_abs": 1.1605772415279927,
+   "non_additivity_max_abs": 4.6419625878334045,
+   "mean_abs_logit_minus_base": 2.4788221356163365
+  },
+  "mlp__modal": {
+   "base_value": -0.07882143557071686,
+   "non_additivity_mean_abs": 0.8136873364245709,
+   "non_additivity_max_abs": 5.765743926167488,
+   "mean_abs_logit_minus_base": 1.9573521687356066
+  }
+ },
+ "layer_attribution": {
+  "hidden_units": {
+   "hidden_1": {
+    "unknown": {
+     "n_units": 63,
+     "never_active_units": 0,
+     "share_rows_active_by_unit_median": 0.24136786188579018,
+     "top10_units": [
+      58,
+      37,
+      9,
+      23,
+      18,
+      8,
+      25,
+      61,
+      27,
+      13
+     ],
+     "top10_share_of_mean_abs_conductance": 0.37890247001014243,
+     "completeness_check": {
+      "method": "layer_conductance",
+      "model_name": "pytorch_mlp",
+      "n_instances": 3012,
+      "atol": 0.01,
+      "max_abs_error": 0.011550117131264415,
+      "mean_abs_error": 0.0025511023017401042,
+      "n_violations": 3,
+      "passed": false
+     },
+     "spearman_conductance_vs_gradient_x_activation_unit_importance": 0.7616167434715823
+    },
+    "modal": {
+     "n_units": 63,
+     "never_active_units": 0,
+     "share_rows_active_by_unit_median": 0.24136786188579018,
+     "top10_units": [
+      37,
+      9,
+      8,
+      18,
+      25,
+      27,
+      61,
+      52,
+      51,
+      57
+     ],
+     "top10_share_of_mean_abs_conductance": 0.3851962225593013,
+     "completeness_check": {
+      "method": "layer_conductance",
+      "model_name": "pytorch_mlp",
+      "n_instances": 3012,
+      "atol": 0.01,
+      "max_abs_error": 0.012725862208753824,
+      "mean_abs_error": 0.0020858986460530688,
+      "n_violations": 4,
+      "passed": false
+     },
+     "spearman_conductance_vs_gradient_x_activation_unit_importance": 0.9182987711213519
+    }
+   },
+   "hidden_2": {
+    "unknown": {
+     "n_units": 103,
+     "never_active_units": 0,
+     "share_rows_active_by_unit_median": 0.5657370517928287,
+     "top10_units": [
+      34,
+      41,
+      19,
+      45,
+      0,
+      14,
+      84,
+      22,
+      27,
+      68
+     ],
+     "top10_share_of_mean_abs_conductance": 0.2259543618611615,
+     "completeness_check": {
+      "method": "layer_conductance",
+      "model_name": "pytorch_mlp",
+      "n_instances": 3012,
+      "atol": 0.01,
+      "max_abs_error": 0.0004794239066541195,
+      "mean_abs_error": 0.0001595285598342,
+      "n_violations": 0,
+      "passed": true
+     },
+     "spearman_conductance_vs_gradient_x_activation_unit_importance": 0.9276677063655934
+    },
+    "modal": {
+     "n_units": 103,
+     "never_active_units": 0,
+     "share_rows_active_by_unit_median": 0.5657370517928287,
+     "top10_units": [
+      41,
+      34,
+      45,
+      84,
+      27,
+      14,
+      19,
+      59,
+      22,
+      24
+     ],
+     "top10_share_of_mean_abs_conductance": 0.2481430207812624,
+     "completeness_check": {
+      "method": "layer_conductance",
+      "model_name": "pytorch_mlp",
+      "n_instances": 3012,
+      "atol": 0.01,
+      "max_abs_error": 0.0002977427211590111,
+      "mean_abs_error": 8.980618014559447e-05,
+      "n_violations": 0,
+      "passed": true
+     },
+     "spearman_conductance_vs_gradient_x_activation_unit_importance": 0.9708957518780477
+    }
+   }
+  },
+  "embedding_dimensions": {
+   "unknown": {
+    "country": {
+     "mean_abs_by_dimension": [
+      0.10605397829490538,
+      0.3660141814337694,
+      0.2188451719367731,
+      0.07469166830636868,
+      0.053761205944356336,
+      0.27344043919355315
+     ],
+     "largest_dimension_share": 0.3349304134191267
+    },
+    "location_type": {
+     "mean_abs_by_dimension": [
+      0.023778157948684566,
+      0.020938787864511595,
+      0.11114557521307142,
+      0.12545915968080226,
+      0.15164014414431334,
+      0.08956694786835578
+     ],
+     "largest_dimension_share": 0.2902043907649968
+    },
+    "cellphone_access": {
+     "mean_abs_by_dimension": [
+      0.13586848217850092,
+      0.3692817509975284,
+      0.1295743145310844,
+      0.1485552024007775,
+      0.2763331294739619,
+      0.005616529423885367
+     ],
+     "largest_dimension_share": 0.34666875311132067
+    },
+    "gender_of_respondent": {
+     "mean_abs_by_dimension": [
+      0.028414004842048597,
+      0.031869830608890426,
+      0.013254589213447616,
+      0.03638426524588886,
+      0.08259620374779843,
+      0.2115210812371224
+     ],
+     "largest_dimension_share": 0.5235152321054093
+    },
+    "relationship_with_head": {
+     "mean_abs_by_dimension": [
+      0.07529564430798928,
+      0.08035690247398451,
+      0.05297208889458852,
+      0.131960921269143,
+      0.08179795685211139,
+      0.08947982005958328
+     ],
+     "largest_dimension_share": 0.25780498922375633
+    },
+    "marital_status": {
+     "mean_abs_by_dimension": [
+      0.06221941012184198,
+      0.13316026078374124,
+      0.0811509589690104,
+      0.0540760456880007,
+      0.09660681015101727,
+      0.049103656115650665
+     ],
+     "largest_dimension_share": 0.27956218470817296
+    },
+    "education_level": {
+     "mean_abs_by_dimension": [
+      0.47291296544484795,
+      0.42631072861142455,
+      0.26297114388708726,
+      0.5422886862903833,
+      0.7347194037437439,
+      0.21117626192420721
+     ],
+     "largest_dimension_share": 0.2772129386402991
+    },
+    "job_type": {
+     "mean_abs_by_dimension": [
+      0.22071412430139026,
+      0.5159037217609584,
+      0.15674911551206605,
+      0.5421494368575513,
+      0.19332624000293502,
+      0.5140656608122371
+     ],
+     "largest_dimension_share": 0.2529970307399636
+    }
+   },
+   "modal": {
+    "country": {
+     "mean_abs_by_dimension": [
+      0.04384526804133202,
+      0.23014347707829438,
+      0.20186125708272448,
+      0.07235762705035449,
+      0.044825214594706723,
+      0.18998949768207968
+     ],
+     "largest_dimension_share": 0.29391687168050784
+    },
+    "location_type": {
+     "mean_abs_by_dimension": [
+      0.005094222161584184,
+      0.012897023902682122,
+      0.05481260241102427,
+      0.08950912344429525,
+      0.06600901114825683,
+      0.053908026645192876
+     ],
+     "largest_dimension_share": 0.3171495601594809
+    },
+    "cellphone_access": {
+     "mean_abs_by_dimension": [
+      0.07802834283560514,
+      0.16404405543208123,
+      0.08956534007191658,
+      0.08664748357236385,
+      0.09893586558103562,
+      0.001313036632604053
+     ],
+     "largest_dimension_share": 0.316361156960895
+    },
+    "gender_of_respondent": {
+     "mean_abs_by_dimension": [
+      0.028915081238374114,
+      0.01676436519248091,
+      0.011723679734801408,
+      0.015344378677385976,
+      0.04364642665479914,
+      0.17484626118838786
+     ],
+     "largest_dimension_share": 0.6003507262363347
+    },
+    "relationship_with_head": {
+     "mean_abs_by_dimension": [
+      0.036899178974184904,
+      0.08098350621992723,
+      0.01427708827118022,
+      0.04312438557754104,
+      0.026951144223790833,
+      0.03997396990046468
+     ],
+     "largest_dimension_share": 0.3343534504728086
+    },
+    "marital_status": {
+     "mean_abs_by_dimension": [
+      0.0748564775591949,
+      0.013797426290773728,
+      0.033673675990488844,
+      0.04488024040382334,
+      0.06372527268185513,
+      0.021932155730686645
+     ],
+     "largest_dimension_share": 0.2960330767348216
+    },
+    "education_level": {
+     "mean_abs_by_dimension": [
+      0.2423857912570238,
+      0.20410516801429912,
+      0.1361636849604547,
+      0.21730336805805564,
+      0.3970220046639442,
+      0.11134368386864663
+     ],
+     "largest_dimension_share": 0.3034585434891783
+    },
+    "job_type": {
+     "mean_abs_by_dimension": [
+      0.2827800098070875,
+      0.2887622494660318,
+      0.10063148596105748,
+      0.221952556618955,
+      0.12104358107433655,
+      0.11535320982513077
+     ],
+     "largest_dimension_share": 0.2554235745533982
+    }
+   }
+  }
+ },
+ "baseline_sensitivity": {
+  "integrated_gradients__mlp": {
+   "pooled": {
+    "by_baseline": {
+     "unknown": {
+      "ranking": [
+       "job_type",
+       "education_level",
+       "cellphone_access",
+       "country",
+       "age_of_respondent",
+       "relationship_with_head",
+       "location_type",
+       "marital_status",
+       "gender_of_respondent",
+       "household_size"
+      ],
+      "features": {
+       "country": {
+        "share": 0.1317007940502508,
+        "mean_abs": 0.7383624071425329,
+        "ci_low": 0.7057515110930773,
+        "ci_high": 0.7739046912845919
+       },
+       "location_type": {
+        "share": 0.04948977469577487,
+        "mean_abs": 0.2774576223084234,
+        "ci_low": 0.2627801041800574,
+        "ci_high": 0.2924326248643252
+       },
+       "cellphone_access": {
+        "share": 0.18419451544699358,
+        "mean_abs": 1.0326612439102119,
+        "ci_low": 0.9985683962314493,
+        "ci_high": 1.063901931247322
+       },
+       "gender_of_respondent": {
+        "share": 0.03641218847879095,
+        "mean_abs": 0.20413993194505337,
+        "ci_low": 0.19465392495512115,
+        "ci_high": 0.21372306670240188
+       },
+       "relationship_with_head": {
+        "share": 0.06366375056391571,
+        "mean_abs": 0.3569220706152992,
+        "ci_low": 0.34413874185317966,
+        "ci_high": 0.3696494473894874
+       },
+       "marital_status": {
+        "share": 0.04335124529752854,
+        "mean_abs": 0.2430428006250022,
+        "ci_low": 0.2306228460172584,
+        "ci_high": 0.25475052418647715
+       },
+       "education_level": {
+        "share": 0.1922970342391306,
+        "mean_abs": 1.0780869022930857,
+        "ci_low": 1.0358127698625044,
+        "ci_high": 1.1182877027564797
+       },
+       "job_type": {
+        "share": 0.193899570261647,
+        "mean_abs": 1.0870713003269072,
+        "ci_low": 1.048789755042006,
+        "ci_high": 1.1244124580386348
+       },
+       "household_size": {
+        "share": 0.023846838695282424,
+        "mean_abs": 0.13369402476852338,
+        "ci_low": 0.125975145518882,
+        "ci_high": 0.14189897812523558
+       },
+       "age_of_respondent": {
+        "share": 0.08114428827068558,
+        "mean_abs": 0.4549243035736799,
+        "ci_low": 0.42888811471868377,
+        "ci_high": 0.48359895082340065
+       }
+      }
+     },
+     "modal": {
+      "ranking": [
+       "job_type",
+       "country",
+       "cellphone_access",
+       "education_level",
+       "gender_of_respondent",
+       "location_type",
+       "age_of_respondent",
+       "marital_status",
+       "relationship_with_head",
+       "household_size"
+      ],
+      "features": {
+       "country": {
+        "share": 0.18816442626709765,
+        "mean_abs": 0.6075843774100917,
+        "ci_low": 0.5587370251818844,
+        "ci_high": 0.6528401908281058
+       },
+       "location_type": {
+        "share": 0.06982961469302881,
+        "mean_abs": 0.22548036209472047,
+        "ci_low": 0.20312294339294676,
+        "ci_high": 0.24856083324909195
+       },
+       "cellphone_access": {
+        "share": 0.16033531955528174,
+        "mean_abs": 0.5177239781262433,
+        "ci_low": 0.458153929360532,
+        "ci_high": 0.5761148819882731
+       },
+       "gender_of_respondent": {
+        "share": 0.08470718670685931,
+        "mean_abs": 0.27352015637850124,
+        "ci_low": 0.25247694058321923,
+        "ci_high": 0.2948594523761918
+       },
+       "relationship_with_head": {
+        "share": 0.030604638314852224,
+        "mean_abs": 0.09882261214452535,
+        "ci_low": 0.0895231566252197,
+        "ci_high": 0.10828550792702059
+       },
+       "marital_status": {
+        "share": 0.04723702325224914,
+        "mean_abs": 0.15252871083444733,
+        "ci_low": 0.13952013105465863,
+        "ci_high": 0.16525546000823724
+       },
+       "education_level": {
+        "share": 0.14156613014103017,
+        "mean_abs": 0.45711812137113883,
+        "ci_low": 0.42094218561685415,
+        "ci_high": 0.49750832284076607
+       },
+       "job_type": {
+        "share": 0.19277218022036474,
+        "mean_abs": 0.6224628503100684,
+        "ci_low": 0.5959308230256097,
+        "ci_high": 0.6513367498783449
+       },
+       "household_size": {
+        "share": 0.026443905538414216,
+        "mean_abs": 0.08538757405739307,
+        "ci_low": 0.08005376699637617,
+        "ci_high": 0.09040455534260745
+       },
+       "age_of_respondent": {
+        "share": 0.058339575310821894,
+        "mean_abs": 0.18837893669273761,
+        "ci_low": 0.17569683335746597,
+        "ci_high": 0.2026702191594899
+       }
+      }
+     }
+    },
+    "unknown_vs_modal": {
+     "n": 1000,
+     "global": {
+      "spearman": 0.7696969696969697,
+      "kendall": 0.5555555555555555,
+      "top3_overlap": 0.6666666666666666,
+      "top5_overlap": 0.8,
+      "spearman_ci": [
+       0.709090909090909,
+       0.7818181818181817
+      ]
+     },
+     "instance_spearman": {
+      "median": 0.2727272727272727,
+      "q25": 0.030303030303030304,
+      "q75": 0.503030303030303,
+      "share_below_0.5": 0.743
+     },
+     "same_top_feature_share": 0.494,
+     "sign_agreement_share": 0.8309260832625318,
+     "mean_abs_difference": 0.40267481140347827
+    }
+   },
+   "uganda": {
+    "by_baseline": {
+     "unknown": {
+      "ranking": [
+       "country",
+       "education_level",
+       "cellphone_access",
+       "job_type",
+       "age_of_respondent",
+       "location_type",
+       "relationship_with_head",
+       "marital_status",
+       "household_size",
+       "gender_of_respondent"
+      ],
+      "features": {
+       "country": {
+        "share": 0.2455694110869368,
+        "mean_abs": 1.4926373935866364,
+        "ci_low": 1.4684844493828768,
+        "ci_high": 1.5159320156836427
+       },
+       "location_type": {
+        "share": 0.059938782090211896,
+        "mean_abs": 0.36432415209163843,
+        "ci_low": 0.34798553192787196,
+        "ci_high": 0.3820838467569463
+       },
+       "cellphone_access": {
+        "share": 0.18367952810178803,
+        "mean_abs": 1.116453921795721,
+        "ci_low": 1.1035043013513837,
+        "ci_high": 1.1295879928115489
+       },
+       "gender_of_respondent": {
+        "share": 0.024507138993648644,
+        "mean_abs": 0.14896102861441052,
+        "ci_low": 0.14347014212471856,
+        "ci_high": 0.15500542180590549
+       },
+       "relationship_with_head": {
+        "share": 0.05965413572352134,
+        "mean_abs": 0.362593994377816,
+        "ci_low": 0.3546786522211581,
+        "ci_high": 0.37062259480445875
+       },
+       "marital_status": {
+        "share": 0.03300913390861815,
+        "mean_abs": 0.2006384564911026,
+        "ci_low": 0.19477214844592247,
+        "ci_high": 0.20716748539079252
+       },
+       "education_level": {
+        "share": 0.18875362930665,
+        "mean_abs": 1.1472956832500363,
+        "ci_low": 1.121660420091153,
+        "ci_high": 1.172192740457714
+       },
+       "job_type": {
+        "share": 0.08847235032827798,
+        "mean_abs": 0.537758908220591,
+        "ci_low": 0.514922465918959,
+        "ci_high": 0.5615662797545535
+       },
+       "household_size": {
+        "share": 0.0325791418751235,
+        "mean_abs": 0.19802484844726012,
+        "ci_low": 0.18870825727743246,
+        "ci_high": 0.20781282786309588
+       },
+       "age_of_respondent": {
+        "share": 0.08383674858522375,
+        "mean_abs": 0.5095824652636604,
+        "ci_low": 0.48964577686547905,
+        "ci_high": 0.5291517101339218
+       }
+      }
+     },
+     "modal": {
+      "ranking": [
+       "country",
+       "cellphone_access",
+       "education_level",
+       "location_type",
+       "job_type",
+       "age_of_respondent",
+       "gender_of_respondent",
+       "household_size",
+       "relationship_with_head",
+       "marital_status"
+      ],
+      "features": {
+       "country": {
+        "share": 0.39492106753751455,
+        "mean_abs": 1.5291942674295946,
+        "ci_low": 1.5136726718933629,
+        "ci_high": 1.5455649000458314
+       },
+       "location_type": {
+        "share": 0.08714981016568431,
+        "mean_abs": 0.3374572821448233,
+        "ci_low": 0.31315589440291636,
+        "ci_high": 0.3628574858130446
+       },
+       "cellphone_access": {
+        "share": 0.15258953942333214,
+        "mean_abs": 0.5908498384521261,
+        "ci_low": 0.5527298054997303,
+        "ci_high": 0.627593607027406
+       },
+       "gender_of_respondent": {
+        "share": 0.0457694510752011,
+        "mean_abs": 0.1772262559807556,
+        "ci_low": 0.16615658864123395,
+        "ci_high": 0.18918940425176972
+       },
+       "relationship_with_head": {
+        "share": 0.019345130274836808,
+        "mean_abs": 0.07490727831618918,
+        "ci_low": 0.06984277090430531,
+        "ci_high": 0.0800638493881122
+       },
+       "marital_status": {
+        "share": 0.016518412010008098,
+        "mean_abs": 0.06396179649328293,
+        "ci_low": 0.059141140632255125,
+        "ci_high": 0.06886406649325841
+       },
+       "education_level": {
+        "share": 0.12955899519284436,
+        "mean_abs": 0.5016720783679539,
+        "ci_low": 0.47386676790885346,
+        "ci_high": 0.532070141979911
+       },
+       "job_type": {
+        "share": 0.06645004873284702,
+        "mean_abs": 0.2573046665408251,
+        "ci_low": 0.24212864624990774,
+        "ci_high": 0.2730042671491882
+       },
+       "household_size": {
+        "share": 0.03129075123161455,
+        "mean_abs": 0.12116253433961242,
+        "ci_low": 0.11571933480673202,
+        "ci_high": 0.12678947916523187
+       },
+       "age_of_respondent": {
+        "share": 0.056406794356117014,
+        "mean_abs": 0.21841566242920274,
+        "ci_low": 0.2086443748157745,
+        "ci_high": 0.22830513516243398
+       }
+      }
+     }
+    },
+    "unknown_vs_modal": {
+     "n": 2101,
+     "global": {
+      "spearman": 0.8424242424242423,
+      "kendall": 0.6444444444444444,
+      "top3_overlap": 1.0,
+      "top5_overlap": 0.8,
+      "spearman_ci": [
+       0.7818181818181817,
+       0.8666666666666665
+      ]
+     },
+     "instance_spearman": {
+      "median": 0.38181818181818183,
+      "q25": 0.15151515151515152,
+      "q75": 0.5757575757575758,
+      "share_below_0.5": 0.6358876725368872
+     },
+     "same_top_feature_share": 0.646834840552118,
+     "sign_agreement_share": 0.8585321253428643,
+     "mean_abs_difference": 0.38769366812865835
+    }
+   }
+  },
+  "feature_ablation__mlp": {
+   "pooled": {
+    "by_baseline": {
+     "unknown": {
+      "ranking": [
+       "job_type",
+       "cellphone_access",
+       "education_level",
+       "country",
+       "age_of_respondent",
+       "location_type",
+       "marital_status",
+       "gender_of_respondent",
+       "relationship_with_head",
+       "household_size"
+      ],
+      "features": {
+       "country": {
+        "share": 0.14565858893922726,
+        "mean_abs": 0.6758235836923122,
+        "ci_low": 0.646643300698232,
+        "ci_high": 0.7049884963768535
+       },
+       "location_type": {
+        "share": 0.0718512448325804,
+        "mean_abs": 0.3333738582059741,
+        "ci_low": 0.3143749899947084,
+        "ci_high": 0.35106401524441316
+       },
+       "cellphone_access": {
+        "share": 0.1750756454522516,
+        "mean_abs": 0.8123122089020908,
+        "ci_low": 0.7841482347628101,
+        "ci_high": 0.8412634285860695
+       },
+       "gender_of_respondent": {
+        "share": 0.05145866338371956,
+        "mean_abs": 0.23875679802522062,
+        "ci_low": 0.22672906944816934,
+        "ci_high": 0.2519737480159849
+       },
+       "relationship_with_head": {
+        "share": 0.047050442809829784,
+        "mean_abs": 0.21830363115295767,
+        "ci_low": 0.20811321280691772,
+        "ci_high": 0.22881014416664838
+       },
+       "marital_status": {
+        "share": 0.060063159759938735,
+        "mean_abs": 0.27867975498363373,
+        "ci_low": 0.2658465227676555,
+        "ci_high": 0.2929673723335378
+       },
+       "education_level": {
+        "share": 0.16035923231581833,
+        "mean_abs": 0.7440313122011721,
+        "ci_low": 0.7134174206291325,
+        "ci_high": 0.7758477035540157
+       },
+       "job_type": {
+        "share": 0.18877839120531575,
+        "mean_abs": 0.8758899135105311,
+        "ci_low": 0.8407003922324627,
+        "ci_high": 0.9068653903470375
+       },
+       "household_size": {
+        "share": 0.023037680102750754,
+        "mean_abs": 0.10688973194360733,
+        "ci_low": 0.09990282331593335,
+        "ci_high": 0.11419551367936656
+       },
+       "age_of_respondent": {
+        "share": 0.07666695119856767,
+        "mean_abs": 0.3557176688797772,
+        "ci_low": 0.33380496464325116,
+        "ci_high": 0.37775643794685604
+       }
+      }
+     },
+     "modal": {
+      "ranking": [
+       "country",
+       "job_type",
+       "cellphone_access",
+       "education_level",
+       "age_of_respondent",
+       "location_type",
+       "gender_of_respondent",
+       "marital_status",
+       "relationship_with_head",
+       "household_size"
+      ],
+      "features": {
+       "country": {
+        "share": 0.21457011905401688,
+        "mean_abs": 0.8351274750307203,
+        "ci_low": 0.7662077055379748,
+        "ci_high": 0.8976508915400132
+       },
+       "location_type": {
+        "share": 0.09102710025647008,
+        "mean_abs": 0.3542862013205886,
+        "ci_low": 0.321444718374405,
+        "ci_high": 0.38642922404101115
+       },
+       "cellphone_access": {
+        "share": 0.13225328953924115,
+        "mean_abs": 0.5147424825243652,
+        "ci_low": 0.4532979479804635,
+        "ci_high": 0.5756753883152268
+       },
+       "gender_of_respondent": {
+        "share": 0.060456578971427095,
+        "mean_abs": 0.23530280156433583,
+        "ci_low": 0.21466644880967214,
+        "ci_high": 0.2571698506273329
+       },
+       "relationship_with_head": {
+        "share": 0.044331639273893844,
+        "mean_abs": 0.1725429903008044,
+        "ci_low": 0.15583240170106294,
+        "ci_high": 0.19028892161799593
+       },
+       "marital_status": {
+        "share": 0.05622723158646761,
+        "mean_abs": 0.2188417760580778,
+        "ci_low": 0.19863193885721267,
+        "ci_high": 0.23768316785953936
+       },
+       "education_level": {
+        "share": 0.1242797718020207,
+        "mean_abs": 0.4837087870389223,
+        "ci_low": 0.44415273065436633,
+        "ci_high": 0.5270285194532014
+       },
+       "job_type": {
+        "share": 0.15799609751548568,
+        "mean_abs": 0.6149359592311084,
+        "ci_low": 0.5825091547847725,
+        "ci_high": 0.6488227096612565
+       },
+       "household_size": {
+        "share": 0.0274632833843098,
+        "mean_abs": 0.10688973194360733,
+        "ci_low": 0.09990282331593335,
+        "ci_high": 0.11419551367936656
+       },
+       "age_of_respondent": {
+        "share": 0.09139488861666714,
+        "mean_abs": 0.3557176688797772,
+        "ci_low": 0.33380496464325116,
+        "ci_high": 0.37775643794685604
+       }
+      }
+     }
+    },
+    "unknown_vs_modal": {
+     "n": 1000,
+     "global": {
+      "spearman": 0.9151515151515152,
+      "kendall": 0.8222222222222221,
+      "top3_overlap": 0.6666666666666666,
+      "top5_overlap": 1.0,
+      "spearman_ci": [
+       0.8909090909090909,
+       0.9272727272727272
+      ]
+     },
+     "instance_spearman": {
+      "median": 0.296969696969697,
+      "q25": 0.10303030303030303,
+      "q75": 0.5151515151515151,
+      "share_below_0.5": 0.728
+     },
+     "same_top_feature_share": 0.403,
+     "sign_agreement_share": 0.918606627017842,
+     "mean_abs_difference": 0.3508240968089551
+    }
+   },
+   "uganda": {
+    "by_baseline": {
+     "unknown": {
+      "ranking": [
+       "country",
+       "education_level",
+       "cellphone_access",
+       "job_type",
+       "age_of_respondent",
+       "location_type",
+       "relationship_with_head",
+       "marital_status",
+       "gender_of_respondent",
+       "household_size"
+      ],
+      "features": {
+       "country": {
+        "share": 0.1921436602169854,
+        "mean_abs": 0.879736721231959,
+        "ci_low": 0.8553792983754983,
+        "ci_high": 0.9032526457915415
+       },
+       "location_type": {
+        "share": 0.08577291313977471,
+        "mean_abs": 0.3927143955251281,
+        "ci_low": 0.37662485912544164,
+        "ci_high": 0.41146480750038983
+       },
+       "cellphone_access": {
+        "share": 0.17925795826809882,
+        "mean_abs": 0.8207390672345067,
+        "ci_low": 0.8090344930406764,
+        "ci_high": 0.8324174104135631
+       },
+       "gender_of_respondent": {
+        "share": 0.0361674044044782,
+        "mean_abs": 0.16559377358760907,
+        "ci_low": 0.15839313991657722,
+        "ci_high": 0.17354775243538517
+       },
+       "relationship_with_head": {
+        "share": 0.045242406469832644,
+        "mean_abs": 0.20714399987731533,
+        "ci_low": 0.19944055315256934,
+        "ci_high": 0.21462259667702568
+       },
+       "marital_status": {
+        "share": 0.044072985163911345,
+        "mean_abs": 0.20178976198964207,
+        "ci_low": 0.19518524103464185,
+        "ci_high": 0.20826384929850564
+       },
+       "education_level": {
+        "share": 0.1881692285505184,
+        "mean_abs": 0.8615396416141895,
+        "ci_low": 0.8401000561353098,
+        "ci_high": 0.8820673792347709
+       },
+       "job_type": {
+        "share": 0.10479429383986476,
+        "mean_abs": 0.479804477349867,
+        "ci_low": 0.4616833659176179,
+        "ci_high": 0.4982618937731633
+       },
+       "household_size": {
+        "share": 0.02941384672923982,
+        "mean_abs": 0.1346723646836897,
+        "ci_low": 0.12762539985783394,
+        "ci_high": 0.14268036654958416
+       },
+       "age_of_respondent": {
+        "share": 0.09496530321729597,
+        "mean_abs": 0.43480208708857254,
+        "ci_low": 0.4192087866967435,
+        "ci_high": 0.45036647013795944
+       }
+      }
+     },
+     "modal": {
+      "ranking": [
+       "country",
+       "education_level",
+       "cellphone_access",
+       "age_of_respondent",
+       "location_type",
+       "job_type",
+       "relationship_with_head",
+       "household_size",
+       "gender_of_respondent",
+       "marital_status"
+      ],
+      "features": {
+       "country": {
+        "share": 0.3424820744375067,
+        "mean_abs": 1.4115621198016595,
+        "ci_low": 1.3886077878873941,
+        "ci_high": 1.434664355141059
+       },
+       "location_type": {
+        "share": 0.07233061944426075,
+        "mean_abs": 0.29811534713749827,
+        "ci_low": 0.2767222537593504,
+        "ci_high": 0.3221198708735679
+       },
+       "cellphone_access": {
+        "share": 0.1338638142716491,
+        "mean_abs": 0.5517284072410743,
+        "ci_low": 0.515052323165203,
+        "ci_high": 0.5880040257381473
+       },
+       "gender_of_respondent": {
+        "share": 0.03146769343814926,
+        "mean_abs": 0.129696142864633,
+        "ci_low": 0.11956837273627052,
+        "ci_high": 0.14064823354061148
+       },
+       "relationship_with_head": {
+        "share": 0.046520633401561866,
+        "mean_abs": 0.19173781286706987,
+        "ci_low": 0.17993720142296676,
+        "ci_high": 0.20391612815945942
+       },
+       "marital_status": {
+        "share": 0.024695766447306183,
+        "mean_abs": 0.10178520582059575,
+        "ci_low": 0.09363066164563025,
+        "ci_high": 0.11035818240903619
+       },
+       "education_level": {
+        "share": 0.14314356410078952,
+        "mean_abs": 0.5899754990386941,
+        "ci_low": 0.5559461999591041,
+        "ci_high": 0.6294422265746831
+       },
+       "job_type": {
+        "share": 0.06732636331319863,
+        "mean_abs": 0.27748998038218964,
+        "ci_low": 0.2607366968294706,
+        "ci_high": 0.2961498896185768
+       },
+       "household_size": {
+        "share": 0.0326750556558965,
+        "mean_abs": 0.1346723646836897,
+        "ci_low": 0.12762539985783394,
+        "ci_high": 0.14268036654958416
+       },
+       "age_of_respondent": {
+        "share": 0.10549441548968146,
+        "mean_abs": 0.43480208708857254,
+        "ci_low": 0.4192087866967435,
+        "ci_high": 0.45036647013795944
+       }
+      }
+     }
+    },
+    "unknown_vs_modal": {
+     "n": 2101,
+     "global": {
+      "spearman": 0.9151515151515152,
+      "kendall": 0.7777777777777777,
+      "top3_overlap": 1.0,
+      "top5_overlap": 0.8,
+      "spearman_ci": [
+       0.8666666666666665,
+       0.9393939393939393
+      ]
+     },
+     "instance_spearman": {
+      "median": 0.34545454545454546,
+      "q25": 0.12727272727272726,
+      "q75": 0.5272727272727272,
+      "share_below_0.5": 0.7006187529747739
+     },
+     "same_top_feature_share": 0.5245121370775822,
+     "sign_agreement_share": 0.9224503366303716,
+     "mean_abs_difference": 0.3385521051891925
+    }
+   }
+  },
+  "feature_ablation__xgboost": {
+   "pooled": {
+    "by_baseline": {
+     "unknown": {
+      "ranking": [
+       "cellphone_access",
+       "education_level",
+       "country",
+       "location_type",
+       "age_of_respondent",
+       "job_type",
+       "gender_of_respondent",
+       "relationship_with_head",
+       "marital_status",
+       "household_size"
+      ],
+      "features": {
+       "country": {
+        "share": 0.1285688702359598,
+        "mean_abs": 0.3340840634549968,
+        "ci_low": 0.3162590552764363,
+        "ci_high": 0.35090539718980435
+       },
+       "location_type": {
+        "share": 0.1032322493417121,
+        "mean_abs": 0.2682472769371234,
+        "ci_low": 0.2575477604905493,
+        "ci_high": 0.278068771915813
+       },
+       "cellphone_access": {
+        "share": 0.2236432749548601,
+        "mean_abs": 0.5811333172966261,
+        "ci_low": 0.5613097183851351,
+        "ci_high": 0.5999355608865793
+       },
+       "gender_of_respondent": {
+        "share": 0.06402128648213894,
+        "mean_abs": 0.16635824438929558,
+        "ci_low": 0.15853558803850318,
+        "ci_high": 0.17342790139544523
+       },
+       "relationship_with_head": {
+        "share": 0.041188919436548364,
+        "mean_abs": 0.10702871970040724,
+        "ci_low": 0.10013325494893362,
+        "ci_high": 0.11348856159839779
+       },
+       "marital_status": {
+        "share": 0.025590784068501037,
+        "mean_abs": 0.06649722528411076,
+        "ci_low": 0.06285594114607666,
+        "ci_high": 0.07050714999001938
+       },
+       "education_level": {
+        "share": 0.20982732834277265,
+        "mean_abs": 0.5452328106174246,
+        "ci_low": 0.5248387958731735,
+        "ci_high": 0.5666154704550747
+       },
+       "job_type": {
+        "share": 0.083637243331647,
+        "mean_abs": 0.21732998086651786,
+        "ci_low": 0.20337981159242338,
+        "ci_high": 0.23140246341598686
+       },
+       "household_size": {
+        "share": 0.02284049747937577,
+        "mean_abs": 0.05935065148537978,
+        "ci_low": 0.05460050613969797,
+        "ci_high": 0.06430281819006195
+       },
+       "age_of_respondent": {
+        "share": 0.09744954632648417,
+        "mean_abs": 0.25322101966710764,
+        "ci_low": 0.23064450523667038,
+        "ci_high": 0.27565511631427797
+       }
+      }
+     },
+     "modal": {
+      "ranking": [
+       "country",
+       "education_level",
+       "cellphone_access",
+       "job_type",
+       "age_of_respondent",
+       "location_type",
+       "gender_of_respondent",
+       "relationship_with_head",
+       "marital_status",
+       "household_size"
+      ],
+      "features": {
+       "country": {
+        "share": 0.16976785831256147,
+        "mean_abs": 0.3647790371438023,
+        "ci_low": 0.33796485590547676,
+        "ci_high": 0.39034646841776555
+       },
+       "location_type": {
+        "share": 0.08583393002346772,
+        "mean_abs": 0.18443077894393356,
+        "ci_low": 0.1677744643875398,
+        "ci_high": 0.20090660167583263
+       },
+       "cellphone_access": {
+        "share": 0.15384448819292426,
+        "mean_abs": 0.3305646005710587,
+        "ci_low": 0.29294540861370044,
+        "ci_high": 0.3717052133099176
+       },
+       "gender_of_respondent": {
+        "share": 0.06815540439781859,
+        "mean_abs": 0.14644505172828212,
+        "ci_low": 0.1334490235295263,
+        "ci_high": 0.15904701791098338
+       },
+       "relationship_with_head": {
+        "share": 0.03695049966279251,
+        "mean_abs": 0.07939528614515438,
+        "ci_low": 0.07114287597972434,
+        "ci_high": 0.08906848574563626
+       },
+       "marital_status": {
+        "share": 0.03240589957621734,
+        "mean_abs": 0.06963033499207813,
+        "ci_low": 0.06335529941630084,
+        "ci_high": 0.07624122068101132
+       },
+       "education_level": {
+        "share": 0.15609343944451837,
+        "mean_abs": 0.33539690675842576,
+        "ci_low": 0.3056773429764784,
+        "ci_high": 0.3672978496738069
+       },
+       "job_type": {
+        "share": 0.15147788647556237,
+        "mean_abs": 0.3254794996317942,
+        "ci_low": 0.3064675799867138,
+        "ci_high": 0.3464258548365498
+       },
+       "household_size": {
+        "share": 0.027621743483455988,
+        "mean_abs": 0.05935065148537978,
+        "ci_low": 0.05460050613969797,
+        "ci_high": 0.06430281819006195
+       },
+       "age_of_respondent": {
+        "share": 0.11784885043068123,
+        "mean_abs": 0.25322101966710764,
+        "ci_low": 0.23064450523667038,
+        "ci_high": 0.27565511631427797
+       }
+      }
+     }
+    },
+    "unknown_vs_modal": {
+     "n": 1000,
+     "global": {
+      "spearman": 0.9030303030303028,
+      "kendall": 0.7333333333333333,
+      "top3_overlap": 1.0,
+      "top5_overlap": 0.8,
+      "spearman_ci": [
+       0.7939393939393938,
+       0.9393939393939393
+      ]
+     },
+     "instance_spearman": {
+      "median": 0.17575757575757575,
+      "q25": -0.07878787878787878,
+      "q75": 0.41818181818181815,
+      "share_below_0.5": 0.817
+     },
+     "same_top_feature_share": 0.474,
+     "sign_agreement_share": 0.9061173974540311,
+     "mean_abs_difference": 0.2184684249942773
+    }
+   },
+   "uganda": {
+    "by_baseline": {
+     "unknown": {
+      "ranking": [
+       "education_level",
+       "cellphone_access",
+       "country",
+       "location_type",
+       "age_of_respondent",
+       "gender_of_respondent",
+       "job_type",
+       "relationship_with_head",
+       "household_size",
+       "marital_status"
+      ],
+      "features": {
+       "country": {
+        "share": 0.16115896204805552,
+        "mean_abs": 0.3888145322969732,
+        "ci_low": 0.37717857504545166,
+        "ci_high": 0.3994529041491152
+       },
+       "location_type": {
+        "share": 0.12025144188229034,
+        "mean_abs": 0.2901204347516056,
+        "ci_low": 0.282991416760068,
+        "ci_high": 0.29647221993083145
+       },
+       "cellphone_access": {
+        "share": 0.19246919857448255,
+        "mean_abs": 0.4643540791916736,
+        "ci_low": 0.45365722388488333,
+        "ci_high": 0.4758708019313395
+       },
+       "gender_of_respondent": {
+        "share": 0.05212724108898415,
+        "mean_abs": 0.125762964754646,
+        "ci_low": 0.12175237263372986,
+        "ci_high": 0.13010864231740676
+       },
+       "relationship_with_head": {
+        "share": 0.03667212281557178,
+        "mean_abs": 0.08847571428650648,
+        "ci_low": 0.08462269414879088,
+        "ci_high": 0.09248177161792547
+       },
+       "marital_status": {
+        "share": 0.01857630381366864,
+        "mean_abs": 0.04481746957990661,
+        "ci_low": 0.04333282055052663,
+        "ci_high": 0.046509215800620896
+       },
+       "education_level": {
+        "share": 0.23126659731598415,
+        "mean_abs": 0.557957266096774,
+        "ci_low": 0.5402652078468686,
+        "ci_high": 0.5754259075871105
+       },
+       "job_type": {
+        "share": 0.051569498234120076,
+        "mean_abs": 0.12441734596621466,
+        "ci_low": 0.11649604368042192,
+        "ci_high": 0.13297455655250198
+       },
+       "household_size": {
+        "share": 0.028768143665745864,
+        "mean_abs": 0.06940645547911724,
+        "ci_low": 0.06558897937812565,
+        "ci_high": 0.07362149968827103
+       },
+       "age_of_respondent": {
+        "share": 0.10714049056109702,
+        "mean_abs": 0.2584887566796279,
+        "ci_low": 0.24417005496663993,
+        "ci_high": 0.2724259084600524
+       }
+      }
+     },
+     "modal": {
+      "ranking": [
+       "country",
+       "education_level",
+       "cellphone_access",
+       "age_of_respondent",
+       "location_type",
+       "job_type",
+       "gender_of_respondent",
+       "relationship_with_head",
+       "household_size",
+       "marital_status"
+      ],
+      "features": {
+       "country": {
+        "share": 0.2945727876547447,
+        "mean_abs": 0.6112163034903825,
+        "ci_low": 0.5921734778281805,
+        "ci_high": 0.6291345572682412
+       },
+       "location_type": {
+        "share": 0.07022092167757754,
+        "mean_abs": 0.1457031130307983,
+        "ci_low": 0.13488252130372522,
+        "ci_high": 0.15717291374553302
+       },
+       "cellphone_access": {
+        "share": 0.1403615609834822,
+        "mean_abs": 0.2912396461991456,
+        "ci_low": 0.27005132566570084,
+        "ci_high": 0.3120969170714236
+       },
+       "gender_of_respondent": {
+        "share": 0.039647407699193955,
+        "mean_abs": 0.08226537885529338,
+        "ci_low": 0.07638620410304112,
+        "ci_high": 0.08858042843088802
+       },
+       "relationship_with_head": {
+        "share": 0.03804692970989078,
+        "mean_abs": 0.07894450781276464,
+        "ci_low": 0.07403957149752374,
+        "ci_high": 0.08443690957824014
+       },
+       "marital_status": {
+        "share": 0.011923166345425283,
+        "mean_abs": 0.024739670346241475,
+        "ci_low": 0.022598067721848893,
+        "ci_high": 0.026950112333904014
+       },
+       "education_level": {
+        "share": 0.19558496366741943,
+        "mean_abs": 0.40582403915467496,
+        "ci_low": 0.3803010088012324,
+        "ci_high": 0.4333774916527692
+       },
+       "job_type": {
+        "share": 0.051614725770407266,
+        "mean_abs": 0.10709666070049147,
+        "ci_low": 0.09783501770046595,
+        "ci_high": 0.11702813265871997
+       },
+       "household_size": {
+        "share": 0.03345011079541696,
+        "mean_abs": 0.06940645547911724,
+        "ci_low": 0.06558897937812565,
+        "ci_high": 0.07362149968827103
+       },
+       "age_of_respondent": {
+        "share": 0.12457742569644188,
+        "mean_abs": 0.2584887566796279,
+        "ci_low": 0.24417005496663993,
+        "ci_high": 0.2724259084600524
+       }
+      }
+     }
+    },
+    "unknown_vs_modal": {
+     "n": 2101,
+     "global": {
+      "spearman": 0.9393939393939393,
+      "kendall": 0.8222222222222221,
+      "top3_overlap": 1.0,
+      "top5_overlap": 1.0,
+      "spearman_ci": [
+       0.9151515151515152,
+       0.9515151515151514
+      ]
+     },
+     "instance_spearman": {
+      "median": 0.18787878787878787,
+      "q25": -0.006060606060606061,
+      "q75": 0.3939393939393939,
+      "share_below_0.5": 0.8586387434554974
+     },
+     "same_top_feature_share": 0.5192765349833413,
+     "sign_agreement_share": 0.8927831491712708,
+     "mean_abs_difference": 0.2074036283268432
+    }
+   }
+  }
+ }
+}
