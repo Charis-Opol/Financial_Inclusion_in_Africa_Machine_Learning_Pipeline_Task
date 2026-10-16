@@ -271,3 +271,42 @@ def hidden_unit_attributions(
 
 def unit_names(layer: str, n_units: int) -> tuple[str, ...]:
     return tuple(f"{layer}[unit{u:03d}]" for u in range(n_units))
+
+
+# --- Gradient saturation ------------------------------------------------------------
+
+
+def path_gradient_profile(
+    model: MLPRawModel, X_raw: pd.DataFrame, baseline: np.ndarray, n_points: int = 32
+) -> tuple[np.ndarray, np.ndarray]:
+    """How the MLP's output changes along IG's straight path from the
+    baseline to each respondent (in embedding space).
+
+    Returns `(profile [n, n_points], endpoint [n, 51])`: `profile[i, t]` is
+    d f / d alpha at the midpoint of step t, i.e. the gradient dotted with
+    the path direction, which IG integrates; its mean over t is
+    f(x) - f(baseline). `endpoint` is gradient x (x - baseline) evaluated at
+    the respondent only -- what IG would return if the model were linear
+    along the path. Flat stretches of the profile (gradient ~ 0 where the
+    output has already saturated) and a large gap between `endpoint` and IG
+    are the evidence for gradient saturation.
+    """
+    net = model.net
+    net.eval()
+    wrapper = EmbeddedInputNet(net)
+    z = embed(model, model.to_codes(X_raw))
+    z_baseline = embed(model, baseline).expand_as(z)
+    direction = z - z_baseline
+
+    def gradient_at(points: torch.Tensor) -> torch.Tensor:
+        points = points.clone().requires_grad_(True)
+        (gradient,) = torch.autograd.grad(wrapper(points).sum(), points)
+        return gradient
+
+    alphas = (np.arange(n_points) + 0.5) / n_points
+    profile = np.column_stack([
+        (gradient_at(z_baseline + float(a) * direction) * direction).sum(dim=1).detach().double().numpy()
+        for a in alphas
+    ])
+    endpoint = (gradient_at(z) * direction).detach().double().numpy()
+    return profile, endpoint

@@ -59,6 +59,14 @@ same ID further down.
 | D5.4 | What separates confident yes from confident no is mostly education, not phone access. |
 | D5.5 | The MLP's learned category vectors, flattened to 2-D and coloured by their effect. Position alone means nothing. |
 | D5.6 | Exact interaction values: about 40-45% of attribution is shared between pairs. The strongest pair for both models is country with rural/urban. |
+| D6.1 | To tell reference effects from method effects, SHAP is also computed against the exact same single point IG and Ablation use. |
+| D6.2 | Correction: when two explanations both give exactly zero to a feature (because the respondent equals the baseline there), that is not agreement. Those features are now excluded. |
+| D6.3 | Same model: the choice of reference explains most of the disagreement between SHAP and Captum. With the same reference, SHAP and IG agree closely. |
+| D6.4 | Different models: XGBoost and the MLP rely on very similar features. The low TreeSHAP-vs-IG agreement is mostly about the methods, not the models. |
+| D6.5 | Why: reference (strong evidence), interactions (explains Ablation vs SHAP almost exactly), correlated features (weak, not established), gradient saturation (not supported). |
+| D6.6 | Faithfulness: all methods beat a random order easily; which looks best depends on how "removing" a feature is defined. |
+| D6.7 | Scrambling the MLP's weights changes every method's explanation; SHAP's changes most. |
+| D6.8 | Small changes to age or household size barely move any explanation. |
 
 ## Phase 0 — Reconnaissance (findings that constrain later choices)
 
@@ -544,3 +552,148 @@ not computed for the Uganda set.
   show how the country effect shifts between rural and urban respondents.
 - This is direct evidence for Phase 6: pairs are where a one-at-a-time method
   (ablation) and a coalition-averaging method (Shapley) should part ways.
+
+## Phase 6 — SHAP vs Captum (Task 4)
+
+All numbers below are from `reports/xai/comparison_summary.json` and
+`reports/xai/comparison_table.csv`, written by `scripts/run_xai_comparison.py`.
+Per-respondent figures are medians; intervals are 95% bootstrap over
+respondents (1,000 resamples). "Pooled" is the 1,000-row stratified sample,
+"Uganda" all 2,101 Uganda rows.
+
+**D6.1 — References are aligned by computing exact Shapley values at the same single baseline point IG and Ablation use.**
+SHAP compares a respondent with 200 background rows; IG and Ablation with one
+point. Comparing them directly mixes two differences. Exact Shapley values
+against the modal and the unknown baseline points (same oracle machinery,
+1,024 coalitions, one reference row) give a third attribution that shares
+SHAP's method and IG/Ablation's reference. Then:
+
+- R1 (SHAP at the background vs SHAP at the modal point) isolates the
+  reference effect;
+- M1–M4 (SHAP vs IG/Ablation at the same point) isolate the method effect.
+
+**D6.2 — A correction made during this phase: shared exact zeros inflate per-respondent rank correlations.**
+With a single baseline point, a feature on which the respondent equals the
+baseline gets exactly zero from Ablation, IG and point-Shapley alike,
+whatever the model (4.1 features per pooled respondent, on average, for the
+modal baseline). Two such explanations then "agree" on those features by
+construction. This first showed up in the randomisation check (D6.6), where IG
+and Ablation looked 0.90 similar on a fully scrambled MLP. Every per-respondent
+rank correlation is now also reported with the shared zeros excluded, and that
+version is the one quoted below. It matters only for comparisons where both
+sides use the same baseline point.
+
+**D6.3 — Result, experiment A (same model, the MLP): the reference explains most of the disagreement; the method very little.**
+Median per-respondent rank correlation (shared zeros excluded), pooled:
+
+| Comparison | Pooled | Uganda |
+| --- | --- | --- |
+| A1 exact SHAP vs IG (modal) | 0.34 [0.32, 0.36] | 0.51 [0.50, 0.53] |
+| A3 exact SHAP vs Ablation (modal) | 0.36 [0.33, 0.39] | 0.54 [0.52, 0.55] |
+| R1 SHAP: background vs modal point (reference only) | 0.37 [0.34, 0.40] | 0.53 [0.52, 0.54] |
+| M1 SHAP vs IG at the modal point (method only) | 0.94 [0.94, 0.94] | 0.94 [0.94, 0.94] |
+| M2 SHAP vs Ablation at the modal point (method only) | 0.83 [0.83, 0.86] | 0.88 [0.86, 0.89] |
+| A6 exact SHAP vs GradientSHAP | 0.95 [0.95, 0.95] | 0.96 [0.96, 0.96] |
+
+Changing only the reference (R1, 0.37) produces as much disagreement as the
+raw SHAP-vs-Captum comparisons (A1 0.34, A3 0.36); holding the reference fixed,
+SHAP and IG order features almost identically (M1, 0.94; same top feature for
+90% of respondents). With the unknown baseline the raw comparisons agree more
+(A2 0.65, A4 0.67) and the method-only ones slightly less (M3 0.90, M4 0.81).
+Global rankings agree throughout (Spearman 0.83–1.00).
+
+**D6.4 — Result, experiment B (different models): the two models rely on very similar features; TreeSHAP-vs-IG disagreement is mostly method and reference.**
+
+| Comparison | Global Spearman | Per-respondent (pooled) | Same top feature |
+| --- | --- | --- | --- |
+| B1 TreeSHAP (XGBoost) vs IG modal (MLP) | 0.77 | 0.25 | 54% |
+| B2 TreeSHAP (XGBoost) vs IG unknown (MLP) | 0.78 | 0.58 | 46% |
+| B3 exact SHAP, XGBoost vs MLP (model only) | 0.99 | 0.83 | 86% |
+| B4 Ablation modal, XGBoost vs MLP (model only) | 0.94 | 0.80 | 66% |
+
+Explained with the same method and reference, the two candidate models agree
+on the global ranking almost perfectly (B3, 0.99) and on most individual
+respondents (0.83). The low agreement in B1 therefore says more about
+TreeSHAP vs IG than about XGBoost vs the MLP. Uganda follows the same pattern
+(B1 0.41, B3 0.87).
+
+**D6.5 — Why they disagree: evidence for each candidate cause.**
+
+- *Reference (supported, the dominant cause):* D6.3.
+- *Value function (supported, explains Ablation vs SHAP):* at the same
+  reference, Ablation removes a feature from the full set of others; Shapley
+  averages over coalitions. Their difference is made only of interaction
+  terms, and for purely pairwise interactions it equals the sum of the
+  feature's pairwise Shapley interactions exactly (unit-tested). Measured:
+  the sum of pairwise interactions explains R² = 0.96 (MLP) and 0.95 (XGBoost)
+  of Ablation − Shapley on y = x (Spearman 0.90, 0.92); the remainder is
+  higher-order interactions. The mean |gap| is 0.14 logits for the MLP against
+  a mean |Shapley value| of 0.31.
+- *Correlated features (weak, not established):* Cramér's V on the training
+  data: strongest pairs `gender_of_respondent` × `relationship_with_head`
+  (0.51), `country` × `location_type` (0.48), `country` × `job_type` (0.45);
+  `relationship_with_head` × `marital_status` 0.30. Features with a stronger
+  association to another feature tend to have more method disagreement
+  (Spearman 0.58, p = 0.08) and more reference disagreement (0.56, p = 0.09),
+  over just 10 features. The largest disagreements are on `location_type`
+  and `relationship_with_head`, both strongly associated with another
+  feature, but `gender_of_respondent` (also 0.51) is near average. Recorded as
+  suggestive, not shown.
+- *Gradient saturation (not supported):* along IG's path the MLP's output
+  is rarely flat (median 0% of the path flat for the unknown baseline, 3%
+  for the modal). The model is clearly nonlinear along the path — the
+  gradient at the respondent alone misses a median 29% / 67% of the output
+  change — but per-respondent flatness barely relates to SHAP-vs-IG
+  disagreement (Spearman 0.20 / 0.15), and with the reference aligned that
+  disagreement is small anyway (M1).
+
+**D6.6 — Faithfulness: every method beats a random ordering by a wide margin; which is "best" depends on the removal reference, as expected.**
+Deletion area (higher is better) and insertion gap (lower is better), logits,
+pooled. Removal by the 200 background rows is SHAP's own value function;
+removal to the modal point is IG's and Ablation's.
+
+- XGBoost, background removal: TreeSHAP and exact SHAP are best (deletion
+  0.96, insertion gap 0.32) vs random 0.61 / 0.61; point-baseline methods 0.90–0.92 / 0.37–0.40.
+- XGBoost, modal-point removal: Ablation modal and SHAP at the modal point
+  are best on insertion (0.22, 0.24 vs 0.37 for TreeSHAP); deletion is
+  near-equal (1.08–1.10).
+- MLP, background removal: exact SHAP and GradientSHAP best (1.41 / 0.51);
+  IG and Ablation 1.28–1.33 / 0.62–0.66; random 0.91 / 0.90.
+- MLP, modal-point removal: point methods best on insertion (0.40–0.43 vs
+  0.61 for exact SHAP); deletion equal within intervals (1.58–1.62).
+- Uganda exception: for the MLP with background removal, the modal-point
+  methods do slightly better on deletion than exact SHAP (1.34 vs 1.29) —
+  the one case where a method beat SHAP on SHAP's own removal reference.
+
+Each removal reference favours the methods built on it, so no method is
+declared "most faithful" overall. The exact Shapley values against a given
+reference are the ground truth for that reference: GradientSHAP is within
+0.95 rank agreement of them, TreeSHAP essentially equal (D3.2).
+
+**D6.7 — Weight randomisation (MLP, 300 pooled rows): all three methods degrade, SHAP the most.**
+Cascading re-initialisation from the output layer to the embeddings. Median
+per-respondent rank correlation with the trained model's attributions
+(shared zeros excluded), after each step:
+
+| Step | Model logits corr. | Exact SHAP | IG modal | Ablation modal |
+| --- | --- | --- | --- | --- |
+| + output layer | 0.19 | 0.28 | 0.60 | 0.49 |
+| + hidden layer 2 | 0.60 | 0.59 | 0.71 | 0.60 |
+| + hidden layer 1 | 0.03 | 0.30 | 0.40 | 0.43 |
+| + embeddings | 0.13 | 0.10 | 0.49 | 0.40 |
+
+Every method passes in the sense that it changes when the model does. IG and
+Ablation retain more similarity than SHAP even on a fully random model: part
+of their per-respondent ranking is set by the baseline itself (which features
+differ from it), not by the model. Not monotone: after re-initialising
+hidden layer 2 the scrambled model happened to correlate more with the
+original (0.60) than after the output layer alone, and the attributions
+follow. Counting shared zeros, IG and Ablation would have shown 0.89–0.95
+throughout (D6.2).
+
+**D6.8 — Stability (200 pooled rows, age and household size each nudged by ±1): all methods are stable.**
+Median relative change ‖φ(x′) − φ(x)‖₁ / ‖φ(x)‖₁: exact SHAP 0.031 (XGBoost),
+0.022 (MLP); TreeSHAP 0.031; IG modal 0.026; Ablation modal 0.055 (XGBoost),
+0.039 (MLP). Per-respondent rank correlation with the unperturbed ranking
+0.99–1.00 for all. The models' own mean |logit change| is 0.043, so
+explanations move in proportion to the model, not more.

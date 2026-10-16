@@ -1,0 +1,6543 @@
+{
+ "note": "agreement is not correctness; attributions describe the models, not causes; every explained row is a training row; logits throughout",
+ "comparisons": [
+  {
+   "experiment": "A",
+   "id": "A1",
+   "label": "Exact SHAP vs IG (modal)",
+   "a": "kernel_shap__mlp",
+   "b": "integrated_gradients__mlp__modal"
+  },
+  {
+   "experiment": "A",
+   "id": "A2",
+   "label": "Exact SHAP vs IG (unknown)",
+   "a": "kernel_shap__mlp",
+   "b": "integrated_gradients__mlp__unknown"
+  },
+  {
+   "experiment": "A",
+   "id": "A3",
+   "label": "Exact SHAP vs Ablation (modal)",
+   "a": "kernel_shap__mlp",
+   "b": "feature_ablation__mlp__modal"
+  },
+  {
+   "experiment": "A",
+   "id": "A4",
+   "label": "Exact SHAP vs Ablation (unknown)",
+   "a": "kernel_shap__mlp",
+   "b": "feature_ablation__mlp__unknown"
+  },
+  {
+   "experiment": "A",
+   "id": "A5",
+   "label": "IG vs Ablation (both modal)",
+   "a": "integrated_gradients__mlp__modal",
+   "b": "feature_ablation__mlp__modal"
+  },
+  {
+   "experiment": "A",
+   "id": "A6",
+   "label": "Exact SHAP vs GradientSHAP",
+   "a": "kernel_shap__mlp",
+   "b": "gradient_shap__mlp"
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "R1",
+   "label": "SHAP: background vs modal point (reference only)",
+   "a": "kernel_shap__mlp",
+   "b": "exact_shapley_point__mlp__modal"
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M1",
+   "label": "SHAP vs IG at the modal point (method only)",
+   "a": "exact_shapley_point__mlp__modal",
+   "b": "integrated_gradients__mlp__modal"
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M2",
+   "label": "SHAP vs Ablation at the modal point (method only)",
+   "a": "exact_shapley_point__mlp__modal",
+   "b": "feature_ablation__mlp__modal"
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M3",
+   "label": "SHAP vs IG at the unknown point (method only)",
+   "a": "exact_shapley_point__mlp__unknown",
+   "b": "integrated_gradients__mlp__unknown"
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M4",
+   "label": "SHAP vs Ablation at the unknown point (method only)",
+   "a": "exact_shapley_point__mlp__unknown",
+   "b": "feature_ablation__mlp__unknown"
+  },
+  {
+   "experiment": "B",
+   "id": "B1",
+   "label": "TreeSHAP (XGBoost) vs IG modal (MLP)",
+   "a": "tree_shap__xgboost",
+   "b": "integrated_gradients__mlp__modal"
+  },
+  {
+   "experiment": "B",
+   "id": "B2",
+   "label": "TreeSHAP (XGBoost) vs IG unknown (MLP)",
+   "a": "tree_shap__xgboost",
+   "b": "integrated_gradients__mlp__unknown"
+  },
+  {
+   "experiment": "B",
+   "id": "B3",
+   "label": "Exact SHAP: XGBoost vs MLP (model only)",
+   "a": "kernel_shap__xgboost",
+   "b": "kernel_shap__mlp"
+  },
+  {
+   "experiment": "B",
+   "id": "B4",
+   "label": "Ablation modal: XGBoost vs MLP (model only)",
+   "a": "feature_ablation__xgboost__modal",
+   "b": "feature_ablation__mlp__modal"
+  },
+  {
+   "experiment": "B-aligned",
+   "id": "V1",
+   "label": "XGBoost: SHAP vs Ablation at the modal point (method only)",
+   "a": "exact_shapley_point__xgboost__modal",
+   "b": "feature_ablation__xgboost__modal"
+  }
+ ],
+ "agreement": [
+  {
+   "experiment": "A",
+   "id": "A1",
+   "comparison": "Exact SHAP vs IG (modal)",
+   "a": "kernel_shap__mlp",
+   "b": "integrated_gradients__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.8424242424242423,
+    "ci": [
+     0.8303030303030302,
+     0.8909090909090909
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.6444444444444444,
+    "ci": [
+     0.6,
+     0.7333333333333333
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     0.6666666666666666
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.37575757575757573,
+    "ci": [
+     0.3575757575757576,
+     0.3939393939393939
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.33766491571959006,
+    "ci": [
+     0.3167890100792656,
+     0.3564240777040118
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.561,
+    "ci": [
+     0.53,
+     0.592
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.7971112999150383,
+    "ci": [
+     0.7867364845932956,
+     0.8069181329670108
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A1",
+   "comparison": "Exact SHAP vs IG (modal)",
+   "a": "kernel_shap__mlp",
+   "b": "integrated_gradients__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9272727272727272,
+    "ci": [
+     0.9272727272727272,
+     0.9515151515151514
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.8222222222222221,
+     0.8666666666666666
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.5151515151515151,
+    "ci": [
+     0.503030303030303,
+     0.5272727272727272
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.5127504275741924,
+    "ci": [
+     0.5002002752404049,
+     0.5252565355638068
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.7348881485007139,
+    "ci": [
+     0.714897667777249,
+     0.7534507377439315
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8254509184606433,
+    "ci": [
+     0.8196469225525181,
+     0.8317311150312431
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A2",
+   "comparison": "Exact SHAP vs IG (unknown)",
+   "a": "kernel_shap__mlp",
+   "b": "integrated_gradients__mlp__unknown",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.8303030303030302,
+    "ci": [
+     0.8060606060606059,
+     0.8545454545454544
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.6444444444444444,
+    "ci": [
+     0.6,
+     0.6888888888888888
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     0.6666666666666666
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.6484848484848484,
+    "ci": [
+     0.6363636363636364,
+     0.6727272727272727
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.6484848484848483,
+    "ci": [
+     0.6363636363636362,
+     0.6727272727272726
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.45,
+    "ci": [
+     0.42,
+     0.48
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8449,
+    "ci": [
+     0.8394,
+     0.8508025
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A2",
+   "comparison": "Exact SHAP vs IG (unknown)",
+   "a": "kernel_shap__mlp",
+   "b": "integrated_gradients__mlp__unknown",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9151515151515152,
+    "ci": [
+     0.8787878787878788,
+     0.9151515151515152
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.7333333333333333,
+     0.8222222222222221
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.7212121212121212,
+    "ci": [
+     0.7090909090909091,
+     0.7212121212121212
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.7212121212121211,
+    "ci": [
+     0.709090909090909,
+     0.7212121212121211
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.615421227986673,
+    "ci": [
+     0.5939790575916231,
+     0.6349476439790576
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8175630652070442,
+    "ci": [
+     0.8135625892432174,
+     0.8218467396477868
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A3",
+   "comparison": "Exact SHAP vs Ablation (modal)",
+   "a": "kernel_shap__mlp",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.8787878787878788,
+    "ci": [
+     0.8303030303030302,
+     0.9151515151515152
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.7333333333333333,
+    "ci": [
+     0.6444444444444444,
+     0.7777777777777777
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     0.6666666666666666
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.3939393939393939,
+    "ci": [
+     0.3575757575757576,
+     0.41818181818181815
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.3619904402925108,
+    "ci": [
+     0.3298404276560089,
+     0.3865321650581048
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.512,
+    "ci": [
+     0.481,
+     0.543
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8492778249787596,
+    "ci": [
+     0.8401826558767347,
+     0.857362649470428
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A3",
+   "comparison": "Exact SHAP vs Ablation (modal)",
+   "a": "kernel_shap__mlp",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.8909090909090909,
+    "ci": [
+     0.8909090909090909,
+     0.9393939393939393
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.7333333333333333,
+    "ci": [
+     0.7333333333333333,
+     0.8222222222222221
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.5272727272727272,
+    "ci": [
+     0.5151515151515151,
+     0.5515151515151515
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.5366017925832457,
+    "ci": [
+     0.5236716289065411,
+     0.5495319562599505
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.7567824845311756,
+    "ci": [
+     0.7372679676344598,
+     0.7739171822941456
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8763195079378273,
+    "ci": [
+     0.8700314547825392,
+     0.8816398177069777
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A4",
+   "comparison": "Exact SHAP vs Ablation (unknown)",
+   "a": "kernel_shap__mlp",
+   "b": "feature_ablation__mlp__unknown",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.8666666666666665,
+    "ci": [
+     0.8303030303030302,
+     0.8666666666666665
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.7333333333333333,
+    "ci": [
+     0.6444444444444444,
+     0.7333333333333333
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     0.6666666666666666
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.6666666666666667,
+    "ci": [
+     0.6484848484848484,
+     0.6848484848484848
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.6666666666666665,
+    "ci": [
+     0.6484848484848483,
+     0.6848484848484848
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.47,
+    "ci": [
+     0.44,
+     0.499025
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8285,
+    "ci": [
+     0.8214975,
+     0.8356
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A4",
+   "comparison": "Exact SHAP vs Ablation (unknown)",
+   "a": "kernel_shap__mlp",
+   "b": "feature_ablation__mlp__unknown",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9515151515151514,
+    "ci": [
+     0.9030303030303028,
+     0.9515151515151514
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8666666666666666,
+    "ci": [
+     0.7777777777777777,
+     0.8666666666666666
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.696969696969697,
+    "ci": [
+     0.6848484848484848,
+     0.7090909090909091
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.6969696969696969,
+    "ci": [
+     0.6848484848484848,
+     0.709090909090909
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.5164207520228463,
+    "ci": [
+     0.4954783436458829,
+     0.5378391242265588
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.7871489766777725,
+    "ci": [
+     0.7815790099952403,
+     0.7923381722989052
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A5",
+   "comparison": "IG vs Ablation (both modal)",
+   "a": "integrated_gradients__mlp__modal",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9393939393939393,
+    "ci": [
+     0.9030303030303028,
+     0.9636363636363635
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.7777777777777777,
+     0.911111111111111
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.6666666666666666,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9636363636363636,
+    "ci": [
+     0.9636363636363636,
+     0.9636363636363636
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8214285714285715,
+    "ci": [
+     0.7999999999999999,
+     0.8285714285714287
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.717,
+    "ci": [
+     0.688,
+     0.7430249999999999
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8448598130841122,
+    "ci": [
+     0.8356087213270554,
+     0.854326542068419
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.115
+  },
+  {
+   "experiment": "A",
+   "id": "A5",
+   "comparison": "IG vs Ablation (both modal)",
+   "a": "integrated_gradients__mlp__modal",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9030303030303028,
+    "ci": [
+     0.8909090909090909,
+     0.9151515151515152
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.7333333333333333,
+    "ci": [
+     0.6888888888888888,
+     0.7777777777777777
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9636363636363636,
+    "ci": [
+     0.9636363636363636,
+     0.9757575757575757
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8285714285714287,
+    "ci": [
+     0.8095238095238096,
+     0.8285714285714287
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.7934316991908615,
+    "ci": [
+     0.7753331746787244,
+     0.8091504045692527
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8420746405120106,
+    "ci": [
+     0.8361940269871827,
+     0.8478632333482191
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.273679200380771
+  },
+  {
+   "experiment": "A",
+   "id": "A6",
+   "comparison": "Exact SHAP vs GradientSHAP",
+   "a": "kernel_shap__mlp",
+   "b": "gradient_shap__mlp",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "mean logit over 200 background rows",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9878787878787878,
+    "ci": [
+     0.9878787878787878,
+     0.9999999999999999
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.9555555555555554,
+    "ci": [
+     0.9555555555555554,
+     0.9999999999999999
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9515151515151515,
+    "ci": [
+     0.9515151515151515,
+     0.9515151515151515
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.9515151515151514,
+    "ci": [
+     0.9515151515151514,
+     0.9515151515151514
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.923,
+    "ci": [
+     0.906,
+     0.94
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.9598,
+    "ci": [
+     0.956,
+     0.9637
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A",
+   "id": "A6",
+   "comparison": "Exact SHAP vs GradientSHAP",
+   "a": "kernel_shap__mlp",
+   "b": "gradient_shap__mlp",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "mean logit over 200 background rows",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9878787878787878,
+    "ci": [
+     0.9878787878787878,
+     0.9999999999999999
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.9555555555555554,
+    "ci": [
+     0.9555555555555554,
+     0.9999999999999999
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9636363636363636,
+    "ci": [
+     0.9636363636363636,
+     0.9636363636363636
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.9636363636363635,
+    "ci": [
+     0.9636363636363635,
+     0.9636363636363635
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.9243217515468825,
+    "ci": [
+     0.9128986197049024,
+     0.9357448833888624
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.9791051880057116,
+    "ci": [
+     0.9769621608757735,
+     0.9810090433127082
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "R1",
+   "comparison": "SHAP: background vs modal point (reference only)",
+   "a": "kernel_shap__mlp",
+   "b": "exact_shapley_point__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.8909090909090909,
+    "ci": [
+     0.8545454545454544,
+     0.9393939393939393
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.7333333333333333,
+    "ci": [
+     0.6444444444444444,
+     0.8222222222222221
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     0.6666666666666666
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.40606060606060607,
+    "ci": [
+     0.38181818181818183,
+     0.4243939393939392
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.3687199252398553,
+    "ci": [
+     0.3425870321612615,
+     0.3988030274409017
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.603,
+    "ci": [
+     0.572,
+     0.633
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8343245539507221,
+    "ci": [
+     0.8252772079138331,
+     0.8430961005364269
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "R1",
+   "comparison": "SHAP: background vs modal point (reference only)",
+   "a": "kernel_shap__mlp",
+   "b": "exact_shapley_point__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9272727272727272,
+    "ci": [
+     0.9151515151515152,
+     0.9515151515151514
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.7777777777777777,
+     0.8666666666666666
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.5272727272727272,
+    "ci": [
+     0.5151515151515151,
+     0.5515151515151515
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.531509589558614,
+    "ci": [
+     0.5236716289065411,
+     0.5440156975482285
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.7629700142789148,
+    "ci": [
+     0.7453474535935269,
+     0.7810685387910519
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.865264732773668,
+    "ci": [
+     0.8596048463522151,
+     0.8713242527699633
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M1",
+   "comparison": "SHAP vs IG at the modal point (method only)",
+   "a": "exact_shapley_point__mlp__modal",
+   "b": "integrated_gradients__mlp__modal",
+   "reference_a": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9757575757575757,
+    "ci": [
+     0.9272727272727272,
+     0.9878787878787878
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.911111111111111,
+    "ci": [
+     0.8222222222222221,
+     0.9555555555555554
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.6666666666666666,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9878787878787879,
+    "ci": [
+     0.9878787878787879,
+     0.9878787878787879
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.942857142857143,
+    "ci": [
+     0.942857142857143,
+     0.942857142857143
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.9,
+    "ci": [
+     0.8819750000000001,
+     0.917
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.9148683092608326,
+    "ci": [
+     0.9082613419097948,
+     0.921309271398878
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.115
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M1",
+   "comparison": "SHAP vs IG at the modal point (method only)",
+   "a": "exact_shapley_point__mlp__modal",
+   "b": "integrated_gradients__mlp__modal",
+   "reference_a": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9636363636363635,
+    "ci": [
+     0.9636363636363635,
+     0.9878787878787878
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.911111111111111,
+    "ci": [
+     0.911111111111111,
+     0.9555555555555554
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9878787878787879,
+    "ci": [
+     0.9878787878787879,
+     0.9878787878787879
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.942857142857143,
+    "ci": [
+     0.942857142857143,
+     0.942857142857143
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.9447881960970966,
+    "ci": [
+     0.9347810566396955,
+     0.9538434079009994
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.9355830770509517,
+    "ci": [
+     0.9317051586383069,
+     0.9396049637467513
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.273679200380771
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M2",
+   "comparison": "SHAP vs Ablation at the modal point (method only)",
+   "a": "exact_shapley_point__mlp__modal",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9272727272727272,
+    "ci": [
+     0.8787878787878788,
+     0.9515151515151514
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.7333333333333333,
+     0.8666666666666666
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.6666666666666666,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9636363636363636,
+    "ci": [
+     0.9636363636363636,
+     0.9757575757575757
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8285714285714287,
+    "ci": [
+     0.8285714285714287,
+     0.8571428571428573
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.738,
+    "ci": [
+     0.711,
+     0.766
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8858113848768054,
+    "ci": [
+     0.8782927593159998,
+     0.8929370673969049
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.115
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M2",
+   "comparison": "SHAP vs Ablation at the modal point (method only)",
+   "a": "exact_shapley_point__mlp__modal",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9393939393939393,
+    "ci": [
+     0.9272727272727272,
+     0.9515151515151514
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.7777777777777777,
+     0.8666666666666666
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9757575757575757,
+    "ci": [
+     0.9757575757575757,
+     0.9757575757575757
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.880952380952381,
+    "ci": [
+     0.8571428571428573,
+     0.8857142857142858
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.7881960970966206,
+    "ci": [
+     0.7710495002379819,
+     0.804390766301761
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8808910315019532,
+    "ci": [
+     0.8757504628585058,
+     0.886484720872074
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.273679200380771
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M3",
+   "comparison": "SHAP vs IG at the unknown point (method only)",
+   "a": "exact_shapley_point__mlp__unknown",
+   "b": "integrated_gradients__mlp__unknown",
+   "reference_a": "one baseline point (unknown baseline: every categorical set to a never-seen category",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9999999999999999,
+    "ci": [
+     0.9757575757575757,
+     0.9999999999999999
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.9999999999999999,
+    "ci": [
+     0.911111111111111,
+     0.9999999999999999
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9030303030303031,
+    "ci": [
+     0.8909090909090909,
+     0.9030303030303031
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.9030303030303028,
+    "ci": [
+     0.8909090909090909,
+     0.9030303030303028
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.815,
+    "ci": [
+     0.79,
+     0.836
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.9344,
+    "ci": [
+     0.9294,
+     0.9396025
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M3",
+   "comparison": "SHAP vs IG at the unknown point (method only)",
+   "a": "exact_shapley_point__mlp__unknown",
+   "b": "integrated_gradients__mlp__unknown",
+   "reference_a": "one baseline point (unknown baseline: every categorical set to a never-seen category",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9636363636363635,
+    "ci": [
+     0.9393939393939393,
+     0.9878787878787878
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8666666666666666,
+    "ci": [
+     0.8222222222222221,
+     0.9555555555555554
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9030303030303031,
+    "ci": [
+     0.9030303030303031,
+     0.9030303030303031
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.9030303030303028,
+    "ci": [
+     0.9030303030303028,
+     0.9030303030303028
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.792003807710614,
+    "ci": [
+     0.774869109947644,
+     0.8096263683960019
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.939457401237506,
+    "ci": [
+     0.9361732508329367,
+     0.9426463588767253
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M4",
+   "comparison": "SHAP vs Ablation at the unknown point (method only)",
+   "a": "exact_shapley_point__mlp__unknown",
+   "b": "feature_ablation__mlp__unknown",
+   "reference_a": "one baseline point (unknown baseline: every categorical set to a never-seen category",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9151515151515152,
+    "ci": [
+     0.8787878787878788,
+     0.9151515151515152
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.7333333333333333,
+     0.8222222222222221
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.806060606060606,
+    "ci": [
+     0.793939393939394,
+     0.806060606060606
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8060606060606059,
+    "ci": [
+     0.7939393939393938,
+     0.8060606060606059
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.686,
+    "ci": [
+     0.658,
+     0.715
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8912,
+    "ci": [
+     0.8847,
+     0.8971025
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "A-aligned",
+   "id": "M4",
+   "comparison": "SHAP vs Ablation at the unknown point (method only)",
+   "a": "exact_shapley_point__mlp__unknown",
+   "b": "feature_ablation__mlp__unknown",
+   "reference_a": "one baseline point (unknown baseline: every categorical set to a never-seen category",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9757575757575757,
+    "ci": [
+     0.9515151515151514,
+     0.9878787878787878
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.911111111111111,
+    "ci": [
+     0.8666666666666666,
+     0.9555555555555554
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.806060606060606,
+    "ci": [
+     0.806060606060606,
+     0.8181818181818182
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8060606060606059,
+    "ci": [
+     0.8060606060606059,
+     0.8181818181818182
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.6839600190385531,
+    "ci": [
+     0.6639695383150881,
+     0.7034745359352689
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8786768205616373,
+    "ci": [
+     0.8738672060923369,
+     0.883342455973346
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "B",
+   "id": "B1",
+   "comparison": "TreeSHAP (XGBoost) vs IG modal (MLP)",
+   "a": "tree_shap__xgboost",
+   "b": "integrated_gradients__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.7696969696969697,
+    "ci": [
+     0.7575757575757575,
+     0.7939393939393938
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.6,
+    "ci": [
+     0.5555555555555555,
+     0.6444444444444444
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     0.6666666666666666
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.2727272727272727,
+    "ci": [
+     0.24848484848484848,
+     0.296969696969697
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.252138191695742,
+    "ci": [
+     0.23136299780786726,
+     0.2751439048011474
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.544,
+    "ci": [
+     0.51,
+     0.574
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.7622769753610875,
+    "ci": [
+     0.7527138339202535,
+     0.7722726064773867
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "B",
+   "id": "B1",
+   "comparison": "TreeSHAP (XGBoost) vs IG modal (MLP)",
+   "a": "tree_shap__xgboost",
+   "b": "integrated_gradients__mlp__modal",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9030303030303028,
+    "ci": [
+     0.9030303030303028,
+     0.9272727272727272
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.7333333333333333,
+    "ci": [
+     0.7333333333333333,
+     0.7777777777777777
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 0.8,
+    "ci": [
+     0.8,
+     0.8
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.41818181818181815,
+    "ci": [
+     0.40606060606060607,
+     0.4303030303030303
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.4073001558161986,
+    "ci": [
+     0.3988030274409017,
+     0.41895461765208397
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.6820561637315564,
+    "ci": [
+     0.6615897191813422,
+     0.7006187529747739
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.7475687806499876,
+    "ci": [
+     0.7404209321219705,
+     0.7542766679922858
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "B",
+   "id": "B2",
+   "comparison": "TreeSHAP (XGBoost) vs IG unknown (MLP)",
+   "a": "tree_shap__xgboost",
+   "b": "integrated_gradients__mlp__unknown",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.7818181818181817,
+    "ci": [
+     0.7818181818181817,
+     0.8181818181818182
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.6,
+    "ci": [
+     0.6,
+     0.6444444444444444
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     0.6666666666666666
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.5757575757575758,
+    "ci": [
+     0.5515151515151515,
+     0.6
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.5757575757575757,
+    "ci": [
+     0.5515151515151515,
+     0.6
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.455,
+    "ci": [
+     0.424975,
+     0.485
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8027,
+    "ci": [
+     0.7962,
+     0.8095025
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "B",
+   "id": "B2",
+   "comparison": "TreeSHAP (XGBoost) vs IG unknown (MLP)",
+   "a": "tree_shap__xgboost",
+   "b": "integrated_gradients__mlp__unknown",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "unknown baseline: every categorical set to a never-seen category",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.8545454545454544,
+    "ci": [
+     0.8303030303030302,
+     0.8666666666666665
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.6444444444444444,
+    "ci": [
+     0.6,
+     0.6899999999999988
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.6606060606060606,
+    "ci": [
+     0.6484848484848484,
+     0.6727272727272727
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.6606060606060605,
+    "ci": [
+     0.6484848484848483,
+     0.6727272727272726
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.5749643027129938,
+    "ci": [
+     0.5535340314136126,
+     0.5944907187053783
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.7460257020466444,
+    "ci": [
+     0.740740123750595,
+     0.7515468824369348
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "B",
+   "id": "B3",
+   "comparison": "Exact SHAP: XGBoost vs MLP (model only)",
+   "a": "kernel_shap__xgboost",
+   "b": "kernel_shap__mlp",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "mean logit over 200 background rows",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9878787878787878,
+    "ci": [
+     0.9757575757575757,
+     0.9878787878787878
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.9555555555555554,
+    "ci": [
+     0.911111111111111,
+     0.9555555555555554
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.8303030303030303,
+    "ci": [
+     0.8181818181818182,
+     0.8424242424242424
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8303030303030302,
+    "ci": [
+     0.8181818181818182,
+     0.8424242424242423
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.858,
+    "ci": [
+     0.835,
+     0.879
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.9057,
+    "ci": [
+     0.9007,
+     0.9111
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "B",
+   "id": "B3",
+   "comparison": "Exact SHAP: XGBoost vs MLP (model only)",
+   "a": "kernel_shap__xgboost",
+   "b": "kernel_shap__mlp",
+   "reference_a": "mean logit over 200 background rows",
+   "reference_b": "mean logit over 200 background rows",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9393939393939393,
+    "ci": [
+     0.9393939393939393,
+     0.9757575757575757
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.8222222222222221,
+     0.911111111111111
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.8666666666666667,
+    "ci": [
+     0.8545454545454545,
+     0.8666666666666667
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8666666666666665,
+    "ci": [
+     0.8545454545454544,
+     0.8666666666666665
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.8724416944312232,
+    "ci": [
+     0.8567348881485007,
+     0.8857686815802
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.9115659209900048,
+    "ci": [
+     0.9081865778200857,
+     0.9146132793907663
+    ]
+   },
+   "mean_shared_zero_features_per_row": 0.0
+  },
+  {
+   "experiment": "B",
+   "id": "B4",
+   "comparison": "Ablation modal: XGBoost vs MLP (model only)",
+   "a": "feature_ablation__xgboost__modal",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.9393939393939393,
+    "ci": [
+     0.9030303030303028,
+     0.9878787878787878
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8222222222222221,
+    "ci": [
+     0.7333333333333333,
+     0.9555555555555554
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9393939393939394,
+    "ci": [
+     0.9272727272727272,
+     0.9393939393939394
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.7999999999999999,
+    "ci": [
+     0.7999999999999999,
+     0.7999999999999999
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.659,
+    "ci": [
+     0.627,
+     0.688
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8090026478375993,
+    "ci": [
+     0.7998205464321694,
+     0.8182348117875993
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.115
+  },
+  {
+   "experiment": "B",
+   "id": "B4",
+   "comparison": "Ablation modal: XGBoost vs MLP (model only)",
+   "a": "feature_ablation__xgboost__modal",
+   "b": "feature_ablation__mlp__modal",
+   "reference_a": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9636363636363635,
+    "ci": [
+     0.9515151515151514,
+     0.9878787878787878
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.911111111111111,
+    "ci": [
+     0.8666666666666666,
+     0.9555555555555554
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     0.8,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9393939393939394,
+    "ci": [
+     0.9272727272727272,
+     0.9515151515151515
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.7999999999999999,
+    "ci": [
+     0.7714285714285715,
+     0.7999999999999999
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.7405997144217039,
+    "ci": [
+     0.7220371251784864,
+     0.7591623036649214
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8051277639163728,
+    "ci": [
+     0.7980875355177207,
+     0.8120132148831427
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.273679200380771
+  },
+  {
+   "experiment": "B-aligned",
+   "id": "V1",
+   "comparison": "XGBoost: SHAP vs Ablation at the modal point (method only)",
+   "a": "exact_shapley_point__xgboost__modal",
+   "b": "feature_ablation__xgboost__modal",
+   "reference_a": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "pooled",
+   "n": 1000,
+   "global_spearman": {
+    "estimate": 0.8909090909090909,
+    "ci": [
+     0.8545454545454544,
+     0.9393939393939393
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.7333333333333333,
+    "ci": [
+     0.6444444444444444,
+     0.8222222222222221
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 0.6666666666666666,
+    "ci": [
+     0.6666666666666666,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9757575757575757,
+    "ci": [
+     0.9636363636363636,
+     0.9757575757575757
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.8285714285714287,
+    "ci": [
+     0.8214285714285715,
+     0.8571428571428573
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.865,
+    "ci": [
+     0.843,
+     0.886
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.873433362753751,
+    "ci": [
+     0.8646454840073974,
+     0.881879900223399
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.308
+  },
+  {
+   "experiment": "B-aligned",
+   "id": "V1",
+   "comparison": "XGBoost: SHAP vs Ablation at the modal point (method only)",
+   "a": "exact_shapley_point__xgboost__modal",
+   "b": "feature_ablation__xgboost__modal",
+   "reference_a": "one baseline point (modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "reference_b": "modal baseline: every categorical at its most frequent training level (country=Rwanda, location_type=Rural, cellphone_access=Yes, gender_of_respondent=Female, relationship_with_head=Head of Household, marital_status=Married/Living together, education_level=Primary education, job_type=Self employed)",
+   "sample": "uganda",
+   "n": 2101,
+   "global_spearman": {
+    "estimate": 0.9636363636363635,
+    "ci": [
+     0.9272727272727272,
+     0.9636363636363635
+    ]
+   },
+   "global_kendall": {
+    "estimate": 0.8666666666666666,
+    "ci": [
+     0.8222222222222221,
+     0.8666666666666666
+    ]
+   },
+   "top3_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "top5_overlap": {
+    "estimate": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ]
+   },
+   "instance_spearman_median": {
+    "estimate": 0.9636363636363636,
+    "ci": [
+     0.9636363636363636,
+     0.9757575757575757
+    ]
+   },
+   "instance_spearman_median_excluding_shared_zeros": {
+    "estimate": 0.7999999999999999,
+    "ci": [
+     0.7999999999999999,
+     0.8214285714285715
+    ]
+   },
+   "same_top_feature_share": {
+    "estimate": 0.866254164683484,
+    "ci": [
+     0.8510233222275108,
+     0.8800571156592099
+    ]
+   },
+   "sign_agreement_share": {
+    "estimate": 0.8294760388884109,
+    "ci": [
+     0.8226647245634329,
+     0.8363569128282248
+    ]
+   },
+   "mean_shared_zero_features_per_row": 4.456449309852451
+  }
+ ],
+ "evidence": {
+  "value_function": {
+   "xgboost": {
+    "n": 1000,
+    "mean_abs_gap_ablation_minus_shapley": 0.08061432101549885,
+    "mean_abs_shapley": 0.2061688618845749,
+    "spearman_gap_vs_pairwise_interaction_sum": 0.9198537343224207,
+    "r2_gap_explained_by_pairwise_sum_identity": 0.9504626042754175,
+    "same_sign_share": 0.926914968376669
+   },
+   "mlp": {
+    "n": 1000,
+    "mean_abs_gap_ablation_minus_shapley": 0.14192499912479598,
+    "mean_abs_shapley": 0.31130801689037846,
+    "spearman_gap_vs_pairwise_interaction_sum": 0.897707884893981,
+    "r2_gap_explained_by_pairwise_sum_identity": 0.9640066839659048,
+    "same_sign_share": 0.9029736618521665
+   }
+  },
+  "correlated_features": {
+   "cramers_v": {
+    "country": {
+     "country": 1.0,
+     "location_type": 0.48387963307760945,
+     "cellphone_access": 0.22250551058930074,
+     "gender_of_respondent": 0.04860621483584556,
+     "relationship_with_head": 0.15569459355051907,
+     "marital_status": 0.28477112283295797,
+     "education_level": 0.18466752880201498,
+     "job_type": 0.4518296541192988,
+     "household_size": 0.29083144942720807,
+     "age_of_respondent": 0.050058487030455324
+    },
+    "location_type": {
+     "country": 0.48387963307760945,
+     "location_type": 1.0,
+     "cellphone_access": 0.08523825905386578,
+     "gender_of_respondent": 0.01292437714473847,
+     "relationship_with_head": 0.10931978196944009,
+     "marital_status": 0.2847601192785896,
+     "education_level": 0.1328532275019492,
+     "job_type": 0.41481313400735714,
+     "household_size": 0.29045717700598955,
+     "age_of_respondent": 0.054128947455149026
+    },
+    "cellphone_access": {
+     "country": 0.22250551058930074,
+     "location_type": 0.08523825905386578,
+     "cellphone_access": 1.0,
+     "gender_of_respondent": 0.10236957011021665,
+     "relationship_with_head": 0.07670327077272439,
+     "marital_status": 0.17582380042177134,
+     "education_level": 0.25457955072387434,
+     "job_type": 0.21861188635445666,
+     "household_size": 0.13309691096165413,
+     "age_of_respondent": 0.15226232130036513
+    },
+    "gender_of_respondent": {
+     "country": 0.04860621483584556,
+     "location_type": 0.01292437714473847,
+     "cellphone_access": 0.10236957011021665,
+     "gender_of_respondent": 1.0,
+     "relationship_with_head": 0.5092414485812027,
+     "marital_status": 0.22384340643897774,
+     "education_level": 0.12588254727870724,
+     "job_type": 0.16346076806359822,
+     "household_size": 0.03613322940848455,
+     "age_of_respondent": 0.03950544209905143
+    },
+    "relationship_with_head": {
+     "country": 0.15569459355051907,
+     "location_type": 0.10931978196944009,
+     "cellphone_access": 0.07670327077272439,
+     "gender_of_respondent": 0.5092414485812027,
+     "relationship_with_head": 1.0,
+     "marital_status": 0.2986701606964072,
+     "education_level": 0.12613141488651866,
+     "job_type": 0.15731107793869278,
+     "household_size": 0.17020949003493113,
+     "age_of_respondent": 0.3441210197165451
+    },
+    "marital_status": {
+     "country": 0.28477112283295797,
+     "location_type": 0.2847601192785896,
+     "cellphone_access": 0.17582380042177134,
+     "gender_of_respondent": 0.22384340643897774,
+     "relationship_with_head": 0.2986701606964072,
+     "marital_status": 1.0,
+     "education_level": 0.16553958419103115,
+     "job_type": 0.18735738595989387,
+     "household_size": 0.22663531456410502,
+     "age_of_respondent": 0.3122168529108188
+    },
+    "education_level": {
+     "country": 0.18466752880201498,
+     "location_type": 0.1328532275019492,
+     "cellphone_access": 0.25457955072387434,
+     "gender_of_respondent": 0.12588254727870724,
+     "relationship_with_head": 0.12613141488651866,
+     "marital_status": 0.16553958419103115,
+     "education_level": 1.0,
+     "job_type": 0.19197090484296067,
+     "household_size": 0.08046082883739987,
+     "age_of_respondent": 0.2258159917431913
+    },
+    "job_type": {
+     "country": 0.4518296541192988,
+     "location_type": 0.41481313400735714,
+     "cellphone_access": 0.21861188635445666,
+     "gender_of_respondent": 0.16346076806359822,
+     "relationship_with_head": 0.15731107793869278,
+     "marital_status": 0.18735738595989387,
+     "education_level": 0.19197090484296067,
+     "job_type": 1.0,
+     "household_size": 0.16219497766203453,
+     "age_of_respondent": 0.19764800013513015
+    },
+    "household_size": {
+     "country": 0.29083144942720807,
+     "location_type": 0.29045717700598955,
+     "cellphone_access": 0.13309691096165413,
+     "gender_of_respondent": 0.03613322940848455,
+     "relationship_with_head": 0.17020949003493113,
+     "marital_status": 0.22663531456410502,
+     "education_level": 0.08046082883739987,
+     "job_type": 0.16219497766203453,
+     "household_size": 1.0,
+     "age_of_respondent": 0.10530856925500172
+    },
+    "age_of_respondent": {
+     "country": 0.050058487030455324,
+     "location_type": 0.054128947455149026,
+     "cellphone_access": 0.15226232130036513,
+     "gender_of_respondent": 0.03950544209905143,
+     "relationship_with_head": 0.3441210197165451,
+     "marital_status": 0.3122168529108188,
+     "education_level": 0.2258159917431913,
+     "job_type": 0.19764800013513015,
+     "household_size": 0.10530856925500172,
+     "age_of_respondent": 1.0
+    }
+   },
+   "numerics_binned": "quartiles of the training values",
+   "strongest_pairs": [
+    {
+     "pair": [
+      "gender_of_respondent",
+      "relationship_with_head"
+     ],
+     "v": 0.5092414485812027
+    },
+    {
+     "pair": [
+      "country",
+      "location_type"
+     ],
+     "v": 0.48387963307760945
+    },
+    {
+     "pair": [
+      "country",
+      "job_type"
+     ],
+     "v": 0.4518296541192988
+    },
+    {
+     "pair": [
+      "location_type",
+      "job_type"
+     ],
+     "v": 0.41481313400735714
+    },
+    {
+     "pair": [
+      "relationship_with_head",
+      "age_of_respondent"
+     ],
+     "v": 0.3441210197165451
+    }
+   ],
+   "named_pairs": {
+    "relationship_with_head x marital_status": 0.2986701606964072,
+    "country x location_type": 0.48387963307760945
+   },
+   "max_v_by_feature": {
+    "country": 0.48387963307760945,
+    "location_type": 0.48387963307760945,
+    "cellphone_access": 0.25457955072387434,
+    "gender_of_respondent": 0.5092414485812027,
+    "relationship_with_head": 0.5092414485812027,
+    "marital_status": 0.3122168529108188,
+    "education_level": 0.25457955072387434,
+    "job_type": 0.4518296541192988,
+    "household_size": 0.29083144942720807,
+    "age_of_respondent": 0.3441210197165451
+   },
+   "per_feature_disagreement": {
+    "A1": {
+     "country": 0.7215211688066289,
+     "location_type": 1.1831640178277107,
+     "cellphone_access": 0.8903011258982421,
+     "gender_of_respondent": 0.9795374389774745,
+     "relationship_with_head": 1.3616613207975514,
+     "marital_status": 1.1258021398388294,
+     "education_level": 0.36456138276849953,
+     "job_type": 1.0440112773549595,
+     "household_size": 0.757922010102371,
+     "age_of_respondent": 0.7847489227707268
+    },
+    "A3": {
+     "country": 0.9486006844178579,
+     "location_type": 1.2368070185498048,
+     "cellphone_access": 0.901831326216064,
+     "gender_of_respondent": 0.9447929315513235,
+     "relationship_with_head": 1.0896721271636982,
+     "marital_status": 1.1867134624474966,
+     "education_level": 0.44388389557207425,
+     "job_type": 0.8956987761309667,
+     "household_size": 0.8486598935014489,
+     "age_of_respondent": 0.5245617843450817
+    },
+    "A5": {
+     "country": 0.412365527679036,
+     "location_type": 1.1418260024532343,
+     "cellphone_access": 0.12960999671835197,
+     "gender_of_respondent": 0.2986275559089731,
+     "relationship_with_head": 1.0823535501860073,
+     "marital_status": 0.6686989687173609,
+     "education_level": 0.20672026985543687,
+     "job_type": 0.2801258992468332,
+     "household_size": 0.7136732143243949,
+     "age_of_respondent": 0.6912089258831131
+    },
+    "R1": {
+     "country": 0.70558558602409,
+     "location_type": 0.96001904528637,
+     "cellphone_access": 0.899527143916175,
+     "gender_of_respondent": 0.9478303041754421,
+     "relationship_with_head": 1.1581606091956786,
+     "marital_status": 0.9793305513442713,
+     "education_level": 0.3172308706664504,
+     "job_type": 0.9501714695753991,
+     "household_size": 0.6701578379707831,
+     "age_of_respondent": 0.5605645841165747
+    },
+    "M1": {
+     "country": 0.21000840458136638,
+     "location_type": 0.4245837591472736,
+     "cellphone_access": 0.06188760421312126,
+     "gender_of_respondent": 0.14320922587558843,
+     "relationship_with_head": 0.46175726846759657,
+     "marital_status": 0.3501509023244269,
+     "education_level": 0.15285020858189322,
+     "job_type": 0.1520373022509032,
+     "household_size": 0.32287348052057047,
+     "age_of_respondent": 0.3586226621895222
+    },
+    "M2": {
+     "country": 0.5111094030191883,
+     "location_type": 0.9986154215001233,
+     "cellphone_access": 0.12193628280214719,
+     "gender_of_respondent": 0.2687154300853981,
+     "relationship_with_head": 0.8991474540785069,
+     "marital_status": 0.6485458422686855,
+     "education_level": 0.20271520070990376,
+     "job_type": 0.21238668408714287,
+     "household_size": 0.7436442601657496,
+     "age_of_respondent": 0.479241525753013
+    }
+   },
+   "mean_disagreement_A1_A3_A5_by_feature": {
+    "country": 0.6941624603011743,
+    "location_type": 1.1872656796102499,
+    "cellphone_access": 0.6405808162775527,
+    "gender_of_respondent": 0.740985975479257,
+    "relationship_with_head": 1.1778956660490856,
+    "marital_status": 0.9937381903345623,
+    "education_level": 0.3383885160653369,
+    "job_type": 0.7399453175775864,
+    "household_size": 0.7734183726427384,
+    "age_of_respondent": 0.6668398776663071
+   },
+   "spearman_max_v_vs_disagreement__methods (A1, A3, A5 mean)": {
+    "rho": 0.5810642093722459,
+    "p_value": 0.07813223153408824,
+    "n_features": 10
+   },
+   "spearman_max_v_vs_disagreement__reference only (R1)": {
+    "rho": 0.5565983479249934,
+    "p_value": 0.09470010509948204,
+    "n_features": 10
+   }
+  },
+  "gradient_saturation": {
+   "unknown": {
+    "n": 1000,
+    "median_flat_share_of_path": 0.0,
+    "share_rows_with_over_half_the_path_flat": 0.056,
+    "median_relative_gap_endpoint_gradient_vs_IG_total": 0.2916220213644942,
+    "rows_with_output_change_over_0.05": 992,
+    "median_rank_correlation_endpoint_vs_IG": 0.8909090909090909,
+    "spearman_flatness_vs_M3_disagreement": 0.19785237297220445
+   },
+   "modal": {
+    "n": 1000,
+    "median_flat_share_of_path": 0.03125,
+    "share_rows_with_over_half_the_path_flat": 0.006,
+    "median_relative_gap_endpoint_gradient_vs_IG_total": 0.6733718117209921,
+    "rows_with_output_change_over_0.05": 978,
+    "median_rank_correlation_endpoint_vs_IG": 0.9636363636363636,
+    "spearman_flatness_vs_M1_disagreement": 0.15397701786524567
+   }
+  }
+ },
+ "faithfulness": {
+  "xgboost": {
+   "pooled": {
+    "background": {
+     "TreeSHAP": {
+      "deletion_area": {
+       "mean": 0.9601234670230684,
+       "ci": [
+        0.916746724558212,
+        1.002448796477911
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.31878522110197377,
+       "ci": [
+        0.3069302157194334,
+        0.3313389716215371
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8032597420225444,
+       "ci": [
+        0.7805737919564669,
+        0.8259117992526229
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.6197407604234695,
+       "ci": [
+        0.5878798223871928,
+        0.6530861275243465
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.050669012179483,
+       "ci": [
+        1.0024553205437656,
+        1.0972088023936144
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.34779985661652235,
+       "ci": [
+        0.33056437797623367,
+        0.3650959449509676
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.1186962350757694,
+       "ci": [
+        1.0644901124308759,
+        1.1726385511899058
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.22752533065028985,
+       "ci": [
+        0.2174918982544642,
+        0.2386482841780323
+       ]
+      }
+     },
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 0.9600850380066277,
+       "ci": [
+        0.9163948982147537,
+        1.002414223369689
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.3181537959644001,
+       "ci": [
+        0.3062681336435636,
+        0.33070358429105623
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8052900890159013,
+       "ci": [
+        0.7817988782257648,
+        0.8281446696070774
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.6156432467591815,
+       "ci": [
+        0.583503922361307,
+        0.6493514344673806
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.0495161870933638,
+       "ci": [
+        1.000635916786911,
+        1.0949862083871669
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.3507475718830723,
+       "ci": [
+        0.3337232856916576,
+        0.368684707806668
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.1186810099406617,
+       "ci": [
+        1.0636477322233941,
+        1.173358930445963
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.22800724743667786,
+       "ci": [
+        0.2173769626586956,
+        0.23868083369550358
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 0.9089745368091698,
+       "ci": [
+        0.8701720693207016,
+        0.9483795520936542
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.3930978567645169,
+       "ci": [
+        0.37619672690684974,
+        0.41026105732531354
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.7684679324554197,
+       "ci": [
+        0.7430107075660495,
+        0.7925392206768919
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.6452956806230156,
+       "ci": [
+        0.6116139693721298,
+        0.6796995455524537
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.9798474133955464,
+       "ci": [
+        0.9360139136843837,
+        1.0238917231236817
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.44194794837560336,
+       "ci": [
+        0.4181224940108547,
+        0.4666232063848749
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.0150719863139686,
+       "ci": [
+        0.9675850623106435,
+        1.0625468420588828
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.3553976242504915,
+       "ci": [
+        0.33686039466041157,
+        0.3730896237798835
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 0.9009968509630858,
+       "ci": [
+        0.8630709199476205,
+        0.940285328650443
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.3989847434669456,
+       "ci": [
+        0.3817087000391634,
+        0.41728336888266687
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.778565356774641,
+       "ci": [
+        0.7531331497324941,
+        0.8028277350055252
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.669904154465695,
+       "ci": [
+        0.6357422197254675,
+        0.7057901249793667
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.9456381802926912,
+       "ci": [
+        0.9050901348170984,
+        0.9883788516952207
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.44632049275274216,
+       "ci": [
+        0.4220862673011083,
+        0.4715205704585902
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9933206344988851,
+       "ci": [
+        0.9486841303232766,
+        1.038225295215858
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.3623984437056462,
+       "ci": [
+        0.3446087223497433,
+        0.3822578893592687
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 0.9210662377097094,
+       "ci": [
+        0.8793072669359283,
+        0.9625848543586172
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.37331663226045003,
+       "ci": [
+        0.35875711131686133,
+        0.3891608039858676
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.695996096404292,
+       "ci": [
+        0.6708141164946222,
+        0.7234707965619643
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.74086391631105,
+       "ci": [
+        0.7038738794479146,
+        0.7839813014617049
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.017522246898077,
+       "ci": [
+        0.9677280433167113,
+        1.0662045678966925
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.45594002356522423,
+       "ci": [
+        0.4344125531233108,
+        0.4778028501272834
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.0695209219837947,
+       "ci": [
+        1.0198324447714064,
+        1.119894987621588
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.2927794828282567,
+       "ci": [
+        0.27713543149092124,
+        0.3083556595298714
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 0.6128890783955311,
+       "ci": [
+        0.5848688515915246,
+        0.6414201451596092
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6126328026940705,
+       "ci": [
+        0.584429022700313,
+        0.642282350103138
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.19368115194978502,
+       "ci": [
+        0.18257112700144792,
+        0.20477265285664184
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.9986567106312275,
+       "ci": [
+        0.94867581985413,
+        1.04785926065261
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.42815978376433483,
+       "ci": [
+        0.40518105096957063,
+        0.4504754084061575
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.8398005379429206,
+       "ci": [
+        0.7971660254444002,
+        0.8805870707123118
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.6494381114433119,
+       "ci": [
+        0.6178500820680652,
+        0.6812276654965328
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.6513673007179536,
+       "ci": [
+        0.6188926748454802,
+        0.6846222125995471
+       ]
+      }
+     }
+    },
+    "modal point": {
+     "TreeSHAP": {
+      "deletion_area": {
+       "mean": 1.0847816373274386,
+       "ci": [
+        1.042032061738086,
+        1.1271839887782311
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.37137557329703125,
+       "ci": [
+        0.36062606248125345,
+        0.38189964116179936
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8635063723355997,
+       "ci": [
+        0.824595716368442,
+        0.901676998202689
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5376922960551456,
+       "ci": [
+        0.5159075549878412,
+        0.5626207409960683
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.192354548583622,
+       "ci": [
+        1.1419218947857035,
+        1.2435873010635987
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.4333518215031363,
+       "ci": [
+        0.41275603370175235,
+        0.4544960917424178
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2386468591436277,
+       "ci": [
+        1.1848852075638365,
+        1.2911508909313125
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.3345597946201451,
+       "ci": [
+        0.3189903897044249,
+        0.34978387596069366
+       ]
+      }
+     },
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 1.0832432934331113,
+       "ci": [
+        1.0407823886646688,
+        1.126891826797605
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.3694902749633925,
+       "ci": [
+        0.35899162191413236,
+        0.3796697652404451
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8665343761325348,
+       "ci": [
+        0.8275587688059255,
+        0.9047759712979546
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5377890664013103,
+       "ci": [
+        0.515078447916871,
+        0.5632570211593992
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.1909802616706584,
+       "ci": [
+        1.139927647349058,
+        1.241693588313245
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.4330566005022265,
+       "ci": [
+        0.41239053961260946,
+        0.45459828391061163
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.237659677204443,
+       "ci": [
+        1.1843453974457165,
+        1.2906183486717637
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.3319513024096377,
+       "ci": [
+        0.3167643456376274,
+        0.347586434639967
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 1.0971339421146549,
+       "ci": [
+        1.0524313330230446,
+        1.1410188555447844
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.24126781595845448,
+       "ci": [
+        0.23207808419851883,
+        0.2499832891994738
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0074526393443812,
+       "ci": [
+        0.9766015624747845,
+        1.0361898605196795
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5007117373021319,
+       "ci": [
+        0.476845258563722,
+        0.5242760291118408
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.239812367220875,
+       "ci": [
+        1.186157587663841,
+        1.2940241291627521
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.2429165557459928,
+       "ci": [
+        0.22710487332433696,
+        0.2585483478505281
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2489535689256155,
+       "ci": [
+        1.1924292685843305,
+        1.3032100920512457
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.09257013654289767,
+       "ci": [
+        0.08247355774141615,
+        0.10400452075523789
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 1.0814607106663539,
+       "ci": [
+        1.039286839095831,
+        1.1250350403692837
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.22382015354762022,
+       "ci": [
+        0.21550230856041463,
+        0.23253096298298864
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0373227416903246,
+       "ci": [
+        1.008765049928968,
+        1.0640558079666866
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5411235818648711,
+       "ci": [
+        0.5135843225660152,
+        0.56905121777436
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.1602393160923383,
+       "ci": [
+        1.1129882358187344,
+        1.2104953084607493
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.18830232181539758,
+       "ci": [
+        0.17439323614701863,
+        0.2032954490285949
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2162470710841007,
+       "ci": [
+        1.1652674459111179,
+        1.2684659038498065
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.04501502955844626,
+       "ci": [
+        0.039402030201675375,
+        0.05089088923769305
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 1.020751257768705,
+       "ci": [
+        0.9782409262976716,
+        1.064771757829264
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.38860171159306034,
+       "ci": [
+        0.37662585410813015,
+        0.4010377627246918
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.6828164433243219,
+       "ci": [
+        0.6429879393742246,
+        0.7242410256603616
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.680568444036413,
+       "ci": [
+        0.6471229959219811,
+        0.7187857542267418
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.111206568530528,
+       "ci": [
+        1.0575409845465502,
+        1.1690799588853145
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.48833290397841483,
+       "ci": [
+        0.4649521114573232,
+        0.5109466082853032
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2111748964814468,
+       "ci": [
+        1.160578489901591,
+        1.263460249935655
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.3216995169040747,
+       "ci": [
+        0.3042655320166261,
+        0.33944003734402356
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 0.675396338980712,
+       "ci": [
+        0.6475911211081513,
+        0.7021109144560809
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6617169633556623,
+       "ci": [
+        0.6358340952487767,
+        0.6888237339917013
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.19065196791733616,
+       "ci": [
+        0.17718018579310738,
+        0.20393654206329953
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.1202087000145888,
+       "ci": [
+        1.0697070459923164,
+        1.1694625337630433
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.4595351511887663,
+       "ci": [
+        0.4341315964728448,
+        0.4840457919144935
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.9079441475974552,
+       "ci": [
+        0.868673791615502,
+        0.9478125019559229
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.7044492492323432,
+       "ci": [
+        0.6704299139942586,
+        0.7379534921618256
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.6767653810239087,
+       "ci": [
+        0.6441869488810654,
+        0.7093677284485699
+       ]
+      }
+     }
+    }
+   },
+   "uganda": {
+    "background": {
+     "TreeSHAP": {
+      "deletion_area": {
+       "mean": 0.8577828138108478,
+       "ci": [
+        0.8340548372532021,
+        0.882794897400497
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.2551771605626608,
+       "ci": [
+        0.2496893049381353,
+        0.26094354520344737
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8389013966173255,
+       "ci": [
+        0.8245647401616565,
+        0.8527525367759822
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.47180214320547914,
+       "ci": [
+        0.4562775736108949,
+        0.48885323159235317
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.9984592030200367,
+       "ci": [
+        0.9674441918609907,
+        1.0292053475139884
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.28689131948146757,
+       "ci": [
+        0.2773346330554741,
+        0.29599729634262234
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9747453372229751,
+       "ci": [
+        0.9440552606747067,
+        1.0074291202393777
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.19234024734724117,
+       "ci": [
+        0.18656757877800625,
+        0.19781307018838404
+       ]
+      }
+     },
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 0.8574281033387522,
+       "ci": [
+        0.8336765286596576,
+        0.882176030554356
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.25535076162741493,
+       "ci": [
+        0.24998938874393628,
+        0.2610289075918809
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8393065391422709,
+       "ci": [
+        0.8248665930733792,
+        0.8532329899778109
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.47165710149464396,
+       "ci": [
+        0.45623795508126425,
+        0.48833544341905594
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.9975496360065513,
+       "ci": [
+        0.9671555837140717,
+        1.0287743780421517
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.29154609060954645,
+       "ci": [
+        0.2822102276367476,
+        0.30080235054262144
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9757311735400583,
+       "ci": [
+        0.9454038289106547,
+        1.007307385163953
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.18941996850131096,
+       "ci": [
+        0.18401107733374306,
+        0.19502479021343053
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 0.8414695602311536,
+       "ci": [
+        0.8201212682906043,
+        0.8631831643412128
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.3221533892418545,
+       "ci": [
+        0.314461620508246,
+        0.33016190696157066
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8291968173368418,
+       "ci": [
+        0.8145015958987195,
+        0.8427039720173896
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5105743738025927,
+       "ci": [
+        0.49338793460626895,
+        0.5271594031417179
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.000221162828456,
+       "ci": [
+        0.9724169983157461,
+        1.0251090662122526
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.33000305868506663,
+       "ci": [
+        0.31953546009204764,
+        0.34101074955435673
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9388887382179272,
+       "ci": [
+        0.9132200584703788,
+        0.9654266804487733
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.2877689136468992,
+       "ci": [
+        0.27888687159780784,
+        0.2966663771639711
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 0.822209901461356,
+       "ci": [
+        0.8020435278901363,
+        0.8438334755131398
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.3247014488462018,
+       "ci": [
+        0.31678625376041,
+        0.3332442036149592
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.8506534188645668,
+       "ci": [
+        0.8368966745546932,
+        0.863722322990313
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5241290569174836,
+       "ci": [
+        0.5064918170460606,
+        0.541813660926708
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.9040630447473245,
+       "ci": [
+        0.8786171209898116,
+        0.9307063853708462
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.3307734334107206,
+       "ci": [
+        0.3202866721752671,
+        0.3421774808339007
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9118471358143199,
+       "ci": [
+        0.88503132230498,
+        0.9392605487116467
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.2931550410810165,
+       "ci": [
+        0.28388294276917325,
+        0.30186623831676107
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 0.850073389210972,
+       "ci": [
+        0.8291175109336875,
+        0.8719765732539742
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.3294505293605727,
+       "ci": [
+        0.32187912744054703,
+        0.33804105381633864
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.6909175775416361,
+       "ci": [
+        0.6733922201059386,
+        0.7078095525363092
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.6097413454209745,
+       "ci": [
+        0.5887937787471161,
+        0.6325480201789199
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.0076846029761957,
+       "ci": [
+        0.9803873029138911,
+        1.0354143289175104
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.4093868017236699,
+       "ci": [
+        0.39664802564386387,
+        0.42316069395811357
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9882189877637736,
+       "ci": [
+        0.9600020896511403,
+        1.0182846658657416
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.2792177821192562,
+       "ci": [
+        0.2692613304739554,
+        0.28984490491523773
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 0.5285009059084457,
+       "ci": [
+        0.512977792008204,
+        0.5445944678695495
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.520964633057127,
+       "ci": [
+        0.5068125598928944,
+        0.5353102524217772
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.18121949499545884,
+       "ci": [
+        0.17407785730245415,
+        0.18885537791172466
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.8546733193826348,
+       "ci": [
+        0.8283951934270559,
+        0.8833875858975162
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.39154219332158274,
+       "ci": [
+        0.37835801663081975,
+        0.4059299766110339
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7031386329022634,
+       "ci": [
+        0.680698438963222,
+        0.7247185046665351
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.5524551203821663,
+       "ci": [
+        0.5327949602342841,
+        0.5715809832005643
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5493711372662097,
+       "ci": [
+        0.5308740407488037,
+        0.5677412874918304
+       ]
+      }
+     }
+    },
+    "modal point": {
+     "TreeSHAP": {
+      "deletion_area": {
+       "mean": 1.128670035396527,
+       "ci": [
+        1.1026619575789187,
+        1.1543225346223325
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.27632932596921,
+       "ci": [
+        0.2714455518412544,
+        0.2808910398594114
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0320709278645914,
+       "ci": [
+        1.0123652460079164,
+        1.0510847381563917
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.502398715006974,
+       "ci": [
+        0.48626322458548715,
+        0.5190716823017141
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.3051653920055795,
+       "ci": [
+        1.2689729370276335,
+        1.3395530619548819
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.28459279549182676,
+       "ci": [
+        0.27288881450547287,
+        0.2965427234687083
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2512137037693039,
+       "ci": [
+        1.2179169711251439,
+        1.284519689158464
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.1498021393753269,
+       "ci": [
+        0.14336161859106777,
+        0.15653473436342052
+       ]
+      }
+     },
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 1.1282246618568494,
+       "ci": [
+        1.1021697252021911,
+        1.154243802388761
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.2760157269367822,
+       "ci": [
+        0.2711315422217109,
+        0.2807064013783742
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0357888219553377,
+       "ci": [
+        1.0164935525114769,
+        1.0545234098806306
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5082277894283387,
+       "ci": [
+        0.49196609736800656,
+        0.5259001520483002
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.3080639569822439,
+       "ci": [
+        1.2724247980892471,
+        1.3431019976800804
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.28075076035622404,
+       "ci": [
+        0.2697704223803398,
+        0.2934291402294069
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2507299533907745,
+       "ci": [
+        1.2177914181464489,
+        1.2826839095618094
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.14766223272237783,
+       "ci": [
+        0.1415291656551396,
+        0.1546439329397675
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 1.1147129725736018,
+       "ci": [
+        1.0883101608708705,
+        1.1413118839201037
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.22020045133735297,
+       "ci": [
+        0.21589333280465628,
+        0.22483899226992374
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0512822636822925,
+       "ci": [
+        1.0326298260557583,
+        1.068838465067392
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.48438267032019633,
+       "ci": [
+        0.4681974556321001,
+        0.5001934947577698
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.2447737547797708,
+       "ci": [
+        1.2113782466075231,
+        1.2780418095196577
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.1762554811631577,
+       "ci": [
+        0.16752857642156516,
+        0.18517008190958525
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2515864993134396,
+       "ci": [
+        1.2185158952572952,
+        1.2837465190338575
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.063649457798245,
+       "ci": [
+        0.058618856186202564,
+        0.0691988956753691
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 1.092160687417991,
+       "ci": [
+        1.0678012665235908,
+        1.1169495864487533
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.22274465239510685,
+       "ci": [
+        0.2177107301818788,
+        0.22774904420108152
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0855847741379672,
+       "ci": [
+        1.0687766278331265,
+        1.1028893823725332
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.5776656153811313,
+       "ci": [
+        0.556902215555102,
+        0.5991529192015769
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.1381148014033433,
+       "ci": [
+        1.1066162921550982,
+        1.1696388196529819
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.1595514364177534,
+       "ci": [
+        0.149991350749934,
+        0.1692324033266453
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.2040246913131099,
+       "ci": [
+        1.17224294598381,
+        1.2377208445129426
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.03550991995604988,
+       "ci": [
+        0.03214779693500003,
+        0.039316101957537875
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 1.0782773360102318,
+       "ci": [
+        1.0555403630658378,
+        1.0999546657034032
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.38472794059375964,
+       "ci": [
+        0.37725690534947925,
+        0.3930055949678165
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.7129196175012821,
+       "ci": [
+        0.6857873898968941,
+        0.7402202298978062
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.7585357471058027,
+       "ci": [
+        0.7338739465038114,
+        0.7840407045616496
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.1959495895401686,
+       "ci": [
+        1.1677792584210773,
+        1.2227767869252182
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.4279276403072762,
+       "ci": [
+        0.41199028343139577,
+        0.4442254459777475
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.303636397449087,
+       "ci": [
+        1.2725578699415847,
+        1.333754162374188
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.3054549423747229,
+       "ci": [
+        0.29169950240525705,
+        0.32157463201078745
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 0.6550641122731349,
+       "ci": [
+        0.6399603337701711,
+        0.6712742411091638
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6440511594414411,
+       "ci": [
+        0.628335901557554,
+        0.6588743367310309
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.1818550416508627,
+       "ci": [
+        0.17288689526659048,
+        0.1911252619932287
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.1353733353191189,
+       "ci": [
+        1.1050595339409228,
+        1.1660009324100944
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.430484778149625,
+       "ci": [
+        0.4161927887798087,
+        0.4459122249041389
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.8760273180250094,
+       "ci": [
+        0.8489832047741196,
+        0.9009459470385167
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.643854287781574,
+       "ci": [
+        0.6236512688475916,
+        0.6657159573042645
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.6434717336032725,
+       "ci": [
+        0.6206846593609116,
+        0.6644931157967836
+       ]
+      }
+     }
+    }
+   }
+  },
+  "mlp": {
+   "pooled": {
+    "background": {
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 1.4103639455111716,
+       "ci": [
+        1.342193713930101,
+        1.478818614352453
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5109759707404453,
+       "ci": [
+        0.4910317528183423,
+        0.530508750518848
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.1662156066860445,
+       "ci": [
+        1.1306523591184574,
+        1.1999803567201601
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0185081985799223,
+       "ci": [
+        0.9616246315104406,
+        1.0739054504094554
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.5550347698119653,
+       "ci": [
+        1.4814174387378203,
+        1.6287578443716197
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5802442944245786,
+       "ci": [
+        0.5523137932070531,
+        0.6092397126837457
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.6194046129654347,
+       "ci": [
+        1.5341887989750018,
+        1.7040283437083896
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.38349980900403113,
+       "ci": [
+        0.3648070456526727,
+        0.4028862116598445
+       ]
+      }
+     },
+     "GradientSHAP": {
+      "deletion_area": {
+       "mean": 1.4061944731051288,
+       "ci": [
+        1.3401253927869101,
+        1.4722021497935396
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5152162600253861,
+       "ci": [
+        0.49609351156092624,
+        0.5338714504388458
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.1681684612297454,
+       "ci": [
+        1.1330382579535652,
+        1.2025199518398453
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0207739838736505,
+       "ci": [
+        0.967331834097925,
+        1.0746100363121671
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.5396846046878212,
+       "ci": [
+        1.4607361951439763,
+        1.6128800308200404
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5849904606201498,
+       "ci": [
+        0.5555999628332816,
+        0.6133248472834368
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.625577354262881,
+       "ci": [
+        1.539786448217942,
+        1.711965880645379
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.4020846550400555,
+       "ci": [
+        0.3821043446039087,
+        0.4220121830740892
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 1.3278305266283705,
+       "ci": [
+        1.2620684450791695,
+        1.3902832195972963
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6306524728443473,
+       "ci": [
+        0.6121050258319675,
+        0.6528741056957348
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0767352958833984,
+       "ci": [
+        1.0354332128060024,
+        1.1148451472210634
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.141166688272599,
+       "ci": [
+        1.0895966929285463,
+        1.193606282721196
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.4311100379086474,
+       "ci": [
+        1.3548372605415118,
+        1.506494339037819
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.753855278340429,
+       "ci": [
+        0.7237497335836268,
+        0.785436156795437
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.467141906407848,
+       "ci": [
+        1.3886206497361562,
+        1.5439043578378642
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5526740843936615,
+       "ci": [
+        0.5283698528599642,
+        0.5776648537945072
+       ]
+      }
+     },
+     "IG modal": {
+      "deletion_area": {
+       "mean": 1.3157366135042279,
+       "ci": [
+        1.2498634534393716,
+        1.3773669136054747
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6366323881007088,
+       "ci": [
+        0.6181219333568602,
+        0.659692230571384
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0607350961676985,
+       "ci": [
+        1.0187477376371552,
+        1.1008018617201367
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.1709480951402336,
+       "ci": [
+        1.1202129762025679,
+        1.2227735312390062
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.399925634066295,
+       "ci": [
+        1.326544803468921,
+        1.4739229928642437
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7624905332633852,
+       "ci": [
+        0.7310944041795611,
+        0.796648360446916
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.4420634585756062,
+       "ci": [
+        1.361116327180848,
+        1.5173584863251197
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5524811486092582,
+       "ci": [
+        0.5265121073023621,
+        0.5813240646767976
+       ]
+      }
+     },
+     "IG unknown": {
+      "deletion_area": {
+       "mean": 1.2760782640980946,
+       "ci": [
+        1.2120566432650095,
+        1.3361712295158714
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6559924386088652,
+       "ci": [
+        0.6322200659832262,
+        0.6811672715217746
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.916263574226629,
+       "ci": [
+        0.8746824100091769,
+        0.9576379448863613
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.3091361895457283,
+       "ci": [
+        1.2517742562474288,
+        1.368461880321065
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.284012213441897,
+       "ci": [
+        1.2086543945118002,
+        1.355756885972647
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.8022109828745946,
+       "ci": [
+        0.7626936103763008,
+        0.8412182378591898
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.440120999943521,
+       "ci": [
+        1.3635850799358276,
+        1.5158193604997818
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5689179454574733,
+       "ci": [
+        0.5421126682111383,
+        0.5953503175266491
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 1.3293669951587561,
+       "ci": [
+        1.2638780608121278,
+        1.388736209229282
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6353555573941717,
+       "ci": [
+        0.6149194518366472,
+        0.6562625450959033
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.135957898985073,
+       "ci": [
+        1.0948294099781049,
+        1.1746161494939198
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.1897571935220808,
+       "ci": [
+        1.1329780984165039,
+        1.2526738613933288
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.4174808271974326,
+       "ci": [
+        1.3445227297086475,
+        1.4859308256111596
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7726715281805955,
+       "ci": [
+        0.7415662578744874,
+        0.8041731544266624
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.4451400919502229,
+       "ci": [
+        1.3641073696258448,
+        1.5204379452058998
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5507660920074768,
+       "ci": [
+        0.5268781377810663,
+        0.5772664670538101
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 1.2965303418569623,
+       "ci": [
+        1.2328347910835413,
+        1.3576776850830403
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6193932310212352,
+       "ci": [
+        0.5962693393402082,
+        0.6440927487858834
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.9708720360606908,
+       "ci": [
+        0.9304819593230244,
+        1.0080313605806814
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.245285494989101,
+       "ci": [
+        1.1843600576542517,
+        1.3062613747957326
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.3700541562333701,
+       "ci": [
+        1.2933583912985083,
+        1.4420572225080956
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7813486746622809,
+       "ci": [
+        0.743013588164563,
+        0.8193820658882792
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.4601901422640495,
+       "ci": [
+        1.382968377005194,
+        1.5357921160752421
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5347099203574844,
+       "ci": [
+        0.5071779541892735,
+        0.5633626159317694
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 0.9108272556427596,
+       "ci": [
+        0.8659596676816986,
+        0.9534249039422567
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.9044906648629187,
+       "ci": [
+        0.8605568358002819,
+        0.9498387883897231
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.30272388958048696,
+       "ci": [
+        0.28615082352615306,
+        0.3202310516703683
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.472443842450287,
+       "ci": [
+        1.3937156252268819,
+        1.5503718883107518
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.6671893898626106,
+       "ci": [
+        0.6283697431686455,
+        0.7032026861593811
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 1.232570108597589,
+       "ci": [
+        1.168200335322604,
+        1.2967522980552662
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9592743163775467,
+       "ci": [
+        0.9059832099515189,
+        1.0092489886537028
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.9548921250167677,
+       "ci": [
+        0.9054605099435968,
+        1.0077827061123492
+       ]
+      }
+     }
+    },
+    "modal point": {
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 1.6079906919920308,
+       "ci": [
+        1.5239677688196724,
+        1.6859286306451413
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6054817686480555,
+       "ci": [
+        0.5822739407822405,
+        0.6263763882590543
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.2822820109762252,
+       "ci": [
+        1.2199994552971793,
+        1.3410176200442947
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0968541624844075,
+       "ci": [
+        1.0359212214764206,
+        1.1527656435191633
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.8441500551253558,
+       "ci": [
+        1.7503814949732273,
+        1.9344863752198405
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7212513881735504,
+       "ci": [
+        0.6848705164144747,
+        0.7553880565720611
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.8579371447190642,
+       "ci": [
+        1.7556940384610555,
+        1.9576809246254154
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.4903461434841156,
+       "ci": [
+        0.4654240117416717,
+        0.5145097795872018
+       ]
+      }
+     },
+     "GradientSHAP": {
+      "deletion_area": {
+       "mean": 1.6161007304540413,
+       "ci": [
+        1.5358546703207479,
+        1.6923661741116507
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6001570326862011,
+       "ci": [
+        0.5785346603013153,
+        0.6211032190061428
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.2889346452355386,
+       "ci": [
+        1.2268503691710533,
+        1.34848212688826
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0930532677583396,
+       "ci": [
+        1.0327531173828988,
+        1.148978381122835
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.8454632507376372,
+       "ci": [
+        1.7481883903106674,
+        1.9413293434541672
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7500173085331917,
+       "ci": [
+        0.7130290668237024,
+        0.7846570238036104
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.8854288370646537,
+       "ci": [
+        1.7881753781648355,
+        1.9807532691075467
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.4867753065750003,
+       "ci": [
+        0.459466019730363,
+        0.5126976215202361
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 1.6213181309794837,
+       "ci": [
+        1.5422259747383356,
+        1.6978996967683206
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.41795425299893724,
+       "ci": [
+        0.39738041233717547,
+        0.43775190037664197
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.5041537171266972,
+       "ci": [
+        1.458072382601723,
+        1.5511768291900865
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0110131598860026,
+       "ci": [
+        0.9525925415770151,
+        1.0649836438763887
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.852730857681483,
+       "ci": [
+        1.7480134122091344,
+        1.9454286015366202
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.4961615973226726,
+       "ci": [
+        0.4644307868754491,
+        0.5287407716901042
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.8533811703138054,
+       "ci": [
+        1.754914877545554,
+        1.948732286416646
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.16808057877421378,
+       "ci": [
+        0.15046921827718618,
+        0.18809592650681736
+       ]
+      }
+     },
+     "IG modal": {
+      "deletion_area": {
+       "mean": 1.610037405225025,
+       "ci": [
+        1.5287669811118225,
+        1.6850648414405571
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.42571837298436593,
+       "ci": [
+        0.4043876160513356,
+        0.4455194972473366
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.5008867336586118,
+       "ci": [
+        1.4518846388312057,
+        1.5494156572958453
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0029190139323474,
+       "ci": [
+        0.9433491295895539,
+        1.0556388603276574
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.8287900582887233,
+       "ci": [
+        1.7283226109157315,
+        1.9182340967696159
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.511309412036091,
+       "ci": [
+        0.4782107330964878,
+        0.5454162217369304
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.8353709075450897,
+       "ci": [
+        1.7359185182383285,
+        1.9274490756380371
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.19464282893761992,
+       "ci": [
+        0.173921034880355,
+        0.2165277488976717
+       ]
+      }
+     },
+     "IG unknown": {
+      "deletion_area": {
+       "mean": 1.6193206078481266,
+       "ci": [
+        1.5379372667602178,
+        1.6942174198867668
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6421642803844403,
+       "ci": [
+        0.6163365172464654,
+        0.6678805260432544
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0731005625277759,
+       "ci": [
+        1.0173925952909515,
+        1.12518210757263
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.2117923174910248,
+       "ci": [
+        1.1479726675418205,
+        1.2731187880110926
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.8865998615510762,
+       "ci": [
+        1.7980619431166909,
+        1.9765266042384317
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7842101927474141,
+       "ci": [
+        0.7436438060732559,
+        0.822810869961232
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.9358067684732378,
+       "ci": [
+        1.835878921433352,
+        2.0321390240309762
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.563242173999548,
+       "ci": [
+        0.5345336097368971,
+        0.592642190767359
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 1.6046985245103187,
+       "ci": [
+        1.5281063167909583,
+        1.6781695637679064
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.4040265636386519,
+       "ci": [
+        0.3821614175378345,
+        0.42440271540881896
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.6113002708926798,
+       "ci": [
+        1.561407044205349,
+        1.659649851232581
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.1826080133244394,
+       "ci": [
+        1.112396525891032,
+        1.255409710456524
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.7759733663611115,
+       "ci": [
+        1.6853451102145016,
+        1.8609874687997625
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.42107656690850853,
+       "ci": [
+        0.3884327830553986,
+        0.4528691607351415
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.782496947094798,
+       "ci": [
+        1.6934029490978457,
+        1.8700609569461084
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.11413461932912469,
+       "ci": [
+        0.10003777856370434,
+        0.13016139256237075
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 1.5773245365152304,
+       "ci": [
+        1.4986343129533428,
+        1.6486398283631372
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.624281352093274,
+       "ci": [
+        0.5994215428566475,
+        0.6469620212984779
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.0513642856664955,
+       "ci": [
+        0.9920383251264692,
+        1.1077014247970656
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.2662375038154423,
+       "ci": [
+        1.2029879877161236,
+        1.3265525586934759
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.8427086919099092,
+       "ci": [
+        1.7492204351661726,
+        1.9294752842608838
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.8031566378809512,
+       "ci": [
+        0.761369775591232,
+        0.8424214385856875
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.87361328516528,
+       "ci": [
+        1.7776032543773763,
+        1.9675852618779985
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5126207440309226,
+       "ci": [
+        0.4824493576104753,
+        0.5435561883131974
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 1.0478074703486355,
+       "ci": [
+        0.9919402559559426,
+        1.0985289135178862
+       ]
+      },
+      "insertion_gap": {
+       "mean": 1.0260535407377915,
+       "ci": [
+        0.9733565162625248,
+        1.0756177152620685
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.33366465360919634,
+       "ci": [
+        0.3101772207747835,
+        0.356938438424406
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.6583638820225994,
+       "ci": [
+        1.5703206490952524,
+        1.7417182199226071
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.7819546024290223,
+       "ci": [
+        0.7338003180946224,
+        0.8282195094720771
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 1.4072802863828837,
+       "ci": [
+        1.33511391124626,
+        1.4792780245297896
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.1279983048178255,
+       "ci": [
+        1.0615391492311532,
+        1.185525512826505
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 1.0928537164976202,
+       "ci": [
+        1.033483378292527,
+        1.1546574914552272
+       ]
+      }
+     }
+    }
+   },
+   "uganda": {
+    "background": {
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 1.2902521962464115,
+       "ci": [
+        1.249389278431592,
+        1.329270893943181
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.483700938919226,
+       "ci": [
+        0.47240243454168396,
+        0.4940214887681634
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.3339664161276392,
+       "ci": [
+        1.3146540094239245,
+        1.3530537634619655
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.9189529599690421,
+       "ci": [
+        0.8888143061336207,
+        0.9517383996879709
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.424346673868859,
+       "ci": [
+        1.375382913039035,
+        1.4719713993240788
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5767075441532398,
+       "ci": [
+        0.5566772397034881,
+        0.595662109195003
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.41574648497565,
+       "ci": [
+        1.3674190523494405,
+        1.4625131974121284
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.45175972209227355,
+       "ci": [
+        0.4383454679525608,
+        0.4640298366713816
+       ]
+      }
+     },
+     "GradientSHAP": {
+      "deletion_area": {
+       "mean": 1.2978664540040505,
+       "ci": [
+        1.2571340787226888,
+        1.337463364277722
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.4866147646976147,
+       "ci": [
+        0.4755533502122691,
+        0.4974713749558019
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.3310789248637895,
+       "ci": [
+        1.3108930997557322,
+        1.35021540459473
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.9157361654918561,
+       "ci": [
+        0.88711235009261,
+        0.9479021147186216
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.4422174886760986,
+       "ci": [
+        1.3922873997126903,
+        1.4906101979359612
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5642337207358396,
+       "ci": [
+        0.5459290055232723,
+        0.5838422117605461
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.4284185364342754,
+       "ci": [
+        1.3799617457729565,
+        1.4775011953046122
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.46195646546873265,
+       "ci": [
+        0.44868805158794745,
+        0.47523720689607024
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 1.3411078346820124,
+       "ci": [
+        1.3044145361419954,
+        1.3767868421398515
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.556532606361842,
+       "ci": [
+        0.5428383079467948,
+        0.5713992222327992
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.2727424457861374,
+       "ci": [
+        1.2489216893012045,
+        1.2942988835356322
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0306970852824096,
+       "ci": [
+        1.0002380592328501,
+        1.065573343922352
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.6007759609620582,
+       "ci": [
+        1.5581034489052656,
+        1.6399830765951882
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5740584637565908,
+       "ci": [
+        0.553658559796399,
+        0.5946656856026578
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.5501935944906207,
+       "ci": [
+        1.5031272504649873,
+        1.5953455548202244
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5089875542858651,
+       "ci": [
+        0.49276484416189625,
+        0.5246741367794375
+       ]
+      }
+     },
+     "IG modal": {
+      "deletion_area": {
+       "mean": 1.3346293783006768,
+       "ci": [
+        1.2974941026541211,
+        1.371455897508471
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5627446934816143,
+       "ci": [
+        0.5487519536930503,
+        0.5778622024274258
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.26743396604345,
+       "ci": [
+        1.2443329551231879,
+        1.2892613977516032
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.042354374520768,
+       "ci": [
+        1.01150199468981,
+        1.0778472670506518
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.5682605222287078,
+       "ci": [
+        1.5227493757233237,
+        1.6085865611871184
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5878579777251949,
+       "ci": [
+        0.5673005440917116,
+        0.6075701757801698
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.5505549802322351,
+       "ci": [
+        1.5052273469088369,
+        1.594929935275301
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5024122908979438,
+       "ci": [
+        0.48780787892675914,
+        0.5177628011963357
+       ]
+      }
+     },
+     "IG unknown": {
+      "deletion_area": {
+       "mean": 1.3292437968214508,
+       "ci": [
+        1.2917027695004974,
+        1.3650651572211234
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5725004623960488,
+       "ci": [
+        0.5588488120403067,
+        0.5870133648777314
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.1998199831855008,
+       "ci": [
+        1.1746148150416909,
+        1.2255082243264936
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.124912400616644,
+       "ci": [
+        1.088019608333601,
+        1.163138094829305
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.5214870601783337,
+       "ci": [
+        1.4735295945752873,
+        1.5648143164373698
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7070953938916151,
+       "ci": [
+        0.6812134505747908,
+        0.7318364986502115
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.5444930814499074,
+       "ci": [
+        1.4956810646843588,
+        1.5920921130846102
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.4660126116466325,
+       "ci": [
+        0.4497379488127797,
+        0.48306130421155197
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 1.3420222187458473,
+       "ci": [
+        1.3048044603535314,
+        1.377808178548462
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5417656380445369,
+       "ci": [
+        0.5279246904034026,
+        0.5561147648078621
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.3511220620098883,
+       "ci": [
+        1.330549207825281,
+        1.3712869743588703
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 0.9986472473965904,
+       "ci": [
+        0.9678774900561997,
+        1.033162997299646
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.588000175963142,
+       "ci": [
+        1.5436783330988701,
+        1.6290918803773222
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5568603933185803,
+       "ci": [
+        0.5373623354589734,
+        0.5760174659256599
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.5239595423402466,
+       "ci": [
+        1.477987364025009,
+        1.567434884564896
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.4904178197014952,
+       "ci": [
+        0.47575195380721796,
+        0.5045659711424116
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 1.3226747038844981,
+       "ci": [
+        1.2842903644797878,
+        1.3598119742060701
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.555130785817535,
+       "ci": [
+        0.5405049522260906,
+        0.5697484212678965
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.1947149068369012,
+       "ci": [
+        1.1702408504989708,
+        1.2211873429586233
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.1200010832257814,
+       "ci": [
+        1.0840104675735123,
+        1.1568922961012371
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.529487334930855,
+       "ci": [
+        1.4818520253254717,
+        1.5728706210450698
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.6324807729822243,
+       "ci": [
+        0.6077531627049109,
+        0.6562578957008148
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.5584500716027423,
+       "ci": [
+        1.5090435748238062,
+        1.610667001374056
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.4532005666773048,
+       "ci": [
+        0.4360769199997241,
+        0.4696713770661135
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 0.8494894936306545,
+       "ci": [
+        0.823068632446508,
+        0.8767174939048262
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.8357624646783268,
+       "ci": [
+        0.8103785283939628,
+        0.8612943022978935
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.3128132386248208,
+       "ci": [
+        0.3009521856029665,
+        0.32498531632911404
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.329708810944353,
+       "ci": [
+        1.2834005263858144,
+        1.3769448906856074
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.6529801839361077,
+       "ci": [
+        0.6294151239863469,
+        0.6755140417806558
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 1.1211199371846,
+       "ci": [
+        1.0823301309405338,
+        1.159642348065438
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 0.9110056539517952,
+       "ci": [
+        0.8810198628570575,
+        0.942389667027799
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.8970995023610007,
+       "ci": [
+        0.8651372948683633,
+        0.9300070587560543
+       ]
+      }
+     }
+    },
+    "modal point": {
+     "exact SHAP": {
+      "deletion_area": {
+       "mean": 1.8481990024136343,
+       "ci": [
+        1.799776021334321,
+        1.89002027921267
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5257394546812553,
+       "ci": [
+        0.5142959464860921,
+        0.5371877256251268
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.6785008090236595,
+       "ci": [
+        1.6503066939892233,
+        1.7055752577111196
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0436064868984565,
+       "ci": [
+        1.007247443700556,
+        1.0769333423953105
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 2.1627786324396268,
+       "ci": [
+        2.103934420611016,
+        2.215508516678061
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5587378688163697,
+       "ci": [
+        0.5376539883371363,
+        0.581438019334949
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 2.1417596878812803,
+       "ci": [
+        2.079553474285558,
+        2.1962124884392322
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.369454704271164,
+       "ci": [
+        0.3543738499144159,
+        0.3846775279996978
+       ]
+      }
+     },
+     "GradientSHAP": {
+      "deletion_area": {
+       "mean": 1.8492226407393206,
+       "ci": [
+        1.8005532120963375,
+        1.8933384803837812
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5319132929070053,
+       "ci": [
+        0.5198940766069228,
+        0.5434817388799592
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.6729104389808451,
+       "ci": [
+        1.6453618622857942,
+        1.6995504963977253
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0410908143745752,
+       "ci": [
+        1.005202216348801,
+        1.0741736021116712
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 2.1733856985504176,
+       "ci": [
+        2.114904561581339,
+        2.2281857767507174
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.5657467292032174,
+       "ci": [
+        0.5452763939325984,
+        0.5897436138172446
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 2.1348775746172266,
+       "ci": [
+        2.071682026728133,
+        2.1885047652127434
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.37843637368058886,
+       "ci": [
+        0.36285685792380057,
+        0.3951363729901686
+       ]
+      }
+     },
+     "SHAP @ modal point": {
+      "deletion_area": {
+       "mean": 1.8068669326426103,
+       "ci": [
+        1.7593322086475465,
+        1.8508932779010887
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.41174073066116074,
+       "ci": [
+        0.40172692453567294,
+        0.4220358253600072
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.7176695721776272,
+       "ci": [
+        1.690983629640128,
+        1.7420251595529719
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0067666889226392,
+       "ci": [
+        0.9736568740920573,
+        1.0385008506366946
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 2.0041899595982344,
+       "ci": [
+        1.9468509830637297,
+        2.0590664623078685
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.40519061775568666,
+       "ci": [
+        0.38766874477425955,
+        0.42342900289009827
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 2.037104385252909,
+       "ci": [
+        1.975374662219416,
+        2.09501109918458
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.13202702764001475,
+       "ci": [
+        0.12362136809130522,
+        0.1410437834819691
+       ]
+      }
+     },
+     "IG modal": {
+      "deletion_area": {
+       "mean": 1.8117903950180694,
+       "ci": [
+        1.7656710237859028,
+        1.8565977020717066
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.4218919116386801,
+       "ci": [
+        0.4117159511988527,
+        0.4318345078813232
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.7186391677748216,
+       "ci": [
+        1.691009320957016,
+        1.741894498878628
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.0043161609349707,
+       "ci": [
+        0.9701193265426286,
+        1.034416994126846
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 2.014738409345999,
+       "ci": [
+        1.9563590690934642,
+        2.0709468920287835
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.41113105545557155,
+       "ci": [
+        0.3948079016546354,
+        0.4285843488310811
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 2.0353257754025913,
+       "ci": [
+        1.9745821638392291,
+        2.091978403753993
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.16534063129418525,
+       "ci": [
+        0.15393414276681738,
+        0.17780910042455433
+       ]
+      }
+     },
+     "IG unknown": {
+      "deletion_area": {
+       "mean": 1.8049707352216602,
+       "ci": [
+        1.7596901243160183,
+        1.8467029740998047
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.5956895625963694,
+       "ci": [
+        0.5819050924630127,
+        0.609277032856439
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.4410405431487117,
+       "ci": [
+        1.405589508725466,
+        1.4723478265018022
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.2579668519281735,
+       "ci": [
+        1.2132686972130944,
+        1.3001792908447578
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 2.069099461699684,
+       "ci": [
+        2.012889700434058,
+        2.1188071747575092
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.7164842315720326,
+       "ci": [
+        0.6903685593477112,
+        0.7441215943450685
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 2.091762696686726,
+       "ci": [
+        2.0304994647665526,
+        2.1458600796092444
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.4014962451485496,
+       "ci": [
+        0.383692975126221,
+        0.41977738579580015
+       ]
+      }
+     },
+     "Ablation modal": {
+      "deletion_area": {
+       "mean": 1.8167852519852066,
+       "ci": [
+        1.7704416316912854,
+        1.8602760559710678
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.4146694650165187,
+       "ci": [
+        0.4031350625526854,
+        0.42680730613589757
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.7992672004153165,
+       "ci": [
+        1.7754505007225012,
+        1.8214453761836427
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.11652721320126,
+       "ci": [
+        1.0786595795358993,
+        1.1542301193130127
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 2.0555487670241965,
+       "ci": [
+        1.9977840207545958,
+        2.10948266923221
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.39724732067494495,
+       "ci": [
+        0.37722137143621765,
+        0.42170965405276795
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.976998140931711,
+       "ci": [
+        1.9157508834923882,
+        2.030869062463294
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.10103162695990182,
+       "ci": [
+        0.0921339731754337,
+        0.11059609541460261
+       ]
+      }
+     },
+     "Ablation unknown": {
+      "deletion_area": {
+       "mean": 1.8020981887415815,
+       "ci": [
+        1.7581849271100358,
+        1.8425286798605847
+       ]
+      },
+      "insertion_gap": {
+       "mean": 0.6648941016226283,
+       "ci": [
+        0.6467696057221367,
+        0.6819583180558035
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 1.3533696880345116,
+       "ci": [
+        1.3166379791138778,
+        1.390756685901584
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.3543642911721359,
+       "ci": [
+        1.304828253755792,
+        1.4036061288695383
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 1.9880360906189223,
+       "ci": [
+        1.9335631710964778,
+        2.03246811061547
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 0.797632814529948,
+       "ci": [
+        0.7679198345090079,
+        0.8288265312436714
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 2.1678780151432693,
+       "ci": [
+        2.111395307924148,
+        2.22154563396326
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 0.5032463185932453,
+       "ci": [
+        0.47873013837946526,
+        0.5273803362873751
+       ]
+      }
+     },
+     "random order": {
+      "deletion_area": {
+       "mean": 1.1213088605354162,
+       "ci": [
+        1.0925975293579706,
+        1.151906268857465
+       ]
+      },
+      "insertion_gap": {
+       "mean": 1.109711512920339,
+       "ci": [
+        1.0770438967630362,
+        1.1383076279881377
+       ]
+      },
+      "comprehensiveness@1": {
+       "mean": 0.3424086027803656,
+       "ci": [
+        0.32804107282623385,
+        0.3577016987777713
+       ]
+      },
+      "sufficiency@1": {
+       "mean": 1.8729412197108055,
+       "ci": [
+        1.8155501141533663,
+        1.9236886609161716
+       ]
+      },
+      "comprehensiveness@3": {
+       "mean": 0.781721414823523,
+       "ci": [
+        0.7543496112926983,
+        0.8099372309533898
+       ]
+      },
+      "sufficiency@3": {
+       "mean": 1.5086244624323806,
+       "ci": [
+        1.4597682582915292,
+        1.5506510288241673
+       ]
+      },
+      "comprehensiveness@5": {
+       "mean": 1.1531866548100331,
+       "ci": [
+        1.1178908040239792,
+        1.1915366851008202
+       ]
+      },
+      "sufficiency@5": {
+       "mean": 1.1524677772542447,
+       "ci": [
+        1.1134063182450098,
+        1.1863106340327416
+       ]
+      }
+     }
+    }
+   }
+  }
+ },
+ "randomisation": {
+  "rows": [
+   172,
+   405,
+   413,
+   559,
+   561,
+   622,
+   668,
+   678,
+   752,
+   900,
+   1034,
+   1077,
+   1117,
+   1270,
+   1294,
+   1334,
+   1362,
+   1385,
+   1417,
+   1431,
+   1535,
+   1611,
+   1616,
+   1647,
+   1664,
+   1684,
+   1932,
+   1934,
+   2041,
+   2082,
+   2103,
+   2289,
+   2300,
+   2435,
+   2528,
+   2609,
+   2677,
+   2746,
+   2783,
+   2984,
+   3025,
+   3139,
+   3198,
+   3317,
+   3450,
+   3466,
+   3500,
+   3521,
+   3525,
+   3733,
+   3815,
+   3872,
+   3909,
+   3925,
+   3968,
+   4182,
+   4240,
+   4266,
+   4441,
+   4556,
+   4762,
+   4829,
+   4860,
+   5038,
+   5371,
+   5507,
+   5573,
+   5659,
+   5720,
+   5735,
+   5888,
+   5942,
+   5959,
+   6026,
+   6064,
+   6240,
+   6251,
+   6272,
+   6273,
+   6464,
+   6528,
+   6691,
+   6740,
+   6862,
+   6884,
+   6927,
+   6999,
+   7057,
+   7081,
+   7128,
+   7134,
+   7472,
+   7481,
+   7511,
+   7592,
+   7769,
+   7969,
+   7974,
+   8063,
+   8097,
+   8121,
+   8178,
+   8242,
+   8337,
+   8437,
+   8715,
+   8753,
+   8866,
+   8890,
+   8897,
+   9008,
+   9062,
+   9070,
+   9083,
+   9189,
+   9213,
+   9282,
+   9399,
+   9566,
+   9701,
+   9738,
+   9783,
+   9889,
+   9908,
+   9940,
+   10007,
+   10025,
+   10034,
+   10135,
+   10628,
+   10631,
+   10640,
+   10660,
+   10687,
+   10692,
+   10712,
+   10824,
+   10885,
+   11002,
+   11048,
+   11149,
+   11203,
+   11238,
+   11256,
+   11270,
+   11281,
+   11426,
+   11434,
+   11729,
+   11944,
+   11968,
+   12141,
+   12213,
+   12218,
+   12317,
+   12416,
+   12421,
+   12447,
+   12531,
+   12650,
+   12697,
+   12894,
+   12933,
+   12955,
+   12965,
+   13026,
+   13035,
+   13036,
+   13151,
+   13154,
+   13388,
+   13426,
+   13443,
+   13491,
+   13505,
+   13640,
+   13646,
+   13661,
+   13664,
+   13855,
+   13958,
+   14039,
+   14051,
+   14080,
+   14158,
+   14197,
+   14204,
+   14215,
+   14257,
+   14314,
+   14354,
+   14566,
+   14762,
+   14781,
+   14818,
+   14829,
+   14838,
+   14861,
+   14864,
+   14905,
+   15043,
+   15167,
+   15329,
+   15356,
+   15395,
+   15403,
+   15666,
+   15750,
+   15784,
+   15986,
+   15989,
+   16050,
+   16131,
+   16156,
+   16493,
+   16527,
+   16608,
+   16765,
+   16810,
+   16868,
+   16918,
+   17021,
+   17078,
+   17143,
+   17158,
+   17209,
+   17339,
+   17448,
+   17616,
+   17652,
+   17886,
+   18041,
+   18383,
+   18384,
+   18397,
+   18399,
+   18517,
+   18612,
+   18679,
+   18819,
+   18896,
+   19022,
+   19035,
+   19478,
+   19504,
+   19624,
+   19627,
+   19687,
+   19765,
+   19792,
+   19872,
+   19944,
+   20002,
+   20092,
+   20126,
+   20180,
+   20271,
+   20272,
+   20292,
+   20740,
+   20746,
+   20953,
+   21000,
+   21030,
+   21048,
+   21059,
+   21204,
+   21230,
+   21325,
+   21326,
+   21502,
+   21505,
+   21573,
+   21814,
+   21836,
+   21852,
+   21926,
+   21929,
+   21937,
+   22063,
+   22084,
+   22091,
+   22222,
+   22355,
+   22400,
+   22521,
+   22642,
+   22667,
+   22834,
+   22836,
+   22887,
+   22921,
+   23082,
+   23133,
+   23163,
+   23247,
+   23424,
+   23426,
+   23469,
+   23505
+  ],
+  "steps": [
+   "trained model",
+   "+ output layer",
+   "+ hidden layer 2",
+   "+ hidden layer 1",
+   "+ embeddings"
+  ],
+  "methods": {
+   "exact SHAP": {
+    "median_instance_rank_correlation": [
+     1.0,
+     0.2787878787878788,
+     0.5878787878787879,
+     0.30303030303030304,
+     0.10303030303030303
+    ],
+    "median_instance_rank_correlation_excluding_shared_zeros": [
+     1.0,
+     0.2787878787878788,
+     0.5878787878787878,
+     0.303030303030303,
+     0.10303030303030303
+    ],
+    "global_rank_correlation": [
+     1.0,
+     0.6,
+     0.9151515151515152,
+     0.4545454545454545,
+     0.05454545454545454
+    ]
+   },
+   "IG modal": {
+    "median_instance_rank_correlation": [
+     1.0,
+     0.9151515151515152,
+     0.9454545454545455,
+     0.8909090909090909,
+     0.896969696969697
+    ],
+    "median_instance_rank_correlation_excluding_shared_zeros": [
+     1.0,
+     0.6,
+     0.7142857142857143,
+     0.39999999999999997,
+     0.48571428571428577
+    ],
+    "global_rank_correlation": [
+     1.0,
+     0.6,
+     0.9030303030303028,
+     0.3939393939393939,
+     0.28484848484848485
+    ]
+   },
+   "Ablation modal": {
+    "median_instance_rank_correlation": [
+     1.0,
+     0.9030303030303031,
+     0.9212121212121211,
+     0.896969696969697,
+     0.8909090909090909
+    ],
+    "median_instance_rank_correlation_excluding_shared_zeros": [
+     1.0,
+     0.4880952380952381,
+     0.6,
+     0.4285714285714286,
+     0.39642857142857146
+    ],
+    "global_rank_correlation": [
+     1.0,
+     0.6242424242424242,
+     0.8424242424242423,
+     0.5393939393939393,
+     0.07878787878787878
+    ]
+   }
+  },
+  "model_logit_correlation": [
+   1.0,
+   0.18591570236263472,
+   0.6000627204944463,
+   0.027118393554742645,
+   0.13343845828779782
+  ]
+ },
+ "stability": {
+  "rows": [
+   65,
+   320,
+   395,
+   663,
+   668,
+   842,
+   900,
+   946,
+   1385,
+   1535,
+   1573,
+   1598,
+   1731,
+   2001,
+   2339,
+   2411,
+   2528,
+   2703,
+   2783,
+   2841,
+   2933,
+   2975,
+   3267,
+   3466,
+   3644,
+   3674,
+   3691,
+   3733,
+   3815,
+   4240,
+   4318,
+   4441,
+   5122,
+   5235,
+   5254,
+   5300,
+   5405,
+   5527,
+   5626,
+   6066,
+   6101,
+   6115,
+   6271,
+   6273,
+   6443,
+   6691,
+   6839,
+   6884,
+   7057,
+   7149,
+   7296,
+   7305,
+   7649,
+   7933,
+   7965,
+   8178,
+   8378,
+   8380,
+   8695,
+   8700,
+   8715,
+   8737,
+   8881,
+   8978,
+   9062,
+   9069,
+   9070,
+   9282,
+   9343,
+   9418,
+   9424,
+   9426,
+   9475,
+   9669,
+   9738,
+   9889,
+   9973,
+   10049,
+   10674,
+   10715,
+   10848,
+   11010,
+   11149,
+   11203,
+   11256,
+   11281,
+   11353,
+   11367,
+   11411,
+   11426,
+   11676,
+   11738,
+   11881,
+   11944,
+   12000,
+   12126,
+   12213,
+   12380,
+   12447,
+   12463,
+   12531,
+   12572,
+   12651,
+   12710,
+   12763,
+   12814,
+   13214,
+   13232,
+   13481,
+   13775,
+   13850,
+   13876,
+   14039,
+   14058,
+   14075,
+   14177,
+   14208,
+   14258,
+   14408,
+   14492,
+   14753,
+   14762,
+   14781,
+   14861,
+   14973,
+   15045,
+   15329,
+   15379,
+   15649,
+   15700,
+   16163,
+   16209,
+   16210,
+   16248,
+   16376,
+   16532,
+   16583,
+   16765,
+   16954,
+   17039,
+   17090,
+   17229,
+   17266,
+   17448,
+   17466,
+   17519,
+   17652,
+   17995,
+   18110,
+   18383,
+   18397,
+   18417,
+   18563,
+   18587,
+   18612,
+   18740,
+   18762,
+   18788,
+   18819,
+   18896,
+   18923,
+   19017,
+   19032,
+   19035,
+   19406,
+   19468,
+   19549,
+   19589,
+   19627,
+   19838,
+   19840,
+   19919,
+   20005,
+   20036,
+   20062,
+   20126,
+   20369,
+   20705,
+   20740,
+   20843,
+   20930,
+   21008,
+   21191,
+   21342,
+   21359,
+   21502,
+   21625,
+   21700,
+   21836,
+   21852,
+   21973,
+   22287,
+   22350,
+   22361,
+   22422,
+   22521,
+   22682,
+   22992,
+   23082,
+   23133
+  ],
+  "nudge": "age_of_respondent and household_size, each +/-1, within the observed training range",
+  "methods": {
+   "exact SHAP \u00b7 xgboost": {
+    "n_perturbed_rows": 766,
+    "median_relative_l1_change": 0.03136752670464785,
+    "ci": [
+     0.02893398386922357,
+     0.03340408135192554
+    ],
+    "median_instance_rank_correlation": 0.9878787878787879,
+    "mean_abs_logit_change": 0.043270975886600935
+   },
+   "Ablation modal \u00b7 xgboost": {
+    "n_perturbed_rows": 766,
+    "median_relative_l1_change": 0.05545305593590502,
+    "ci": [
+     0.05315066331006745,
+     0.05941821862496474
+    ],
+    "median_instance_rank_correlation": 0.9878787878787879,
+    "mean_abs_logit_change": 0.043270975886600935
+   },
+   "TreeSHAP \u00b7 xgboost": {
+    "n_perturbed_rows": 766,
+    "median_relative_l1_change": 0.03120076548952208,
+    "ci": [
+     0.028839900960253136,
+     0.0330510948663461
+    ],
+    "median_instance_rank_correlation": 0.9878787878787879,
+    "mean_abs_logit_change": 0.043270975886600935
+   },
+   "exact SHAP \u00b7 mlp": {
+    "n_perturbed_rows": 766,
+    "median_relative_l1_change": 0.021874794443751608,
+    "ci": [
+     0.021034921784598565,
+     0.023162798503476596
+    ],
+    "median_instance_rank_correlation": 1.0,
+    "mean_abs_logit_change": 0.04344337454975118
+   },
+   "Ablation modal \u00b7 mlp": {
+    "n_perturbed_rows": 766,
+    "median_relative_l1_change": 0.03869703021416343,
+    "ci": [
+     0.03658133949142287,
+     0.040787393315951444
+    ],
+    "median_instance_rank_correlation": 1.0,
+    "mean_abs_logit_change": 0.04344337454975118
+   },
+   "IG modal \u00b7 mlp": {
+    "n_perturbed_rows": 766,
+    "median_relative_l1_change": 0.02635755833868713,
+    "ci": [
+     0.0240314062694389,
+     0.028870601873418132
+    ],
+    "median_instance_rank_correlation": 1.0,
+    "mean_abs_logit_change": 0.04344337454975118
+   }
+  }
+ }
+}

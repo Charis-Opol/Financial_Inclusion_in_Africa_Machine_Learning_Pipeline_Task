@@ -95,6 +95,22 @@ class ExactShapleyExplainer(Explainer):
     def __init__(self, model: RawFeatureModel, background_raw: pd.DataFrame):
         self.model = model
         self.background_codes = model.to_codes(background_raw)
+        self.reference = f"mean logit over {len(self.background_codes)} background rows"
+        self.metadata: dict = {}
+
+    @classmethod
+    def at_point(cls, model: RawFeatureModel, baseline: np.ndarray, description: str, name: str) -> "ExactShapleyExplainer":
+        """Shapley values against ONE reference point (a code vector, which may
+        hold `UNKNOWN_CODE` or non-integer numeric means) instead of a
+        background distribution. With the same point as Integrated Gradients
+        or Feature Ablation, the three share their reference exactly, so any
+        remaining difference between them is the method, not the reference."""
+        explainer = cls.__new__(cls)
+        explainer.model = model
+        explainer.background_codes = np.atleast_2d(np.asarray(baseline, dtype=np.float64))
+        explainer.reference = f"one baseline point ({description})"
+        explainer.metadata = {"baseline": name}
+        return explainer
 
     def explain(self, X_raw: pd.DataFrame) -> Attribution:
         values, base_value = exact_shapley_values(
@@ -108,11 +124,11 @@ class ExactShapleyExplainer(Explainer):
             model_name=self.model.name,
             target_space=LOGIT_SPACE,
             baseline_description=(
-                f"mean logit over {len(self.background_codes)} background rows; interventional value "
-                f"function (absent features take background values), exact over all "
-                f"{2 ** len(self.model.raw_features)} coalitions of raw features"
+                f"{self.reference}; interventional value function (absent features take the reference's "
+                f"values), exact over all {2 ** len(self.model.raw_features)} coalitions of raw features"
             ),
-            metadata={"n_background": len(self.background_codes), "n_coalitions": 2 ** len(self.model.raw_features)},
+            metadata={"n_background": len(self.background_codes),
+                      "n_coalitions": 2 ** len(self.model.raw_features), **self.metadata},
         )
 
 

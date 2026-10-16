@@ -515,3 +515,148 @@ def plot_interaction_facets(
     np.atleast_1d(axes)[0].set_yticks(range(len(levels)), levels, fontsize=7.5)
     fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
     _save(fig, path, f"{caption} One dot per respondent; black bar: mean for that level in that panel.")
+
+
+# --- Phase 6: comparison -------------------------------------------------------------
+
+# The full validated categorical order (slots 1-8), for charts with more than
+# three named series. Lines are adjacent-safe in this order; identity is also
+# carried by direct labels, never by colour alone.
+PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948"]
+BASELINE_GREY = "#898781"
+
+
+def plot_rho_histograms(
+    panels: Mapping[str, Mapping[str, np.ndarray]], path: Path, title: str, caption: str, ncols: int = 4
+) -> None:
+    """Small multiples: for each comparison, the distribution over respondents
+    of the rank correlation between the two explanations, one outline per
+    sample (pooled / focus country), with each sample's median marked."""
+    nrows = int(np.ceil(len(panels) / ncols))
+    fig, axes = plt.subplots(nrows, ncols, figsize=(3.3 * ncols + 0.6, 2.6 * nrows + 0.8), sharex=True)
+    axes = np.atleast_1d(axes).ravel()
+    bins = np.linspace(-1, 1, 41)
+    for ax, (panel_title, samples) in zip(axes, panels.items()):
+        for color, (sample, rho) in zip(SERIES, samples.items()):
+            rho = rho[~np.isnan(rho)]
+            ax.hist(rho, bins=bins, density=True, histtype="step", linewidth=1.6, color=color, label=sample)
+            ax.axvline(np.median(rho), color=color, linewidth=1.2)
+        ax.set_title(panel_title, loc="left", fontsize=8.5)
+        ax.set_yticks([])
+        ax.axvline(0, color=AXIS, linewidth=0.8)
+        _style(ax, grid_axis="x")
+    for ax in axes[len(panels):]:
+        ax.set_visible(False)
+    for ax in axes[-ncols:]:
+        ax.set_xlabel("per-respondent rank correlation")
+    axes[0].legend(frameon=False, fontsize=7.5, loc="upper left")
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, f"{caption} Vertical lines: medians.")
+
+
+def plot_forest(
+    labels: Sequence[str], series: Mapping[str, tuple[np.ndarray, np.ndarray, np.ndarray]], path: Path,
+    title: str, xlabel: str, caption: str, reference: float | None = None, xlim: tuple[float, float] | None = None,
+) -> None:
+    """Point estimates with intervals, one row per label, one marker per
+    series (offset vertically so the intervals never overlap)."""
+    n = len(labels)
+    fig, ax = plt.subplots(figsize=(8.2, 0.42 * n + 1.8))
+    offsets = np.linspace(-0.18, 0.18, len(series)) if len(series) > 1 else [0.0]
+    rows = np.arange(n)[::-1]
+    for offset, color, (name, (estimate, low, high)) in zip(offsets, SERIES, series.items()):
+        ax.errorbar(estimate, rows + offset, xerr=[estimate - low, high - estimate], fmt="o", color=color,
+                    ecolor=color, elinewidth=1.4, capsize=2, markersize=5, label=name)
+    if reference is not None:
+        ax.axvline(reference, color=AXIS, linewidth=1)
+    ax.set_yticks(rows, labels, fontsize=8)
+    ax.set_xlabel(xlabel)
+    if xlim:
+        ax.set_xlim(*xlim)
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    if len(series) > 1:
+        ax.legend(frameon=False, fontsize=8, loc="lower right")
+    _style(ax)
+    _save(fig, path, f"{caption} Bars: 95% bootstrap intervals over respondents.")
+
+
+def plot_curves(
+    panels: Mapping[str, Mapping[str, np.ndarray]], path: Path, title: str, xlabel: str, ylabel: str,
+    caption: str, baseline_name: str = "random order",
+) -> None:
+    """Small multiples of mean curves, one line per method, labelled at its
+    end; the no-information baseline (`baseline_name`) in grey."""
+    fig, axes = plt.subplots(1, len(panels), figsize=(5.0 * len(panels) + 1.4, 4.2))
+    for ax, (panel_title, curves) in zip(np.atleast_1d(axes), panels.items()):
+        colors = iter(PALETTE)
+        for name, curve in curves.items():
+            x = np.arange(len(curve))
+            color = BASELINE_GREY if name == baseline_name else next(colors)
+            ax.plot(x, curve, color=color, linewidth=2 if name != baseline_name else 1.6, label=name)
+        ax.set_title(panel_title, loc="left", fontsize=9)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        _style(ax, grid_axis="y")
+    np.atleast_1d(axes)[-1].legend(frameon=False, fontsize=7.5, loc="center left", bbox_to_anchor=(1.01, 0.5))
+    fig.suptitle(title, x=0.02, ha="left", fontsize=11, fontweight="bold")
+    _save(fig, path, caption)
+
+
+def plot_lines(
+    x_labels: Sequence[str], series: Mapping[str, Sequence[float]], path: Path, title: str, ylabel: str,
+    caption: str, ylim: tuple[float, float] | None = None,
+) -> None:
+    """One line per named series over ordered categorical steps, labelled at its end."""
+    fig, ax = plt.subplots(figsize=(7.6, 4.2))
+    x = np.arange(len(x_labels))
+    for color, (name, values) in zip(PALETTE, series.items()):
+        ax.plot(x, values, color=color, linewidth=2, marker="o", markersize=5, label=name)
+        ax.annotate(name, (x[-1], values[-1]), xytext=(6, 0), textcoords="offset points", va="center",
+                    fontsize=7.5, color=INK_SECONDARY)
+    ax.axhline(0, color=AXIS, linewidth=0.8)
+    ax.set_xticks(x, x_labels, fontsize=8)
+    ax.set_ylabel(ylabel)
+    if ylim:
+        ax.set_ylim(*ylim)
+    ax.margins(x=0.25)
+    ax.set_title(title, loc="left")
+    ax.legend(frameon=False, fontsize=7.5, loc="lower left")
+    _style(ax, grid_axis="y")
+    _save(fig, path, caption)
+
+
+def plot_labelled_scatter(
+    x: np.ndarray, y: np.ndarray, labels: Sequence[str], path: Path, title: str, xlabel: str, ylabel: str,
+    caption: str,
+) -> None:
+    """A few labelled points (e.g. one per feature)."""
+    fig, ax = plt.subplots(figsize=(6.8, 4.6))
+    ax.scatter(x, y, color=MAGNITUDE, s=40, edgecolors=SURFACE, linewidths=1, zorder=3)
+    for xi, yi, label in zip(x, y, labels):
+        ax.annotate(label, (xi, yi), xytext=(5, 3), textcoords="offset points", fontsize=7.5, color=INK_SECONDARY,
+                    annotation_clip=False)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.margins(x=0.25, y=0.15)
+    ax.set_title(title, loc="left")
+    _style(ax, grid_axis="both")
+    _save(fig, path, caption)
+
+
+def plot_identity_scatter(
+    x: np.ndarray, y: np.ndarray, path: Path, title: str, xlabel: str, ylabel: str, caption: str
+) -> None:
+    """Many points against the y = x line: points on the line are fully
+    accounted for by x."""
+    fig, ax = plt.subplots(figsize=(6.2, 5.0))
+    ax.scatter(x, y, color=MAGNITUDE, s=5, linewidths=0, alpha=0.35)
+    low, high = float(min(x.min(), y.min())), float(max(x.max(), y.max()))
+    ax.plot([low, high], [low, high], color=INK, linewidth=1)
+    ax.annotate("y = x", (high, high), xytext=(-30, -12), textcoords="offset points", fontsize=7.5, color=INK_SECONDARY)
+    ax.axhline(0, color=AXIS, linewidth=0.8)
+    ax.axvline(0, color=AXIS, linewidth=0.8)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title, loc="left")
+    _style(ax, grid_axis="both")
+    _save(fig, path, f"{caption} One dot per respondent and feature (n = {len(x):,}).")
