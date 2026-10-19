@@ -1,0 +1,8 @@
+*
+!requirements-dashboard.txt
+!config/
+!config/**
+!src/
+!src/**
+**/__pycache__
+**/*.py[cod]

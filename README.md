@@ -755,6 +755,10 @@ py -3.13 -m venv .venv-xai
 
 # Dashboard (localhost only, see .streamlit/config.toml)
 .venv-xai/Scripts/streamlit run src/fin_inclusion/dashboard/app.py
+
+# Dashboard in Docker (data and XAI artifacts are mounted read-only)
+docker compose up --build dashboard
+# Open http://localhost:8501
 ```
 
 The retrained MLP is written to `models/xai/` (gitignored); `models/production/`

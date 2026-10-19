@@ -1,6 +1,36 @@
 # Local deployment of the prediction service.
 #   docker compose up --build        -> http://localhost:8000/docs
 services:
+  # Dashboard uses the separate XAI dependency stack and reads data/artifacts
+  # from read-only host mounts, keeping survey data out of the built image.
+  #   docker compose up --build dashboard -> http://localhost:8501
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    image: fin-inclusion-dashboard:latest
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - ./data/raw:/app/data/raw:ro
+      - ./models/production:/app/models/production:ro
+      - ./models/xai:/app/models/xai:ro
+      - ./reports/xai:/app/reports/xai:ro
+      - ./reports/figures/xai:/app/reports/figures/xai:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4G
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
   api:
     build:
       context: .
