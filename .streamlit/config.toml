@@ -1,0 +1,11 @@
+# Streamlit settings for the explanation dashboard (src/fin_inclusion/dashboard/app.py).
+# Read when `streamlit run` is started from the repo root.
+
+[server]
+# Localhost only, like the prediction API (README §10.3): the dashboard reads
+# survey data, and Streamlit otherwise listens on every network interface.
+address = "localhost"
+headless = true
+
+[browser]
+gatherUsageStats = false

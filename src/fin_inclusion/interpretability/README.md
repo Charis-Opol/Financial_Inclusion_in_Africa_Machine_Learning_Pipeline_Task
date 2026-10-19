@@ -103,7 +103,7 @@ which rows serve as the reference, so every method uses the same ones.
 | `scripts/run_xai_internals.py` | `reports/xai/internals_summary.json`, interaction values in `reports/xai/attributions/`, `reports/figures/xai/internals_*.png` (all-method comparison, heatmaps, TP vs TN, embeddings, interactions) |
 | `scripts/run_xai_comparison.py` | `reports/xai/comparison_table.csv`, `reports/xai/comparison_summary.json`, `reports/figures/xai/comparison_*.png` and `faithfulness_*.png` |
 
-Run them in this order from the XAI environment (see `requirements-xai.txt`):
+`scripts/run_xai_analysis.py` runs all of them in order, then executes `notebooks/03_xai_analysis.ipynb` and builds the report PDF. To run them one by one, in this order, from the XAI environment (see `requirements-xai.txt`):
 
 ```bash
 .venv-xai/Scripts/python scripts/run_xai_models.py   # about 5 minutes
@@ -111,6 +111,18 @@ Run them in this order from the XAI environment (see `requirements-xai.txt`):
 .venv-xai/Scripts/python scripts/run_xai_captum.py   # about 3 minutes
 .venv-xai/Scripts/python scripts/run_xai_internals.py # about 12 minutes the first time; reuses interaction values after
 .venv-xai/Scripts/python scripts/run_xai_comparison.py   # about 30 minutes
+```
+
+## The dashboard
+
+`src/fin_inclusion/dashboard/` is an interactive page on top of this package:
+pick or enter a respondent, choose a model, a method and a baseline, and see
+the score, the explanation, a what-if, every method side by side, and the
+saved global results. `service.py` does the work, `charts.py` draws, `app.py`
+lays out the page. It needs the analysis scripts above to have run first.
+
+```bash
+.venv-xai/Scripts/streamlit run src/fin_inclusion/dashboard/app.py   # from the repo root; opens on localhost only
 ```
 
 Every choice that was not obvious, and why it was made, is in

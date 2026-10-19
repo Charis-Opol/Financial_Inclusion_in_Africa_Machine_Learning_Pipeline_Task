@@ -67,6 +67,20 @@ same ID further down.
 | D6.6 | Faithfulness: all methods beat a random order easily; which looks best depends on how "removing" a feature is defined. |
 | D6.7 | Scrambling the MLP's weights changes every method's explanation; SHAP's changes most. |
 | D6.8 | Small changes to age or household size barely move any explanation. |
+| D7.1 | The dashboard's calculations are separate from its page layout, so they can be tested without a browser. |
+| D7.2 | Inputs are checked by the prediction API's own rules: anything the API would reject, the dashboard rejects. |
+| D7.3 | XGBoost offers TreeSHAP, exact SHAP and Ablation; the MLP offers exact SHAP, IG and Ablation. The baseline choice applies only to IG and Ablation. |
+| D7.4 | Each model's own cut-off is shown (XGBoost 0.4551, MLP 0.6824). |
+| D7.5 | Examples are either held-out (never trained on, but no known answer) or training rows (known answer, but seen in training). |
+| D7.6 | Overall views are read from the saved results, so every number matches the report. |
+| D7.7 | If anything is missing, the page says what and stops. |
+| D7.8 | The dashboard only accepts connections from this computer, like the prediction API. |
+| D7.9 | Tested automatically across both models and all methods. Not yet looked at by a person in a browser. |
+| D8.1 | The notebook shows saved results and recomputes one example live, explaining each choice. |
+| D8.2 | The notebook is forced to run in the XAI environment; otherwise it would silently use the wrong Python. |
+| D8.3 | The 5-page report is turned into a PDF by a browser, with no extra tools needed. |
+| D8.4 | Deleting every result and regenerating from raw data gives the same numbers, figures and model. |
+| D8.5 | Still open: the dashboard and the PDF have not been looked at by a person; a few checks cover the pooled sample only. |
 
 ## Phase 0 — Reconnaissance (findings that constrain later choices)
 
@@ -697,3 +711,129 @@ Median relative change ‖φ(x′) − φ(x)‖₁ / ‖φ(x)‖₁: exact SHAP 
 0.039 (MLP). Per-respondent rank correlation with the unperturbed ranking
 0.99–1.00 for all. The models' own mean |logit change| is 0.043, so
 explanations move in proportion to the model, not more.
+
+## Phase 7 — Streamlit dashboard (Task 5)
+
+**D7.1 — Logic and UI are separate.**
+`dashboard/service.py` holds everything the dashboard computes — validation,
+scoring, live explanations, what-if, reading saved results — with no
+Streamlit in it, so it is unit-tested on the synthetic models.
+`dashboard/charts.py` builds the charts; `dashboard/app.py` only lays out the
+page. Models are injected into `ExplanationService` (built from the shared
+`Workspace` in the app), so the same class runs on the real or the test
+models.
+
+**D7.2 — Inputs are validated with the serving API's `SurveyRecord` schema.**
+Same field names, category spellings and numeric bounds as `/predict`; an
+unseen category such as "uganda" is rejected with the field named, never
+encoded as "unknown". The category drop-downs are filled from the schema's
+own allowed values. A household size above the training maximum (21) is
+accepted, as the API accepts it, with the same "extrapolation" warning.
+
+**D7.3 — Methods offered per model, and what the baseline selector means.**
+XGBoost: TreeSHAP, exact SHAP, Feature Ablation. MLP: exact SHAP, Integrated
+Gradients, Feature Ablation. IG needs gradients, which trees do not have;
+TreeSHAP needs trees. The baseline selector (modal / unknown) applies to IG
+and Ablation only and is disabled for the SHAP methods, which use the 200
+reference respondents; the page says which reference every number uses.
+"Exact SHAP" is the brute-force oracle, identical to KernelSHAP with all
+coalitions (D3.2); live it takes about 1–2 seconds per respondent.
+
+**D7.4 — Each model shows its own threshold.**
+XGBoost 0.4551 (shipped), MLP 0.6824 (D2.8); the help text says so. The
+score is labelled a ranking score, not a calibrated probability.
+
+**D7.5 — Examples: held-out but unlabelled, or labelled but seen in training.**
+"Held-out respondent" picks from 30 rows of `Test_v2.csv` (seeded sample,
+schema-valid rows only): never seen in training, but with no true answer.
+"Training example" offers the five rule-chosen local examples from Phase 3,
+with their actual answer, flagged as training rows. No labelled held-out
+data exists (D2.3), and the page does not pretend otherwise.
+
+**D7.6 — Global views come from saved artifacts, not recomputed.**
+The "Global importance" tab reads `shap_summary.json` (with 95% bootstrap
+intervals) and `internals_summary.json`; "Method agreement" reads
+`comparison_table.csv` and shows the shared-zeros-robust per-respondent
+correlation (D6.2). Every global number on the page is therefore one the
+report can trace.
+
+**D7.7 — Fails loudly.**
+If data, a model or an artifact is missing, the page shows the reason and
+stops (`st.stop()`), instead of rendering partial results. Rejected input
+lists every offending field and nothing is scored.
+
+**D7.8 — The dashboard binds to localhost only (`.streamlit/config.toml`).**
+Streamlit listens on every network interface by default; the first headless
+launch advertised an external URL. The dashboard reads personal survey data,
+and the prediction API is deliberately bound to `127.0.0.1`, so the project
+config sets `server.address = "localhost"` (verified: listening on
+127.0.0.1 only) and turns off Streamlit's usage statistics.
+
+**D7.9 — Verified headlessly.**
+Streamlit's `AppTest` loads the real app, switches between both models and
+every method, loads a training example, enters a household size of 30, and
+checks for no exceptions, the five tabs, the limitations box and the
+extrapolation warning (`tests/test_dashboard.py`). A real server was also
+started and answered its health check. No one has yet looked at the page in
+a browser.
+
+## Phase 8 — Notebook, report, final QA
+
+**D8.1 — The notebook reads saved artifacts and recomputes one example live.**
+`notebooks/03_xai_analysis.ipynb` walks through Tasks 1–5 in order, with the
+reasons for each choice in its Markdown cells. Its tables and figures come
+from `reports/xai/` and `reports/figures/xai/`, so it cannot drift from the
+scripts. One cell recomputes an exact Shapley explanation for a Ugandan
+respondent and checks efficiency live (base value −1.2473 + contributions
+−1.2514 = the model's logit −2.4987). Its first cell stops if it is run
+outside the XAI environment.
+
+**D8.2 — The notebook kernel is pointed at the XAI interpreter explicitly.**
+The machine's default Jupyter kernel spec runs whichever `python` is first
+on PATH, which is the training interpreter (pydantic v1, no Captum). Run that
+way, the notebook would have used the wrong environment.
+`run_xai_analysis.py` therefore puts the XAI interpreter's directory first on
+PATH for the notebook step, and the notebook checks for itself.
+
+**D8.3 — The report is 5 pages, built to PDF by a headless browser.**
+`reports/xai_comparison_report.md` → `scripts/build_xai_report_pdf.py`
+(Markdown → HTML with mistune, images inlined, printed to PDF by Edge or
+Chrome headless). No LaTeX or pandoc is installed here, and the browser route
+needs neither. Every number in the report was checked against the artifacts
+before the clean regeneration. Two sentences were corrected in that check:
+an efficiency bound (2×10⁻⁶ → 2.2×10⁻⁶) and an overstated description of the
+embedding projections. The PDF's page layout was checked only through a
+screenshot of the same HTML; no PDF renderer is installed to view the pages.
+
+**D8.4 — Clean regeneration from scratch reproduces every result.**
+All of `reports/xai/`, `reports/figures/xai/` and `models/xai/` were backed
+up, deleted, and regenerated with `run_xai_analysis.py --force`. Compared
+with the backup:
+
+- all 6 summary JSON files and `comparison_table.csv` are identical;
+- all 57 figures are byte-identical;
+- the retrained MLP's weights have the same SHA-256 (947acd887386…);
+- 28 of 30 attribution files are identical. The other 2 (the 50-row oracle
+  files) have identical numbers but a different description string,
+  because the wording of the oracle's reference description was changed in
+  Phase 6 when the single-point option was added.
+
+Wall-clock time: models 3 min, SHAP 162 min, Captum 3 min, internals 310 min,
+comparison 29 min, notebook 1 min, PDF 4 s — 507 minutes in all. When first
+run, the same SHAP and internals steps took about 35 and 12 minutes and
+produced the same numbers. The cause of the slowdown was not established
+(the computation is unchanged; possibly the laptop slept or was busy), so the
+README states measured times rather than an estimate.
+
+**D8.5 — Not done, or uncertain.**
+
+- **Nobody has looked at the dashboard in a browser**; it is verified by
+  Streamlit's AppTest and an HTTP health check only.
+- The PDF has not been viewed page by page (see D8.3).
+- Interaction values, randomisation and stability checks were computed for
+  the pooled sample (or a subset of it), not for Uganda.
+- The correlated-features explanation of disagreement rests on 10 data
+  points and is recorded as suggestive (D6.5).
+- The XGBoost verification number is a re-run with tuned-on-all-data
+  settings, not a like-for-like reproduction (D2.1).
+- The regeneration slowdown is unexplained (D8.4).

@@ -299,6 +299,8 @@ financial-inclusion-africa/
 ├── requirements.txt             # training/research environment
 ├── requirements-serving.txt     # serving-only deps (FastAPI, pydantic v2, numpy, xgboost-cpu)
 ├── requirements-onnx.txt        # ONNX export + benchmark tooling
+├── requirements-xai.txt         # explainability env (SHAP, Captum, Streamlit), §11
+├── .streamlit/config.toml       # dashboard binds to localhost only
 ├── Dockerfile                   # multi-stage slim image for the API
 ├── docker-compose.yml           # api service + on-demand drift-check job
 ├── .dockerignore                # allow-list: raw survey data can never enter the image
@@ -365,7 +367,10 @@ financial-inclusion-africa/
 │       │
 │       ├── interpretability/
 │       │   ├── __init__.py
-│       │   └── shap_analysis.py      # SHAP importance + dependence plots on XGBoost
+│       │   ├── shap_analysis.py      # SHAP importance + dependence plots on XGBoost (Phase 4)
+│       │   └── ...                   # Week 3 XAI modules: see interpretability/README.md
+│       │
+│       ├── dashboard/                # Streamlit explanation dashboard (§11)
 │       │
 │       ├── serving/                  # online inference -- numpy + xgboost only, no pandas/sklearn
 │       │   ├── app.py                # FastAPI app: lifespan loading, /predict, /health, error mapping
@@ -700,7 +705,64 @@ versions.
 
 ---
 
-## 11. Known Limitations / Honesty Notes
+## 11. Explainability (Week 3: SHAP vs Captum)
+
+Both candidate models (the shipped XGBoost and the PyTorch MLP) are explained
+with SHAP (TreeSHAP, exact KernelSHAP, GradientSHAP) and Captum (Integrated
+Gradients, Feature Ablation, layer attribution), on the 10 raw survey fields,
+in logits, pooled and for Uganda. Every SHAP method is checked against exact
+Shapley values computed by brute force over all 1,024 coalitions, and the two
+families are compared with the references aligned so that method effects are
+not confused with reference or model effects.
+
+**Main findings** (full report: `reports/xai_comparison_report.md` / `.pdf`):
+
+- Both models rely mainly on phone access, education and country, plus the
+  country × urban/rural interaction, and agree closely with each other when
+  explained the same way.
+- SHAP and Captum agree on what matters overall but often disagree about an
+  individual. That disagreement comes mostly from the **reference** each
+  compares against; with the reference aligned, SHAP and Integrated Gradients
+  agree on nine in ten respondents' top field.
+- Attributions describe the models, not causes; the score is a ranking score,
+  not a calibrated probability.
+
+**Deliverables**
+
+| What | Where |
+|---|---|
+| Analysis notebook | `notebooks/03_xai_analysis.ipynb` |
+| Comparison report (3-5 pages) | `reports/xai_comparison_report.md`, `.pdf` |
+| Interactive dashboard | `src/fin_inclusion/dashboard/` |
+| Every choice and why | `reports/xai_decisions_log.md` |
+| Code guide | `src/fin_inclusion/interpretability/README.md` |
+| Saved results | `reports/xai/` (attributions, summaries, comparison table), `reports/figures/xai/` |
+
+**Running it.** The XAI work has its own environment: the training
+interpreter's pydantic v1 cannot load the serving schemas the dashboard
+reuses, and Streamlit cannot share an environment with the serving stack's
+pinned FastAPI.
+
+```bash
+py -3.13 -m venv .venv-xai
+.venv-xai/Scripts/python -m pip install -r requirements-xai.txt
+.venv-xai/Scripts/python -m pip install --no-deps -e .
+
+# Regenerate everything from data/raw/ (scripts, notebook, PDF); --force recomputes cached
+# attributions too. Steps took about 85 minutes in total when first run on a laptop CPU; the final
+# clean run took 507 minutes of wall-clock time (see reports/xai_decisions_log.md, D8.4)
+.venv-xai/Scripts/python scripts/run_xai_analysis.py --force
+
+# Dashboard (localhost only, see .streamlit/config.toml)
+.venv-xai/Scripts/streamlit run src/fin_inclusion/dashboard/app.py
+```
+
+The retrained MLP is written to `models/xai/` (gitignored); `models/production/`
+is not modified.
+
+---
+
+## 12. Known Limitations / Honesty Notes
 
 - Four national surveys pooled into one dataset is a domain-shift risk, not
   fully resolved by country-stratified CV alone — flagged rather than hidden.
