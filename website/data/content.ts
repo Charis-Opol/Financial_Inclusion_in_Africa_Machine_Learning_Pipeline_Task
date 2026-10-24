@@ -689,3 +689,89 @@ export const week2: Week2Content = {
     },
   },
 };
+
+/* ---- Week 3: interpretability and explainability ------------------- */
+/* Source: README §11, “Explainability (Week 3: SHAP vs Captum)”.       */
+
+export type MethodFamily = {
+  name: string;
+  methods: string[];
+};
+
+export type Week3Content = {
+  intro: string;
+  stats: { value: string; label: string; note?: string }[];
+  methodsTitle: string;
+  families: [MethodFamily, MethodFamily];
+  rigour: string[];
+  findingsTitle: string;
+  findings: { title: string; text: string }[];
+  deliverablesTitle: string;
+  deliverables: { what: string; where: string }[];
+  dashboard: {
+    title: string;
+    text: string;
+    envNote: string;
+    codeLabel: string;
+    code: string;
+    runtimeNote: string;
+  };
+};
+
+export const week3: Week3Content = {
+  intro:
+    "Both candidate models, the shipped XGBoost and the PyTorch MLP, are explained with SHAP and Captum on the 10 raw survey fields, in logits, pooled and for Uganda.",
+  stats: [
+    { value: "2", label: "models explained", note: "XGBoost and PyTorch MLP" },
+    { value: "10", label: "raw survey fields" },
+    { value: "1,024", label: "coalitions", note: "Exact Shapley values by brute force" },
+    { value: "9 in 10", label: "top fields agree", note: "SHAP vs Integrated Gradients, reference aligned" },
+  ],
+  methodsTitle: "Two families of methods",
+  families: [
+    { name: "SHAP", methods: ["TreeSHAP", "Exact KernelSHAP", "GradientSHAP"] },
+    { name: "Captum", methods: ["Integrated Gradients", "Feature Ablation", "Layer attribution"] },
+  ],
+  rigour: [
+    "Every SHAP method is checked against exact Shapley values computed by brute force over all 1,024 coalitions.",
+    "The two families are compared with their references aligned, so method effects are not confused with reference or model effects.",
+  ],
+  findingsTitle: "What the explanations show",
+  findings: [
+    {
+      title: "The same drivers in both models",
+      text: "Both models rely mainly on phone access, education and country, plus the country × urban/rural interaction, and agree closely with each other when explained the same way.",
+    },
+    {
+      title: "Agree overall, differ per person",
+      text: "SHAP and Captum agree on what matters overall but often disagree about an individual. That disagreement comes mostly from the reference each compares against; with the reference aligned, SHAP and Integrated Gradients agree on nine in ten respondents’ top field.",
+    },
+    {
+      title: "Models, not causes",
+      text: "Attributions describe the models, not causes; the score is a ranking score, not a calibrated probability.",
+    },
+  ],
+  deliverablesTitle: "Deliverables",
+  deliverables: [
+    { what: "Analysis notebook", where: "`notebooks/03_xai_analysis.ipynb`" },
+    { what: "Comparison report (3–5 pages)", where: "`reports/xai_comparison_report.md`, `.pdf`" },
+    { what: "Interactive dashboard", where: "`src/fin_inclusion/dashboard/`" },
+    { what: "Every choice and why", where: "`reports/xai_decisions_log.md`" },
+    { what: "Code guide", where: "`src/fin_inclusion/interpretability/README.md`" },
+    { what: "Saved results", where: "`reports/xai/`, `reports/figures/xai/`" },
+  ],
+  dashboard: {
+    title: "Interactive dashboard",
+    text: "A Streamlit dashboard for exploring the attributions, served on localhost only. In Docker, the data and XAI artifacts are mounted read-only, and the production model in `models/production/` is never modified.",
+    envNote:
+      "The XAI work has its own environment: the training interpreter’s pydantic v1 cannot load the serving schemas the dashboard reuses, and Streamlit cannot share an environment with the serving stack’s pinned FastAPI.",
+    codeLabel: "bash",
+    code: `# Regenerate the analysis (--force recomputes cached attributions)
+.venv-xai/Scripts/python scripts/run_xai_analysis.py --force
+
+# Dashboard in Docker, then open http://localhost:8501
+docker compose up --build dashboard`,
+    runtimeNote:
+      "The steps took about 85 minutes in total when first run on a laptop CPU; the final clean run took 507 minutes of wall-clock time.",
+  },
+};
