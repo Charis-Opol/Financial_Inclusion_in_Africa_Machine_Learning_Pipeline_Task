@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import type { MeanStd, ResultRow } from "@/data/content";
 import { meanStd } from "@/lib/format";
 import { ChartFrame } from "./ChartFrame";
+import { LazyWhenVisible } from "./LazyWhenVisible";
 
 // Must match CHART_HEIGHT in PrAucBars (reserved space, no layout shift).
 const HEIGHT = 320;
@@ -33,7 +34,11 @@ export function PrAucChart({ rows, floor, title, caption }: Props) {
       summary={summary}
       height={HEIGHT}
       headingLevel={4}
-      chart={<Bars rows={rows} floor={floor} />}
+      chart={
+        <LazyWhenVisible height={HEIGHT}>
+          <Bars rows={rows} floor={floor} />
+        </LazyWhenVisible>
+      }
       table={
         <table className="w-full min-w-[22rem] text-left">
           <thead>

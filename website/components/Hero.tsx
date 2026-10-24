@@ -28,7 +28,7 @@ export function Hero({ content }: { content: HeroContent }) {
       <p className="mb-6 font-mono text-xs uppercase tracking-[0.18em] text-accent">{content.eyebrow}</p>
       <h1 className="max-w-4xl text-4xl font-semibold sm:text-5xl lg:text-6xl">
         <span className="block">{lead}</span>
-        <span className="block font-normal italic text-accent">{tail}</span>
+        <span className="block font-italic font-normal italic text-accent">{tail}</span>
       </h1>
       <p className="mt-8 max-w-2xl text-lg text-muted sm:text-xl">{content.subtitle}</p>
 

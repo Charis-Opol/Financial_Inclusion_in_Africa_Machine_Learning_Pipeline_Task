@@ -1,0 +1,1 @@
+Financial Inclusion in Africa: End-to-End ML Pipeline. 23,524 training rows, 14.1% positive class, 0.590 PR-AUC, under 1 ms inference.

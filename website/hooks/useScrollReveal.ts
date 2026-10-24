@@ -1,24 +1,23 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 /**
- * Adds `is-visible` to the element the first time it scrolls into view.
- * Pair with the `.reveal` class from globals.css. Under
+ * Adds `is-visible` to every element matching `selector` the first time it
+ * scrolls into view. One observer serves the whole page, so `.reveal`
+ * wrappers can stay plain server-rendered markup. Under
  * prefers-reduced-motion the CSS never hides anything, so this is a no-op.
  */
-export function useScrollReveal<T extends HTMLElement>(
+export function useScrollReveal(
+  selector = ".reveal",
   options: IntersectionObserverInit = { rootMargin: "0px 0px -10% 0px", threshold: 0.1 },
 ) {
-  const ref = useRef<T>(null);
   const { root, rootMargin, threshold } = options;
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
+    const els = document.querySelectorAll<HTMLElement>(selector);
     if (typeof IntersectionObserver === "undefined") {
-      el.classList.add("is-visible");
+      els.forEach((el) => el.classList.add("is-visible"));
       return;
     }
 
@@ -33,9 +32,7 @@ export function useScrollReveal<T extends HTMLElement>(
       },
       { root, rootMargin, threshold },
     );
-    observer.observe(el);
+    els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [root, rootMargin, threshold]);
-
-  return ref;
+  }, [selector, root, rootMargin, threshold]);
 }

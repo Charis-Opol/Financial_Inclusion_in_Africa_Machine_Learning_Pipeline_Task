@@ -1,6 +1,7 @@
 import type { MethodFamily, SectionMeta, Week3Content } from "@/data/content";
 import { CodeBlock } from "./CodeBlock";
 import { DataTable } from "./DataTable";
+import { ReportFigure } from "./ReportFigure";
 import { Reveal } from "./Reveal";
 import { RichText } from "./RichText";
 import { Section } from "./Section";
@@ -78,6 +79,22 @@ export function Week3({ meta, content }: { meta: SectionMeta; content: Week3Cont
               </li>
             ))}
           </ol>
+        </div>
+
+        {/* Figures */}
+        <div>
+          <Reveal>
+            <SubHeading id="xai-figures">{content.figuresTitle}</SubHeading>
+          </Reveal>
+          <ul className="space-y-8">
+            {content.figures.map((f) => (
+              <li key={f.src}>
+                <Reveal>
+                  <ReportFigure figure={f} sizes="(min-width: 1024px) 880px, 100vw" />
+                </Reveal>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Deliverables */}

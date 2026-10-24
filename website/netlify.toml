@@ -1,8 +1,0 @@
-# Netlify: set "Base directory" to `website` in the site settings
-# (or deploy from this folder), and Netlify picks up this file.
-[build]
-  command = "npm run build"
-  publish = "out"
-
-[build.environment]
-  NODE_VERSION = "22"

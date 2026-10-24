@@ -7,6 +7,11 @@
  */
 
 export type SiteMeta = {
+  /**
+   * Public URL of the deployed site, used for absolute Open Graph URLs.
+   * Optional: leave empty and Netlify/Vercel's own build-time URL is used.
+   */
+  url: string;
   title: string;
   shortTitle: string;
   description: string;
@@ -33,6 +38,7 @@ export type SectionMeta = {
 };
 
 export const site: SiteMeta = {
+  url: "",
   title: "Financial Inclusion in Africa: End-to-End ML Pipeline",
   shortTitle: "Financial Inclusion ML",
   description:
@@ -167,6 +173,15 @@ export const dataset: DatasetSection = {
 /* 02–04 · Weeks 1–3                                                   */
 /* Text in `backticks` is rendered as inline code.                     */
 /* ------------------------------------------------------------------ */
+
+/** A figure exported from the project's notebooks (see public/figures/). */
+export type ReportFigure = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption: string;
+};
 
 /** Short descriptions for the side stepper, keyed by week section id. */
 export const weekSteps: Record<"week-1" | "week-2" | "week-3", string> = {
@@ -342,6 +357,7 @@ export type ModelingContent = {
     body: string[];
     stats: { label: string; value: string; note?: string }[];
   };
+  figures: ReportFigure[];
 };
 
 export const modeling: ModelingContent = {
@@ -452,6 +468,23 @@ export const modeling: ModelingContent = {
       },
     ],
   },
+  figures: [
+    {
+      src: "/figures/pr-curve-overlay.webp",
+      width: 1050,
+      height: 900,
+      alt: "Precision–recall curves for tuned XGBoost with class-weighting and the tuned PyTorch 2-layer MLP with class-weighting. The two curves almost coincide, falling from about 0.85 precision at low recall to under 0.2 at full recall, well above the no-skill baseline of 0.141.",
+      caption:
+        "The best XGBoost and PyTorch configurations trace almost the same precision–recall curve. The legend’s average precision is computed on this one curve, not averaged over folds, so it differs from the mean PR-AUC above.",
+    },
+    {
+      src: "/figures/confusion-matrix-xgb-cw.webp",
+      width: 750,
+      height: 675,
+      alt: "Confusion matrix for the shipped XGBoost class-weight model: 18,130 true negatives, 2,082 false positives, 1,284 false negatives and 2,028 true positives.",
+      caption: "The shipped model’s confusion matrix, with counts across all 23,524 training rows.",
+    },
+  ],
 };
 
 /* ---- Week 2: deployment and MLOps -------------------------------- */
@@ -706,6 +739,8 @@ export type Week3Content = {
   rigour: string[];
   findingsTitle: string;
   findings: { title: string; text: string }[];
+  figuresTitle: string;
+  figures: ReportFigure[];
   deliverablesTitle: string;
   deliverables: { what: string; where: string }[];
   dashboard: {
@@ -749,6 +784,33 @@ export const week3: Week3Content = {
     {
       title: "Models, not causes",
       text: "Attributions describe the models, not causes; the score is a ranking score, not a calibrated probability.",
+    },
+  ],
+  figuresTitle: "From the analysis",
+  figures: [
+    {
+      src: "/figures/shap-beeswarm-xgboost-pooled.webp",
+      width: 1312,
+      height: 832,
+      alt: "TreeSHAP beeswarm for the shipped XGBoost model, pooled across countries, one dot per respondent (n = 1,000). Fields are ordered by mean absolute attribution: cellphone_access, education_level, country, age_of_respondent, job_type, gender_of_respondent, location_type, relationship_with_head, marital_status, household_size. Having a phone pushes clearly towards having an account and not having one pushes clearly away.",
+      caption:
+        "TreeSHAP for the shipped XGBoost, pooled: one dot per respondent, and right pushes towards “has an account”. Phone access, education and country lead.",
+    },
+    {
+      src: "/figures/importance-all-methods-pooled.webp",
+      width: 1600,
+      height: 636,
+      alt: "Ten small bar charts, one per explanation method and model (TreeSHAP, exact SHAP, Feature Ablation, GradientSHAP and Integrated Gradients across XGBoost and the MLP), each showing every field’s share of importance. In all of them cellphone_access, country, education_level and job_type take the largest shares, and household_size the smallest.",
+      caption:
+        "Every method side by side. Each panel shows each field’s share of that method’s total attribution, so methods with different scales and references can be compared.",
+    },
+    {
+      src: "/figures/shap-waterfall-xgboost-uganda.webp",
+      width: 1312,
+      height: 768,
+      alt: "SHAP waterfall for one typical Ugandan respondent without an account. Starting from a base value of −1.25 logits, no formal education (−0.45) and country Uganda (−0.27) pull the score down while urban location (+0.39) and phone access (+0.24) push it up, ending at −1.60 logits.",
+      caption:
+        "One typical Ugandan respondent: how each field moves the shipped model away from the base value. The resulting score, 0.167, is below the 0.4551 threshold, so the prediction is No.",
     },
   ],
   deliverablesTitle: "Deliverables",

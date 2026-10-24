@@ -3,12 +3,13 @@
 import dynamic from "next/dynamic";
 import type { CountryOwnership } from "@/data/content";
 import { ChartFrame } from "./ChartFrame";
+import { LazyWhenVisible } from "./LazyWhenVisible";
 
 // Must match CHART_HEIGHT in CountryOwnershipBars so the placeholder reserves
 // exactly the chart's space (no layout shift when Recharts loads).
 const HEIGHT = 240;
 
-// Recharts is loaded on the client only, after the page is interactive.
+// Recharts is loaded on the client only, once the chart nears the viewport.
 const Bars = dynamic(() => import("./CountryOwnershipBars"), {
   ssr: false,
   loading: () => <div style={{ height: HEIGHT }} />,
@@ -32,7 +33,11 @@ export function CountryOwnershipChart({ data, title, caption }: Props) {
       caption={caption}
       summary={summary}
       height={HEIGHT}
-      chart={<Bars data={data} />}
+      chart={
+        <LazyWhenVisible height={HEIGHT}>
+          <Bars data={data} />
+        </LazyWhenVisible>
+      }
       table={
         <table className="w-full min-w-[18rem] text-left">
           <thead>

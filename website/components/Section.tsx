@@ -13,6 +13,8 @@ type SectionProps = {
 /**
  * A top-level page section: anchor target, thin top rule, eyebrow,
  * heading and optional intro. `scroll-mt` clears the sticky nav.
+ * `.section-lazy` (globals.css) skips layout until the section nears the
+ * viewport, which keeps the long page's first render cheap on phones.
  */
 export function Section({ id, eyebrow, title, intro, children, className = "" }: SectionProps) {
   const headingId = `${id}-heading`;
@@ -20,7 +22,7 @@ export function Section({ id, eyebrow, title, intro, children, className = "" }:
     <section
       id={id}
       aria-labelledby={headingId}
-      className={`scroll-mt-24 border-t border-rule py-16 sm:py-24 ${className}`.trim()}
+      className={`section-lazy scroll-mt-24 border-t border-rule py-16 sm:py-24 ${className}`.trim()}
     >
       <Reveal className="max-w-3xl">
         {eyebrow && (

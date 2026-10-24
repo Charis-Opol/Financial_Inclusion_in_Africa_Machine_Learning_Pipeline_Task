@@ -1,6 +1,7 @@
 import type { ModelingContent } from "@/data/content";
 import { PrAucChart } from "./charts/PrAucChart";
 import { NestedCvDiagram } from "./NestedCvDiagram";
+import { ReportFigure } from "./ReportFigure";
 import { ResultsTable } from "./ResultsTable";
 import { Reveal } from "./Reveal";
 import { RichText } from "./RichText";
@@ -94,6 +95,15 @@ export function ModelingBlocks({ content }: { content: ModelingContent }) {
             title={content.chart.title}
             caption={content.chart.caption}
           />
+        </Reveal>
+        <Reveal className="mt-8">
+          <ul className="grid grid-cols-1 gap-6 md:grid-cols-2" aria-label="Figures from the evaluation notebooks">
+            {content.figures.map((f) => (
+              <li key={f.src}>
+                <ReportFigure figure={f} sizes="(min-width: 1024px) 420px, (min-width: 768px) 45vw, 100vw" />
+              </li>
+            ))}
+          </ul>
         </Reveal>
       </div>
 

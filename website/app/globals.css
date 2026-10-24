@@ -65,6 +65,7 @@
   /* next/font injects the --font-*-face variables on <html>. */
   --font-display: var(--font-sans-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-sans: var(--font-sans-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-italic: var(--font-italic-face), var(--font-sans-face), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   --radius-sm: 0.25rem;
@@ -113,6 +114,16 @@
   html {
     scroll-behavior: smooth;
   }
+}
+
+/*
+ * Off-screen sections skip layout and paint until they near the viewport.
+ * They stay in the accessibility tree and in find-in-page; `auto` makes the
+ * browser remember each section's real height once it has rendered.
+ */
+.section-lazy {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1400px;
 }
 
 /*

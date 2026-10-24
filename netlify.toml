@@ -1,0 +1,9 @@
+# Netlify: deploys the project website in website/ with no UI settings needed.
+# `publish` is relative to `base`.
+[build]
+  base = "website"
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
