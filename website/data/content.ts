@@ -83,8 +83,7 @@ export const hero: Hero = {
   subtitle:
     "A reproducible, SOLID-principle ML pipeline predicting bank account ownership across Kenya, Rwanda, Tanzania and Uganda. Built for honest evaluation over leaderboard-chasing, and taken through to a containerised FastAPI service with ONNX export and drift monitoring.",
   primary: { label: "View on GitHub", href: site.repoUrl, external: true },
-  // Points at Week 2 until the results table gets its own #results anchor in Phase 3.
-  secondary: { label: "Jump to results", href: "#week-2" },
+  secondary: { label: "Jump to results", href: "#results" },
   stats: [
     { value: "23,524", label: "training rows" },
     { value: "4", label: "countries" },
@@ -288,4 +287,169 @@ export const week1: Week1Content = {
       line: "Orchestration depends on abstractions (`BaseModel`, `BasePreprocessor`) injected via config.",
     },
   ],
+};
+
+/* ---- Week 2 ------------------------------------------------------- */
+
+export type MeanStd = { mean: number; std: number };
+
+export type ModelEntry = {
+  name: string;
+  role: string;
+  detail: string;
+};
+
+export type ValidationRule = string;
+
+export type MetricNote = {
+  name: string;
+  /** Marks the headline metric. */
+  headline?: boolean;
+  note: string;
+};
+
+export type ResultRow = {
+  id: string;
+  model: string;
+  imbalance: string;
+  prAuc: MeanStd;
+  f1: MeanStd;
+  rocAuc: MeanStd;
+  /** The shipped model; highlighted in the table and chart. */
+  winner?: boolean;
+};
+
+export type Week2Content = {
+  intro: string;
+  modelsTitle: string;
+  models: ModelEntry[];
+  imbalance: string;
+  validationTitle: string;
+  validation: ValidationRule[];
+  diagram: { title: string; description: string; rows: string };
+  metricsTitle: string;
+  metrics: MetricNote[];
+  metricsFootnote: string;
+  accuracyTrap: string;
+  resultsTitle: string;
+  resultsIntro: string;
+  results: ResultRow[];
+  /** Reference line on the PR-AUC chart. */
+  floor: { label: string; prAuc: MeanStd };
+  chart: { title: string; caption: string };
+  shipped: {
+    title: string;
+    body: string[];
+    stats: { label: string; value: string; note?: string }[];
+  };
+};
+
+export const week2: Week2Content = {
+  intro:
+    "Two model families, two ways of handling imbalance, and a validation scheme where no reported number has been seen by tuning.",
+  modelsTitle: "Models and imbalance handling",
+  models: [
+    { name: "XGBoost", role: "Primary baseline", detail: "Gradient-boosted trees on one-hot features." },
+    { name: "Logistic Regression", role: "Sanity floor", detail: "PR-AUC 0.559 ± 0.019." },
+    {
+      name: "PyTorch MLP",
+      role: "Neural comparison",
+      detail: "2-layer untuned → tuned 2-layer → 3-layer ablation.",
+    },
+  ],
+  imbalance: "Class-weighting vs SMOTE, applied to both model families.",
+  validationTitle: "Validation: nested stratified 5-fold CV",
+  validation: [
+    "Folds are stratified jointly on country and target.",
+    "Outer folds are never touched by tuning.",
+    "The inner loop uses Optuna to search hyperparameters.",
+    "SMOTE is fit only inside training folds, to avoid leakage.",
+  ],
+  diagram: {
+    title: "Nested cross-validation",
+    description:
+      "Five outer folds each hold out one fifth of the data as an untouched validation fold. Inside each outer fold, an inner stratified CV loop runs Optuna on the four training folds only, the model is refit with the best parameters, and it is scored once on the held-out fold. Repeating this for all five folds gives a mean and standard deviation.",
+    rows: "23,524 training rows",
+  },
+  metricsTitle: "What is measured, and why",
+  metrics: [
+    {
+      name: "PR-AUC",
+      headline: true,
+      note: "The headline metric. ROC-AUC is flattered when only ~14% of rows are positive; PR-AUC is not.",
+    },
+    { name: "F1", note: "Taken at a tuned decision threshold, not 0.5." },
+    { name: "Precision and recall", note: "Reported separately, not only through F1." },
+    { name: "ROC-AUC", note: "Included for comparability with other work." },
+  ],
+  metricsFootnote: "Every metric is reported as mean ± std over the 5 outer folds.",
+  accuracyTrap:
+    "Always predicting “No” gives ~86% accuracy with zero true positives, which is why accuracy is not optimised.",
+  resultsTitle: "Results",
+  resultsIntro: "Mean ± std over 5 outer folds. The shipped configuration is highlighted.",
+  results: [
+    {
+      id: "xgb-cw",
+      model: "XGBoost",
+      imbalance: "class-weight",
+      prAuc: { mean: 0.59, std: 0.019 },
+      f1: { mean: 0.547, std: 0.016 },
+      rocAuc: { mean: 0.865, std: 0.003 },
+      winner: true,
+    },
+    {
+      id: "xgb-smote",
+      model: "XGBoost",
+      imbalance: "SMOTE",
+      prAuc: { mean: 0.577, std: 0.017 },
+      f1: { mean: 0.537, std: 0.018 },
+      rocAuc: { mean: 0.859, std: 0.004 },
+    },
+    {
+      id: "mlp2-cw",
+      model: "PyTorch 2-layer",
+      imbalance: "class-weight",
+      prAuc: { mean: 0.584, std: 0.019 },
+      f1: { mean: 0.546, std: 0.019 },
+      rocAuc: { mean: 0.864, std: 0.006 },
+    },
+    {
+      id: "mlp2-smote",
+      model: "PyTorch 2-layer",
+      imbalance: "SMOTE",
+      prAuc: { mean: 0.568, std: 0.018 },
+      f1: { mean: 0.525, std: 0.018 },
+      rocAuc: { mean: 0.852, std: 0.008 },
+    },
+    {
+      id: "mlp3-cw",
+      model: "PyTorch 3-layer",
+      imbalance: "class-weight",
+      prAuc: { mean: 0.581, std: 0.019 },
+      f1: { mean: 0.542, std: 0.014 },
+      rocAuc: { mean: 0.862, std: 0.006 },
+    },
+  ],
+  floor: { label: "Logistic Regression floor", prAuc: { mean: 0.559, std: 0.019 } },
+  chart: {
+    title: "PR-AUC by configuration",
+    caption:
+      "Bars show the mean over 5 outer folds; whiskers show ± one standard deviation. The dashed line is the Logistic Regression floor.",
+  },
+  shipped: {
+    title: "Shipped: XGBoost + class-weight",
+    body: [
+      "It had the best mean PR-AUC and the tied-tightest std, though it is not statistically distinguishable from the best PyTorch model at n=5 folds. It was chosen on PR-AUC stability, Uganda per-country fairness and interpretability, not a bare “highest wins” rule.",
+      "SMOTE underperformed class-weighting for both model families. SHAP is used to explain the shipped model; the expected top features are `cellphone_access`, `education_level` and `country`.",
+    ],
+    stats: [
+      { label: "Paired t-test vs PyTorch-best", value: "p = 0.087" },
+      { label: "Wilcoxon vs PyTorch-best", value: "p = 0.125" },
+      {
+        label: "Uganda PR-AUC, the weakest segment",
+        value: "0.553 ± 0.047",
+        note: "2,101 training rows",
+      },
+    ],
+  },
 };

@@ -4,14 +4,7 @@ import { PreprocessingTable } from "./PreprocessingTable";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
 import { SolidList } from "./SolidList";
-
-function SubHeading({ id, children }: { id: string; children: string }) {
-  return (
-    <h3 id={id} className="mb-6 font-sans text-xl font-semibold">
-      {children}
-    </h3>
-  );
-}
+import { SubHeading } from "./SubHeading";
 
 /** Week 1: EDA findings and decisions, preprocessing table, SOLID mapping. */
 export function Week1({ meta, content }: { meta: SectionMeta; content: Week1Content }) {

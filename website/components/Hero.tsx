@@ -26,7 +26,7 @@ export function Hero({ content }: { content: HeroContent }) {
   return (
     <div id="top" className="scroll-mt-24 pb-16 pt-16 sm:pb-24 sm:pt-24">
       <p className="mb-6 font-mono text-xs uppercase tracking-[0.18em] text-accent">{content.eyebrow}</p>
-      <h1 className="max-w-4xl text-4xl font-semibold sm:text-6xl lg:text-7xl">
+      <h1 className="max-w-4xl text-4xl font-semibold sm:text-5xl lg:text-6xl">
         <span className="block">{lead}</span>
         <span className="block font-normal italic text-accent">{tail}</span>
       </h1>

@@ -2,8 +2,9 @@ import { DatasetSection } from "@/components/DatasetSection";
 import { Hero } from "@/components/Hero";
 import { Section } from "@/components/Section";
 import { Week1 } from "@/components/Week1";
+import { Week2 } from "@/components/Week2";
 import { WeeksTimeline } from "@/components/WeeksTimeline";
-import { dataset, hero, sections, week1, weekSteps, type SectionMeta } from "@/data/content";
+import { dataset, hero, sections, week1, week2, weekSteps, type SectionMeta } from "@/data/content";
 
 const byId = (id: SectionMeta["id"]) => sections.find((s) => s.id === id)!;
 
@@ -28,7 +29,7 @@ export default function Home() {
         }))}
       >
         <Week1 meta={byId("week-1")} content={week1} />
-        <Placeholder meta={byId("week-2")} />
+        <Week2 meta={byId("week-2")} content={week2} />
         <Placeholder meta={byId("week-3")} />
       </WeeksTimeline>
 

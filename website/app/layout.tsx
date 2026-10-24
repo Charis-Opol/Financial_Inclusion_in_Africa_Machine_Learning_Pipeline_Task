@@ -1,21 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Poppins } from "next/font/google";
 import { Nav } from "@/components/Nav";
 import { sections, site } from "@/data/content";
 import "./globals.css";
 
-// Display serif for headings, a clean grotesk for body, monospace for metrics/code.
-const display = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-display-face",
-  display: "swap",
-  style: ["normal", "italic"],
-  axes: ["opsz"],
-});
-
-const sans = IBM_Plex_Sans({
+// Poppins for headings and body (italic for the hero accent line),
+// monospace for metrics and code.
+const sans = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   variable: "--font-sans-face",
   display: "swap",
 });
@@ -44,7 +38,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+      className={`${sans.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <head>
