@@ -775,3 +775,72 @@ docker compose up --build dashboard`,
       "The steps took about 85 minutes in total when first run on a laptop CPU; the final clean run took 507 minutes of wall-clock time.",
   },
 };
+
+/* ------------------------------------------------------------------ */
+/* 05 · Reproducibility                                                */
+/* ------------------------------------------------------------------ */
+
+export type ReproducibilityContent = {
+  intro: string;
+  guarantees: string[];
+  runLabel: string;
+  run: string;
+};
+
+export const reproducibility: ReproducibilityContent = {
+  intro: "Every number on this page can be regenerated from the repository.",
+  guarantees: [
+    "Seeds are centralised in `config/config.yaml` (seed 42).",
+    "Requirements are pinned.",
+    "Folds are deterministic.",
+    "Per-fold tuned hyperparameters are persisted in `reports/ablation_raw_results.json`.",
+    "No metric is computed on data that model or threshold selection has seen.",
+    "The test suite runs on synthetic fixtures.",
+  ],
+  runLabel: "Run order",
+  run: `python scripts/run_eda.py
+python scripts/run_preprocessing.py
+python scripts/run_baseline_training.py
+python scripts/run_tuning_and_ablation.py`,
+};
+
+/* ------------------------------------------------------------------ */
+/* 06 · Known limitations                                              */
+/* ------------------------------------------------------------------ */
+
+export type Limitation = { title: string; detail: string };
+
+export const limitations: { intro: string; items: Limitation[] } = {
+  intro: "What these results do not show, stated up front.",
+  items: [
+    { title: "Domain shift", detail: "One pooled four-country model carries domain-shift risk." },
+    { title: "Associative, not causal", detail: "SHAP describes the model’s associations, not causes." },
+    { title: "Survey years differ", detail: "The four surveys span 2016–2018." },
+    { title: "Deterministic refit", detail: "The deployed model is a deterministic refit of the winning configuration." },
+    { title: "No auth or TLS yet", detail: "The API runs on localhost only." },
+    { title: "Uncalibrated scores", detail: "Scores rank respondents; they are not calibrated probabilities." },
+    { title: "Input drift only", detail: "PSI catches input drift, not concept drift." },
+    {
+      title: "Laptop benchmark",
+      detail: "The benchmark ran on a laptop CPU (Ryzen 7 5800U), so only the ratios carry over.",
+    },
+  ],
+};
+
+/* ------------------------------------------------------------------ */
+/* 07 · Tech stack and footer                                          */
+/* ------------------------------------------------------------------ */
+
+export type StackGroup = { label: string; items: string[] };
+
+export const techStack: StackGroup[] = [
+  { label: "Data and modeling", items: ["Python 3.13", "scikit-learn", "XGBoost", "PyTorch", "Optuna", "SMOTE"] },
+  { label: "Serving and MLOps", items: ["FastAPI", "Pydantic v2", "ONNX Runtime", "Docker"] },
+  { label: "Explainability", items: ["SHAP", "Captum", "Streamlit"] },
+  { label: "Testing", items: ["pytest"] },
+];
+
+export const footer = {
+  note: "Built for honest evaluation over leaderboard-chasing.",
+  repoLabel: "View the code on GitHub",
+};
