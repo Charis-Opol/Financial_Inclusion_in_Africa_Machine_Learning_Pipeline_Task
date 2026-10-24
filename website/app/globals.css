@@ -15,6 +15,9 @@
   --accent: #1e5a3c;      /* deep green, 6.9:1 on --bg */
   --accent-soft: #dfeadf; /* tinted highlight fill */
   --accent-ink: #f6f2ea;  /* text on solid accent */
+  /* Chart marks: validated with the dataviz palette script (>=3:1 on --surface). */
+  --chart-highlight: #1f7a4a;
+  --chart-context: #8f877a;
   color-scheme: light;
 }
 
@@ -29,6 +32,8 @@
     --accent: #7cc79a;
     --accent-soft: #1d2e23;
     --accent-ink: #0f1a13;
+    --chart-highlight: #4cb87a;
+    --chart-context: #756e62;
     color-scheme: dark;
   }
 }
@@ -112,4 +117,35 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/*
+ * Recharts writes colours as SVG attributes; these rules re-point them at
+ * the theme tokens so charts follow light/dark mode. Scoped to `.chart`.
+ */
+.chart .recharts-cartesian-grid line {
+  stroke: var(--rule);
+}
+.chart .recharts-cartesian-axis-line,
+.chart .recharts-cartesian-axis-tick-line {
+  stroke: var(--rule);
+}
+.chart .recharts-cartesian-axis-tick-value,
+.chart .recharts-text {
+  fill: var(--muted);
+}
+.chart .recharts-tooltip-cursor {
+  fill: var(--surface-2);
+}
+.chart .bar-highlight {
+  fill: var(--chart-highlight);
+}
+.chart .bar-context {
+  fill: var(--chart-context);
+}
+.chart .chart-label {
+  fill: var(--ink);
+}
+.chart .chart-label-muted {
+  fill: var(--muted);
 }

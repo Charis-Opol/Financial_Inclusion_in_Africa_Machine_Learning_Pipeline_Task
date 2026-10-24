@@ -51,3 +51,115 @@ export const sections: SectionMeta[] = [
   { id: "limitations", navLabel: "Limits", eyebrow: "06 · Honesty notes", title: "Known limitations" },
   { id: "stack", navLabel: "Stack", eyebrow: "07 · Tools", title: "Tech stack" },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Hero                                                                */
+/* ------------------------------------------------------------------ */
+
+export type Stat = {
+  value: string;
+  label: string;
+};
+
+export type LinkButton = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+export type Hero = {
+  eyebrow: string;
+  /** Title split into lines; the last line is set in the accent italic. */
+  titleLines: [string, string];
+  subtitle: string;
+  primary: LinkButton;
+  secondary: LinkButton;
+  stats: Stat[];
+};
+
+export const hero: Hero = {
+  eyebrow: "Kenya · Rwanda · Tanzania · Uganda",
+  titleLines: ["Financial Inclusion in Africa:", "End-to-End ML Pipeline"],
+  subtitle:
+    "A reproducible, SOLID-principle ML pipeline predicting bank account ownership across Kenya, Rwanda, Tanzania and Uganda. Built for honest evaluation over leaderboard-chasing, and taken through to a containerised FastAPI service with ONNX export and drift monitoring.",
+  primary: { label: "View on GitHub", href: site.repoUrl, external: true },
+  // Points at Week 2 until the results table gets its own #results anchor in Phase 3.
+  secondary: { label: "Jump to results", href: "#week-2" },
+  stats: [
+    { value: "23,524", label: "training rows" },
+    { value: "4", label: "countries" },
+    { value: "14.1%", label: "positive class" },
+    { value: "0.590", label: "PR-AUC" },
+    { value: "<1 ms", label: "inference" },
+  ],
+};
+
+/* ------------------------------------------------------------------ */
+/* 01 · The problem and dataset                                        */
+/* ------------------------------------------------------------------ */
+
+export type CountryOwnership = {
+  country: string;
+  /** Share of respondents with a bank account, in percent. */
+  ownership: number;
+  surveyYear: number;
+  /** Drawn in the accent colour; the rest are context. */
+  highlight?: boolean;
+};
+
+export type DatasetSection = {
+  brief: string;
+  source: { name: string; detail: string };
+  splits: { label: string; rows: string; columns: string; note?: string }[];
+  target: {
+    name: string;
+    classes: { label: string; share: number }[];
+    note: string;
+  };
+  whyTitle: string;
+  why: string[];
+  chart: {
+    title: string;
+    caption: string;
+    data: CountryOwnership[];
+  };
+};
+
+export const dataset: DatasetSection = {
+  brief:
+    "The brief: design a complete end-to-end ML pipeline on a Uganda/Africa-relevant dataset, with clean reproducible code, proper evaluation methodology and solid documentation.",
+  source: {
+    name: "Financial Inclusion in Africa",
+    detail: "Zindi / World Bank Findex-derived household surveys",
+  },
+  splits: [
+    { label: "Train", rows: "23,524", columns: "13" },
+    { label: "Test", rows: "10,086", columns: "12", note: "target held out" },
+  ],
+  target: {
+    name: "bank_account",
+    classes: [
+      { label: "No", share: 85.9 },
+      { label: "Yes", share: 14.1 },
+    ],
+    note: "Moderate-severe imbalance.",
+  },
+  whyTitle: "Why this dataset",
+  why: [
+    "Uganda-relevant.",
+    "Tabular, which suits both XGBoost and a PyTorch MLP.",
+    "A binary target with realistic imbalance.",
+    "Rich categorical structure.",
+  ],
+  chart: {
+    title: "Account ownership by country",
+    caption:
+      "Share of survey respondents with a bank account. Survey years differ by country: Kenya 2018, Rwanda 2016, Tanzania 2017, Uganda 2018.",
+    data: [
+      { country: "Kenya", ownership: 25.1, surveyYear: 2018 },
+      { country: "Rwanda", ownership: 11.5, surveyYear: 2016 },
+      { country: "Tanzania", ownership: 9.2, surveyYear: 2017 },
+      { country: "Uganda", ownership: 8.6, surveyYear: 2018, highlight: true },
+    ],
+  },
+};

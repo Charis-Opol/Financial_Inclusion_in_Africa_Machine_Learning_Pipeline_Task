@@ -9,7 +9,9 @@ type StatCardProps = {
 /** A key number with a short label. Uses <dl> semantics for screen readers. */
 export function StatCard({ value, label, note, className = "" }: StatCardProps) {
   return (
-    <dl className={`flex flex-col-reverse gap-1 border-l border-rule pl-4 ${className}`.trim()}>
+    // column-reverse + justify-end pins the value to the top, so values in a row
+    // line up even when one card has an extra note.
+    <dl className={`flex flex-col-reverse justify-end gap-1 border-l border-rule pl-4 ${className}`.trim()}>
       <dt className="text-sm text-muted">
         {label}
         {note && <span className="block text-xs">{note}</span>}
