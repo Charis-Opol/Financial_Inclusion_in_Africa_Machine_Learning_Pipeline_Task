@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Colours are CSS variables so light/dark switch via
+ * prefers-color-scheme with no JS; Tailwind utilities read them through
+ * the @theme block below (bg-bg, text-ink, border-rule, text-accent …).
+ */
+:root {
+  --bg: #f6f2ea;          /* warm paper */
+  --surface: #fffdf8;     /* cards, code */
+  --surface-2: #efe9dd;   /* subtle fills, table stripes */
+  --ink: #1d1b17;         /* body text */
+  --muted: #5c554a;       /* secondary text, 6.7:1 on --bg */
+  --rule: #ddd5c6;        /* thin borders and rules */
+  --accent: #1e5a3c;      /* deep green, 6.9:1 on --bg */
+  --accent-soft: #dfeadf; /* tinted highlight fill */
+  --accent-ink: #f6f2ea;  /* text on solid accent */
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #13120f;
+    --surface: #1b1a16;
+    --surface-2: #23211c;
+    --ink: #ece6da;
+    --muted: #a69e90;
+    --rule: #34302a;
+    --accent: #7cc79a;
+    --accent-soft: #1d2e23;
+    --accent-ink: #0f1a13;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+
+  /* next/font injects the --font-*-face variables on <html>. */
+  --font-display: var(--font-display-face), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-sans-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.875rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/*
+ * Scroll reveal. Content is only hidden once the inline script in
+ * layout.tsx has added `.js` to <html>, so no-JS visitors see everything.
+ * Opacity + transform only, so there is no layout shift.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 600ms ease, transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
