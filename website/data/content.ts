@@ -163,3 +163,129 @@ export const dataset: DatasetSection = {
     ],
   },
 };
+
+/* ------------------------------------------------------------------ */
+/* 02–04 · Weeks 1–3                                                   */
+/* Text in `backticks` is rendered as inline code.                     */
+/* ------------------------------------------------------------------ */
+
+/** Short descriptions for the side stepper, keyed by week section id. */
+export const weekSteps: Record<"week-1" | "week-2" | "week-3", string> = {
+  "week-1": "Data and preprocessing",
+  "week-2": "Modeling and evaluation",
+  "week-3": "Serving and monitoring",
+};
+
+export type Finding = {
+  title: string;
+  finding: string;
+  decision: string;
+};
+
+/** Either one decision for both model families, or one per family. */
+export type PreprocessingRow =
+  | { concern: string; shared: string }
+  | { concern: string; xgboost: string; pytorch: string };
+
+export type SolidPrinciple = {
+  letter: "S" | "O" | "L" | "I" | "D";
+  name: string;
+  line: string;
+};
+
+export type Week1Content = {
+  intro: string;
+  findingsTitle: string;
+  findings: Finding[];
+  preprocessingTitle: string;
+  preprocessing: PreprocessingRow[];
+  solidTitle: string;
+  solid: SolidPrinciple[];
+};
+
+export const week1: Week1Content = {
+  intro:
+    "Every exploratory finding was turned into an explicit, documented preprocessing decision before any model was trained.",
+  findingsTitle: "EDA findings → decisions",
+  findings: [
+    {
+      title: "The ID is not a key",
+      finding:
+        "`uniqueid` is not globally unique; it repeats across country/year. The real key is `uniqueid + country + year` (0 duplicates).",
+      decision: "Documented in the loader docstring so nobody joins on `uniqueid` alone.",
+    },
+    {
+      title: "Missingness in disguise",
+      finding:
+        "No literal NaNs, but placeholder categories: `Dont know` in `marital_status` (8 rows), `Other/Dont know/RTA` in `education_level` (35 rows) and `Dont Know/Refuse to answer` in `job_type` (126 rows).",
+      decision: "Kept as their own category level.",
+    },
+    {
+      title: "A strong country effect",
+      finding:
+        "Four separate national surveys stacked together. Ownership varies ~3× by country, plausibly driven by Kenya’s mobile-money (M-Pesa) penetration.",
+      decision:
+        "One pooled model with `country` as a feature; CV stratified on country + target jointly; all metrics reported both pooled and per-country, since Uganda is the quantity of interest.",
+    },
+    {
+      title: "Encoding by cardinality",
+      finding: "`job_type` has 10 levels and `relationship_with_head` has 6.",
+      decision: "One-hot for XGBoost; learned embeddings for the PyTorch MLP.",
+    },
+    {
+      title: "Possible redundancy",
+      finding: "`relationship_with_head` and `marital_status` might encode the same thing.",
+      decision: "A crosstab showed partial, not total, overlap, so no combined feature was engineered.",
+    },
+    {
+      title: "Household-size outliers",
+      finding: "8 rows have `household_size` > 15.",
+      decision: "Flagged rather than blindly capped.",
+    },
+    {
+      title: "Train/test consistency",
+      finding: "Category levels must line up between the training and test files.",
+      decision: "Encoders fit on train only, with an explicit “unknown” bucket.",
+    },
+  ],
+  preprocessingTitle: "Preprocessing decisions",
+  preprocessing: [
+    { concern: "Missing-in-disguise", shared: "Kept as its own category" },
+    { concern: "Categorical encoding", xgboost: "One-hot", pytorch: "Learned embeddings" },
+    { concern: "Numeric features", xgboost: "Raw", pytorch: "Scaled" },
+    { concern: "Outliers", shared: "Flagged, not capped" },
+    { concern: "Country", shared: "Kept as a pooled feature and as a CV stratifier" },
+    {
+      concern: "Class imbalance",
+      shared: "Class-weighting vs SMOTE, tested as an ablation axis",
+    },
+  ],
+  solidTitle: "SOLID mapping",
+  solid: [
+    {
+      letter: "S",
+      name: "Single responsibility",
+      line: "Data loading, cleaning, encoding, modeling, tuning and evaluation are separate modules.",
+    },
+    {
+      letter: "O",
+      name: "Open/closed",
+      line: "Models implement a shared `BaseModel` interface (`fit`, `predict_proba`, `get_params`).",
+    },
+    {
+      letter: "L",
+      name: "Liskov substitution",
+      line: "Any `BaseModel` (XGBoost, LR, PyTorch MLP) is swappable inside the CV loop.",
+    },
+    {
+      letter: "I",
+      name: "Interface segregation",
+      line: "Preprocessors expose only sklearn-style `fit`/`transform`.",
+    },
+    {
+      letter: "D",
+      name: "Dependency inversion",
+      line: "Orchestration depends on abstractions (`BaseModel`, `BasePreprocessor`) injected via config.",
+    },
+  ],
+};
