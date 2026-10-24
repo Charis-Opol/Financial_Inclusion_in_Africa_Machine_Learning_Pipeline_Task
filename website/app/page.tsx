@@ -4,7 +4,7 @@ import { Section } from "@/components/Section";
 import { Week1 } from "@/components/Week1";
 import { Week2 } from "@/components/Week2";
 import { WeeksTimeline } from "@/components/WeeksTimeline";
-import { dataset, hero, sections, week1, week2, weekSteps, type SectionMeta } from "@/data/content";
+import { dataset, hero, modeling, sections, week1, week2, weekSteps, type SectionMeta } from "@/data/content";
 
 const byId = (id: SectionMeta["id"]) => sections.find((s) => s.id === id)!;
 
@@ -28,7 +28,7 @@ export default function Home() {
           description: weekSteps[w.id as keyof typeof weekSteps],
         }))}
       >
-        <Week1 meta={byId("week-1")} content={week1} />
+        <Week1 meta={byId("week-1")} content={week1} modeling={modeling} />
         <Week2 meta={byId("week-2")} content={week2} />
         <Placeholder meta={byId("week-3")} />
       </WeeksTimeline>

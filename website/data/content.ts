@@ -44,9 +44,9 @@ export const site: SiteMeta = {
 
 export const sections: SectionMeta[] = [
   { id: "dataset", navLabel: "Dataset", eyebrow: "01 · Context", title: "The problem and dataset" },
-  { id: "week-1", navLabel: "Week 1", eyebrow: "02 · Week 1", title: "Understanding the data and preprocessing" },
-  { id: "week-2", navLabel: "Week 2", eyebrow: "03 · Week 2", title: "Modeling, evaluation and ablation" },
-  { id: "week-3", navLabel: "Week 3", eyebrow: "04 · Week 3", title: "Serving, deployment and monitoring" },
+  { id: "week-1", navLabel: "Week 1", eyebrow: "02 · Week 1", title: "Data processing and model evaluation" },
+  { id: "week-2", navLabel: "Week 2", eyebrow: "03 · Week 2", title: "Deployment and MLOps" },
+  { id: "week-3", navLabel: "Week 3", eyebrow: "04 · Week 3", title: "Interpretability and explainability" },
   { id: "reproducibility", navLabel: "Reproduce", eyebrow: "05 · Reproducibility", title: "Reproducibility" },
   { id: "limitations", navLabel: "Limits", eyebrow: "06 · Honesty notes", title: "Known limitations" },
   { id: "stack", navLabel: "Stack", eyebrow: "07 · Tools", title: "Tech stack" },
@@ -170,9 +170,9 @@ export const dataset: DatasetSection = {
 
 /** Short descriptions for the side stepper, keyed by week section id. */
 export const weekSteps: Record<"week-1" | "week-2" | "week-3", string> = {
-  "week-1": "Data and preprocessing",
-  "week-2": "Modeling and evaluation",
-  "week-3": "Serving and monitoring",
+  "week-1": "Data and evaluation",
+  "week-2": "Deployment and MLOps",
+  "week-3": "Interpretability",
 };
 
 export type Finding = {
@@ -204,7 +204,7 @@ export type Week1Content = {
 
 export const week1: Week1Content = {
   intro:
-    "Every exploratory finding was turned into an explicit, documented preprocessing decision before any model was trained.",
+    "Every exploratory finding was turned into an explicit, documented preprocessing decision before any model was trained. Models were then compared under nested cross-validation, so no reported number has been seen by tuning.",
   findingsTitle: "EDA findings → decisions",
   findings: [
     {
@@ -289,7 +289,7 @@ export const week1: Week1Content = {
   ],
 };
 
-/* ---- Week 2 ------------------------------------------------------- */
+/* ---- Week 1, part 2: modeling and evaluation ---------------------- */
 
 export type MeanStd = { mean: number; std: number };
 
@@ -319,7 +319,7 @@ export type ResultRow = {
   winner?: boolean;
 };
 
-export type Week2Content = {
+export type ModelingContent = {
   intro: string;
   modelsTitle: string;
   models: ModelEntry[];
@@ -344,9 +344,9 @@ export type Week2Content = {
   };
 };
 
-export const week2: Week2Content = {
+export const modeling: ModelingContent = {
   intro:
-    "Two model families, two ways of handling imbalance, and a validation scheme where no reported number has been seen by tuning.",
+    "With preprocessing fixed, two model families and two ways of handling imbalance were compared under one validation scheme.",
   modelsTitle: "Models and imbalance handling",
   models: [
     { name: "XGBoost", role: "Primary baseline", detail: "Gradient-boosted trees on one-hot features." },
@@ -451,5 +451,241 @@ export const week2: Week2Content = {
         note: "2,101 training rows",
       },
     ],
+  },
+};
+
+/* ---- Week 2: deployment and MLOps -------------------------------- */
+
+export type KeyValue = { label: string; value: string; note?: string };
+
+export type StatusCode = { code: string; name: string; meaning: string };
+
+export type BenchmarkRow = {
+  batch: string;
+  native: string;
+  onnx: string;
+  speedup: string;
+  /** Which runtime was faster at this batch size. */
+  faster: "native" | "onnx";
+};
+
+export type DriftLevel = "stable" | "moderate" | "significant";
+
+export type PsiBand = { level: DriftLevel; range: string; label: string };
+
+export type DriftScenario = {
+  scenario: string;
+  level: DriftLevel;
+  verdict: string;
+  evidence: string;
+};
+
+export type Week2Content = {
+  quote: { text: string; detail: string };
+  artifact: {
+    title: string;
+    summary: string;
+    files: string[];
+    facts: KeyValue[];
+    gate: string;
+  };
+  api: {
+    title: string;
+    endpoints: string[];
+    contract: string[];
+    statusCodes: StatusCode[];
+    checksTitle: string;
+    checks: string[];
+    sampleLabel: string;
+    sample: string;
+    sampleNote: string;
+  };
+  docker: { title: string; items: { label: string; detail: string }[] };
+  onnx: {
+    title: string;
+    facts: KeyValue[];
+    benchmarkCaption: string;
+    benchmark: BenchmarkRow[];
+    takeaway: string;
+  };
+  monitoring: {
+    title: string;
+    log: string;
+    psi: string;
+    bands: PsiBand[];
+    exitCodesCaption: string;
+    exitCodes: { code: string; meaning: string }[];
+    scenariosCaption: string;
+    scenarios: DriftScenario[];
+  };
+  tradeoffs: {
+    title: string;
+    intro: string;
+    factors: { label: string; detail: string }[];
+    recommendation: { title: string; points: string[] };
+    diagram: {
+      title: string;
+      description: string;
+      boundary: string;
+      cloud: { title: string; lines: string[] };
+      hub: { title: string; lines: string[] };
+      edge: { title: string; lines: string[] };
+      cloudLink: string;
+      edgeLink: string;
+    };
+  };
+};
+
+export const week2: Week2Content = {
+  quote: {
+    text: "No silent failures.",
+    detail:
+      "Every artifact is verified before it is trusted, and every failure surfaces as a specific HTTP status, log line or exit code.",
+  },
+  artifact: {
+    title: "Production artifact",
+    summary:
+      "The winning configuration is refit once, deterministically, and written out with everything needed to verify it later.",
+    files: ["model.json", "metadata.json"],
+    facts: [
+      { label: "Refit", value: "seed 42", note: "~20 s" },
+      {
+        label: "Decision threshold",
+        value: "0.4551",
+        note: "Median of the 5 per-fold F1-optimal thresholds",
+      },
+      { label: "Version", value: "xgb-cw-5ec2d564be13" },
+      { label: "Integrity", value: "SHA-256", note: "Checksums recorded in the metadata" },
+    ],
+    gate:
+      "Nothing is written unless two parity gates pass: the numpy serving encoder must match the sklearn pipeline bit-for-bit on all 23,524 rows.",
+  },
+  api: {
+    title: "FastAPI service",
+    endpoints: ["POST /predict", "GET /health"],
+    contract: [
+      "Strict Pydantic contract: 10 raw fields, strict ints, `extra=\"forbid\"`.",
+      "Rejects NaN/Infinity and unseen categories.",
+    ],
+    statusCodes: [
+      { code: "422", name: "Invalid input", meaning: "The request broke the contract." },
+      { code: "503", name: "Not ready", meaning: "Retryable; the response sends `Retry-After`." },
+      { code: "500", name: "Server-side failure", meaning: "A failure on the service’s side, not the caller’s." },
+    ],
+    checksTitle: "Load-time integrity checks",
+    checks: ["Files present", "SHA-256 match", "Feature order", "Schema vs vocabulary", "Smoke prediction"],
+    sampleLabel: "POST /predict",
+    sample: `POST /predict
+{"country":"Uganda","location_type":"Rural","cellphone_access":"Yes",
+ "household_size":5,"age_of_respondent":34,"gender_of_respondent":"Female",
+ "relationship_with_head":"Spouse","marital_status":"Married/Living together",
+ "education_level":"Primary education","job_type":"Self employed"}
+→ {"probability_bank_account":0.180,"predicted_bank_account":"No", ...}`,
+    sampleNote: "The score is a ranking score, not a calibrated probability.",
+  },
+  docker: {
+    title: "Docker hardening",
+    items: [
+      { label: "Multi-stage build", detail: "`python:3.13-slim` base" },
+      { label: "Non-root user", detail: "UID 10001" },
+      { label: "Read-only root filesystem", detail: "The container cannot modify its own files" },
+      { label: "No capabilities", detail: "`cap_drop: ALL`" },
+      { label: "Healthcheck", detail: "Built into the container definition" },
+      { label: "Localhost only", detail: "Bound to 127.0.0.1" },
+      { label: "Resource limits", detail: "1 CPU / 512 MB (~76 MiB measured)" },
+      { label: "Slim XGBoost", detail: "`xgboost-cpu`: 5.7 MB vs 99 MB" },
+      { label: "Allow-list .dockerignore", detail: "Raw survey data can never enter the image" },
+    ],
+  },
+  onnx: {
+    title: "ONNX export",
+    facts: [
+      { label: "Opset", value: "15" },
+      { label: "Model size", value: "0.81 MB" },
+      { label: "Max |Δp|", value: "2.1e-7", note: "across 33,654 rows" },
+      { label: "Yes/No flips", value: "0" },
+    ],
+    benchmarkCaption: "p50 latency in the 1-CPU container",
+    benchmark: [
+      { batch: "1", native: "519 µs", onnx: "33 µs", speedup: "15.7×", faster: "onnx" },
+      { batch: "32", native: "679 µs", onnx: "399 µs", speedup: "1.7×", faster: "onnx" },
+      { batch: "1024", native: "5.18 ms", onnx: "11.38 ms", speedup: "0.46× (slower)", faster: "native" },
+    ],
+    takeaway:
+      "ONNX wins on single requests and native wins on big batches. Both are under 1 ms, so the API keeps native XGBoost and ONNX is reserved as an optional backend and edge format.",
+  },
+  monitoring: {
+    title: "Monitoring and drift",
+    log: "A non-blocking JSON-lines prediction log. Dropped events are counted and shown in `/health`, never silent; an unwritable log means 503.",
+    psi: "A PSI drift check runs per feature and on the model score, against per-country reference profiles.",
+    bands: [
+      { level: "stable", range: "< 0.10", label: "Stable" },
+      { level: "moderate", range: "0.10–0.25", label: "Moderate" },
+      { level: "significant", range: "> 0.25", label: "Significant" },
+    ],
+    exitCodesCaption: "Drift CLI exit codes",
+    exitCodes: [
+      { code: "0", meaning: "Stable" },
+      { code: "10", meaning: "Moderate drift" },
+      { code: "20", meaning: "Significant drift" },
+      { code: "30", meaning: "Insufficient data" },
+      { code: "1", meaning: "Check failed" },
+    ],
+    scenariosCaption: "Drift scenarios",
+    scenarios: [
+      {
+        scenario: "2,000 held-out test respondents",
+        level: "stable",
+        verdict: "Stable (exit 0)",
+        evidence: "Largest PSI 0.009",
+      },
+      {
+        scenario: "2,000 rural, low-education respondents",
+        level: "significant",
+        verdict: "Significant (exit 20)",
+        evidence: "`location_type` PSI 3.42; predicted-Yes 20.6% → 5.3%",
+      },
+      {
+        scenario: "600 Ugandan rural-outreach respondents",
+        level: "significant",
+        verdict: "Significant (exit 20)",
+        evidence: "Predicted-Yes 10.9% → 0.2%",
+      },
+    ],
+  },
+  tradeoffs: {
+    title: "Deployment trade-offs for Uganda",
+    intro: "Cloud, edge and on-prem options were weighed against four constraints.",
+    factors: [
+      { label: "Rural connectivity", detail: "Field use cannot assume a reliable connection." },
+      {
+        label: "Data Protection and Privacy Act 2019",
+        detail: "No major cloud provider has a region in Uganda.",
+      },
+      { label: "Cost", detail: "Capex vs USD-billed opex." },
+      { label: "Maintenance burden", detail: "Someone has to keep each option running." },
+    ],
+    recommendation: {
+      title: "Recommendation: hybrid",
+      points: [
+        "An in-country server or Kampala colocation hub is the system of record and runs a nightly Uganda drift check.",
+        "Offline ONNX scoring runs on field devices for rural outreach.",
+        "Cloud is used only for work involving no personal data.",
+      ],
+    },
+    diagram: {
+      title: "Hybrid deployment: hub, edge and cloud",
+      description:
+        "Inside Uganda, a hub (in-country server or Kampala colocation) is the system of record and runs a nightly Uganda drift check; field devices score offline with the ONNX model for rural outreach. Outside Uganda, the cloud is used only for work involving no personal data.",
+      boundary: "IN UGANDA · DATA PROTECTION AND PRIVACY ACT 2019",
+      cloud: { title: "Cloud", lines: ["Only work involving", "no personal data"] },
+      hub: {
+        title: "Hub · system of record",
+        lines: ["In-country server or Kampala colocation", "Nightly Uganda drift check"],
+      },
+      edge: { title: "Edge · field devices", lines: ["Offline ONNX scoring", "for rural outreach"] },
+      cloudLink: "no personal data",
+      edgeLink: "ONNX model",
+    },
   },
 };

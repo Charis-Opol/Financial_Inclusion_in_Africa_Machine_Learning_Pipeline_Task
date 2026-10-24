@@ -18,6 +18,11 @@
   /* Chart marks: validated with the dataviz palette script (>=3:1 on --surface). */
   --chart-highlight: #1f7a4a;
   --chart-context: #8f877a;
+  /* Status (reserved for drift verdicts; always paired with icon + text). */
+  --warn: #8a5a00;
+  --warn-soft: #f4e6c8;
+  --danger: #a33a2b;
+  --danger-soft: #f5dfd9;
   color-scheme: light;
 }
 
@@ -34,6 +39,10 @@
     --accent-ink: #0f1a13;
     --chart-highlight: #4cb87a;
     --chart-context: #756e62;
+    --warn: #e0a83a;
+    --warn-soft: #33270f;
+    --danger: #f08a78;
+    --danger-soft: #3a1f1a;
     color-scheme: dark;
   }
 }
@@ -48,6 +57,10 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-accent-ink: var(--accent-ink);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
 
   /* next/font injects the --font-*-face variables on <html>. */
   --font-display: var(--font-sans-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;

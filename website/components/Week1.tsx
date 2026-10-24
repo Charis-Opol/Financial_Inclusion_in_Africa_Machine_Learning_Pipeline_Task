@@ -1,13 +1,25 @@
-import type { SectionMeta, Week1Content } from "@/data/content";
+import type { ModelingContent, SectionMeta, Week1Content } from "@/data/content";
 import { FindingCard } from "./FindingCard";
+import { ModelingBlocks } from "./Modeling";
 import { PreprocessingTable } from "./PreprocessingTable";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
 import { SolidList } from "./SolidList";
 import { SubHeading } from "./SubHeading";
 
-/** Week 1: EDA findings and decisions, preprocessing table, SOLID mapping. */
-export function Week1({ meta, content }: { meta: SectionMeta; content: Week1Content }) {
+/**
+ * Week 1: EDA findings and decisions, preprocessing table and SOLID mapping,
+ * then modeling and evaluation (results, shipping decision).
+ */
+export function Week1({
+  meta,
+  content,
+  modeling,
+}: {
+  meta: SectionMeta;
+  content: Week1Content;
+  modeling: ModelingContent;
+}) {
   return (
     <Section id={meta.id} eyebrow={meta.eyebrow} title={meta.title} intro={<p>{content.intro}</p>}>
       <div className="space-y-16">
@@ -35,6 +47,8 @@ export function Week1({ meta, content }: { meta: SectionMeta; content: Week1Cont
           <SubHeading id="week-1-solid">{content.solidTitle}</SubHeading>
           <SolidList items={content.solid} />
         </Reveal>
+
+        <ModelingBlocks content={modeling} />
       </div>
     </Section>
   );
