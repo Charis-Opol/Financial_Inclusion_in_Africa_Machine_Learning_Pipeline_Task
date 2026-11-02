@@ -1,0 +1,103 @@
+{
+  "name": "phase1_data_audit",
+  "finished_at_utc": "2026-11-02T14:31:45+00:00",
+  "git_commit": "4929a9b430c7102473f19ebbf109a11bd68cafd1-dirty",
+  "seed": null,
+  "config": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "n_outer": 5,
+    "n_inner": 3
+  },
+  "metrics": {
+    "labelled_rows": 23524,
+    "per_country": [
+      {
+        "country": "Kenya",
+        "survey_year": "2018",
+        "rows": 6068,
+        "positives": 1521,
+        "negatives": 4547,
+        "prevalence": 0.250659195781147,
+        "share_of_rows": 0.2579493283455195,
+        "share_of_positives": 0.4592391304347826,
+        "unlabelled_test_rows": 2601
+      },
+      {
+        "country": "Rwanda",
+        "survey_year": "2016",
+        "rows": 8735,
+        "positives": 1003,
+        "negatives": 7732,
+        "prevalence": 0.11482541499713796,
+        "share_of_rows": 0.37132290426798165,
+        "share_of_positives": 0.30283816425120774,
+        "unlabelled_test_rows": 3745
+      },
+      {
+        "country": "Tanzania",
+        "survey_year": "2017",
+        "rows": 6620,
+        "positives": 607,
+        "negatives": 6013,
+        "prevalence": 0.09169184290030212,
+        "share_of_rows": 0.281414725386839,
+        "share_of_positives": 0.1832729468599034,
+        "unlabelled_test_rows": 2839
+      },
+      {
+        "country": "Uganda",
+        "survey_year": "2018",
+        "rows": 2101,
+        "positives": 181,
+        "negatives": 1920,
+        "prevalence": 0.08614945264159923,
+        "share_of_rows": 0.08931304199965992,
+        "share_of_positives": 0.05464975845410628,
+        "unlabelled_test_rows": 901
+      },
+      {
+        "country": "ALL",
+        "survey_year": "all",
+        "rows": 23524,
+        "positives": 3312,
+        "negatives": 20212,
+        "prevalence": 0.14079238224791701,
+        "share_of_rows": 1.0,
+        "share_of_positives": 1.0,
+        "unlabelled_test_rows": 10086
+      }
+    ],
+    "fold_size_summary": [
+      {
+        "design": "leave_one_country_out",
+        "folds": 4,
+        "min_train_rows": 14789,
+        "max_train_rows": 21423,
+        "min_test_positives": 181,
+        "max_over_published_tabpfn_limit": 2.1423
+      },
+      {
+        "design": "nested_cv_inner",
+        "folds": 75,
+        "min_train_rows": 12546,
+        "max_train_rows": 12547,
+        "min_test_positives": 882,
+        "max_over_published_tabpfn_limit": 1.2547
+      },
+      {
+        "design": "nested_cv_outer",
+        "folds": 25,
+        "min_train_rows": 18819,
+        "max_train_rows": 18820,
+        "min_test_positives": 661,
+        "max_over_published_tabpfn_limit": 1.882
+      }
+    ]
+  }
+}

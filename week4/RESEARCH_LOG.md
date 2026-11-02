@@ -22,3 +22,23 @@ Dated decisions, problems and surprises. Newest entry last. Post-hoc changes to 
 **Assumptions.** See `DECISIONS.md` D0.1 to D0.15.
 
 **Tooling problems, for the record.** `pdfinfo`, `pdfimages` and `pdftoppm` did not produce usable output, so pages were counted from form feeds. One long Bash heredoc write was blocked, so the index was written in parts and assembled by script.
+
+## 2026-11-02: Phase 1
+
+**Done.** Data audit, new environment `week4/.venv`, TabPFN source read, toy checks. No study model was trained, and no TabPFN score was computed on the study's real labels. `HYPOTHESES.md` was committed by the user first (`4929a9b`) and has not changed.
+
+**Surprises.**
+
+1. **`TabPFNClassifier()` is not v2 in this package.** The default is v3.5. Using the default would have silently run a gated, non-commercial model, not the one the study specifies.
+2. **The obvious embedding call leaks.** On pure-noise labels a head on `data_source="test"` embeddings scored AUC 0.955 when those rows were also in the context. Out-of-fold scored 0.520 on average (SD 0.030 over 8 draws).
+3. **Tanzania's `location_type` runs the other way.** Positive rate is 0.207 rural and 0.048 urban, while Kenya, Rwanda and Uganda are all higher in urban areas. `demirguckunt2022findex` (p.47) reports Tanzania's urban adults about 13 points more likely to have an account, though its definition and year differ. A swapped coding is possible but unproven. Tanzania's marital status and household size also look different from the other three (`data_audit.md`). Not corrected. A swap would not necessarily affect within-country CV, but could affect LOCO.
+4. **`job_type` is coded very differently across countries.** Uganda has no "Farming and Fishing", "Informally employed", "Remittance Dependent" or "Formally employed Government" rows. Tanzania has no farming or government rows. Total variation distance reaches 0.866 (Rwanda and Uganda). This looks like questionnaire differences. It matters for LOCO, and it lets models infer country even with `country` dropped.
+5. **Uganda has 36 to 37 positives per outer test fold.** This confirms that per-fold country metrics would be too noisy, and supports concatenated out-of-fold metrics.
+6. **Provenance is unresolved.** The README calls the data "Findex-derived", but the Findex 2021 report in the folder never mentions Rwanda. Not resolved; a different Findex year is possible, and the folder cannot settle it.
+
+**My errors.**
+
+- A stray `python -` process from a Phase 0 command of mine had kept running since about 14:03 and used about 148 CPU minutes. It competed with steps 1 to 6 and most of step 7 of the first runtime ladder. I stopped it and reran the decision-relevant sizes. Effect at 5,000 rows: 311.7 s against 306.6 s clean. It did not affect any result other than timing.
+- I told the user step 8 would take about 17 minutes and E2 about 7 hours. It took 745 s, and E2 is estimated at 5.5 hours in the setting chosen.
+
+**Pre-registration.** No hypothesis or criterion changed. D1.8 removes E5c from planned work, which `HYPOTHESES.md` already allows ("H3 if run").
