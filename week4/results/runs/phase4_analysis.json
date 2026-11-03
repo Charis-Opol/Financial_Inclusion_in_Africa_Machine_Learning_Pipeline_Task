@@ -1,0 +1,56 @@
+{
+  "name": "phase4_analysis",
+  "finished_at_utc": "2026-11-03T13:54:25+00:00",
+  "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+  "seed": null,
+  "config": {
+    "replicates": 2000,
+    "bootstrap_seed": 2026,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "metrics": {
+    "arms_nested": [
+      "h1_balanced",
+      "h2_dro",
+      "h2_erm",
+      "h2_rw",
+      "mlp_dro",
+      "mlp_dro_c_0.0",
+      "mlp_dro_c_1.0",
+      "mlp_dro_c_2.0",
+      "mlp_dro_c_4.0",
+      "mlp_dro_country_label",
+      "mlp_dro_step_0.0",
+      "mlp_dro_step_0.001",
+      "mlp_dro_step_0.01",
+      "mlp_dro_step_0.1",
+      "mlp_dro_step_1.0",
+      "mlp_dro_within_cw",
+      "mlp_erm",
+      "mlp_erm_wc",
+      "mlp_erm_within_cw",
+      "mlp_rw",
+      "tabpfn_v2",
+      "xgb",
+      "xgb_rw",
+      "xgb_spw"
+    ],
+    "arms_loco": [
+      "h1_balanced",
+      "h2_dro",
+      "h2_erm",
+      "h2_rw",
+      "mlp_dro",
+      "mlp_erm",
+      "tabpfn_v2",
+      "xgb"
+    ],
+    "missing": []
+  }
+}

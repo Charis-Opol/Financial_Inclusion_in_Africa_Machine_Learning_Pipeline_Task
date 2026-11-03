@@ -1,0 +1,30 @@
+.........................................                                [100%]
+=============================== warnings summary ===============================
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+  /home/Lipscribe-team/.local/share/uv/python/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/inspect.py:1031: DeprecationWarning: Importing from 'tabpfn.model.loading' is deprecated and will be removed in a future release; import from 'tabpfn.model_loading' instead.
+    if ismodule(module) and hasattr(module, '__file__'):
+
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+  /home/Lipscribe-team/.local/share/uv/python/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/inspect.py:1032: DeprecationWarning: Importing from 'tabpfn.model.loading' is deprecated and will be removed in a future release; import from 'tabpfn.model_loading' instead.
+    f = module.__file__
+
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+  /home/Lipscribe-team/.local/share/uv/python/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/inspect.py:933: DeprecationWarning: Importing from 'tabpfn.model.loading' is deprecated and will be removed in a future release; import from 'tabpfn.model_loading' instead.
+    if getattr(object, '__file__', None):
+
+week4/tests/test_group_dro.py::test_step_size_zero_matches_erm_with_uniform_group_weights
+  /home/Lipscribe-team/.local/share/uv/python/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/inspect.py:934: DeprecationWarning: Importing from 'tabpfn.model.loading' is deprecated and will be removed in a future release; import from 'tabpfn.model_loading' instead.
+    return object.__file__
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+41 passed, 14 warnings in 110.05s (0:01:50)

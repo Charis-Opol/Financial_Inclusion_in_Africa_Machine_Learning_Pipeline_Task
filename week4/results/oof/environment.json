@@ -1,0 +1,10 @@
+{
+ "python": "3.13.18",
+ "tabpfn": "9.2.0",
+ "torch": "2.12.1+cu130",
+ "device": "cuda",
+ "gpu": "NVIDIA GeForce RTX 4080 SUPER",
+ "tabpfn_autocast": true,
+ "h2_estimators": 8,
+ "rows": 23524
+}

@@ -1,0 +1,29 @@
+{
+ "arm": "mlp_erm_wc",
+ "design": "nested",
+ "seed": 0,
+ "fold": "fold2",
+ "train_rows": 18819,
+ "val_rows": 4705,
+ "params": {
+  "hidden_dim_1": 102,
+  "hidden_dim_2": 113,
+  "embedding_dim": 16,
+  "dropout": 0.3995792821083618,
+  "lr": 0.0008374496868436813,
+  "weight_decay": 0.0013246974647468455
+ },
+ "selection": "worst_country",
+ "device": "cpu",
+ "budget": {
+  "tabpfn_estimators": 8,
+  "h2_estimators": 2,
+  "context_rows": 10000,
+  "final_epochs": 20
+ },
+ "torch_threads": 5,
+ "host": "cse-robotics-Alienware-Aurora-R16",
+ "seconds": 120.3,
+ "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+ "extra": {}
+}

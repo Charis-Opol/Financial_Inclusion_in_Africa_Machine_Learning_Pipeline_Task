@@ -1,0 +1,29 @@
+{
+ "arm": "xgb",
+ "design": "loco",
+ "seed": 2,
+ "fold": "heldout_Tanzania",
+ "train_rows": 16904,
+ "val_rows": 6620,
+ "params": {
+  "max_depth": 3,
+  "learning_rate": 0.038748870263676655,
+  "n_estimators": 258,
+  "min_child_weight": 4,
+  "subsample": 0.524697304472587,
+  "colsample_bytree": 0.7267659893679946
+ },
+ "selection": "pooled",
+ "device": "cpu",
+ "budget": {
+  "tabpfn_estimators": 8,
+  "h2_estimators": 2,
+  "context_rows": 10000,
+  "final_epochs": 20
+ },
+ "torch_threads": 5,
+ "host": "cse-robotics-Alienware-Aurora-R16",
+ "seconds": 38.9,
+ "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+ "extra": {}
+}

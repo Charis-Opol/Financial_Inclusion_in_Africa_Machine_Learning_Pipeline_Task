@@ -1,0 +1,29 @@
+{
+ "arm": "xgb",
+ "design": "nested",
+ "seed": 0,
+ "fold": "fold4",
+ "train_rows": 18820,
+ "val_rows": 4704,
+ "params": {
+  "max_depth": 8,
+  "learning_rate": 0.05498793797665187,
+  "n_estimators": 61,
+  "min_child_weight": 6,
+  "subsample": 0.5912826411378015,
+  "colsample_bytree": 0.55521625013414
+ },
+ "selection": "pooled",
+ "device": "cpu",
+ "budget": {
+  "tabpfn_estimators": 8,
+  "h2_estimators": 2,
+  "context_rows": 10000,
+  "final_epochs": 20
+ },
+ "torch_threads": 5,
+ "host": "cse-robotics-Alienware-Aurora-R16",
+ "seconds": 22.1,
+ "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+ "extra": {}
+}

@@ -1,0 +1,35 @@
+{
+  "name": "phase4_preflight_cse-robotics-Alienware-Aurora-R16",
+  "finished_at_utc": "2026-11-03T10:13:57+00:00",
+  "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+  "seed": null,
+  "config": {
+    "device": "cuda"
+  },
+  "metrics": {
+    "host": "cse-robotics-Alienware-Aurora-R16",
+    "python": "3.13.18",
+    "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+    "rows": 23524,
+    "torch": "2.12.1+cu130",
+    "tabpfn": "9.2.0",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 4080 SUPER",
+    "gpu_memory_gb": 16.7,
+    "cpu_threads": 24,
+    "tabpfn_autocast_on_device": true,
+    "agreement_seconds_cpu": 420.6,
+    "agreement_seconds_cuda": 1.9,
+    "agreement": {
+      "context_rows": 2000,
+      "query_rows": 1000,
+      "labels": "synthetic",
+      "max_abs_score_difference": 0.0038303732872009277,
+      "mean_abs_score_difference": 0.0005613660323433578,
+      "auc_cpu": 0.9152545377197957,
+      "auc_cuda": 0.9152634004537719
+    },
+    "e2_fit_seconds": 2.8,
+    "tabpfn_hours_projection_8_estimators": 0.3
+  }
+}

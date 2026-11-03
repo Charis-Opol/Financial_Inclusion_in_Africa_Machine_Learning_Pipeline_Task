@@ -1,0 +1,27 @@
+{
+ "arm": "h2_rw",
+ "design": "loco",
+ "seed": 2,
+ "fold": "heldout_Rwanda",
+ "train_rows": 14789,
+ "val_rows": 8735,
+ "params": {
+  "hidden_dim": 69,
+  "dropout": 0.032643252193439054,
+  "lr": 0.0007181987669977647,
+  "weight_decay": 2.4328966625910134e-06
+ },
+ "selection": "worst_country",
+ "device": "cuda",
+ "budget": {
+  "tabpfn_estimators": 8,
+  "h2_estimators": 8,
+  "context_rows": 10000,
+  "final_epochs": 20
+ },
+ "torch_threads": 5,
+ "host": "cse-robotics-Alienware-Aurora-R16",
+ "seconds": 13.2,
+ "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+ "extra": {}
+}

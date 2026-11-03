@@ -1,0 +1,29 @@
+{
+ "arm": "xgb",
+ "design": "loco",
+ "seed": 4,
+ "fold": "heldout_Uganda",
+ "train_rows": 21423,
+ "val_rows": 2101,
+ "params": {
+  "max_depth": 7,
+  "learning_rate": 0.013235947492949339,
+  "n_estimators": 293,
+  "min_child_weight": 2,
+  "subsample": 0.7534559576005805,
+  "colsample_bytree": 0.5542303515698442
+ },
+ "selection": "pooled",
+ "device": "cpu",
+ "budget": {
+  "tabpfn_estimators": 8,
+  "h2_estimators": 2,
+  "context_rows": 10000,
+  "final_epochs": 20
+ },
+ "torch_threads": 5,
+ "host": "cse-robotics-Alienware-Aurora-R16",
+ "seconds": 93.5,
+ "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+ "extra": {}
+}

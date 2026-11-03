@@ -1,0 +1,119 @@
+{
+  "name": "e6_shap",
+  "finished_at_utc": "2026-11-03T13:45:34+00:00",
+  "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+  "seed": null,
+  "config": {
+    "seed": 0,
+    "background_rows": 200,
+    "device": "cuda",
+    "repeats": 200,
+    "size": 1050,
+    "models": {
+      "xgb": "tree_shap",
+      "mlp_erm_wc": "exact_shapley",
+      "mlp_dro": "exact_shapley"
+    }
+  },
+  "metrics": {
+    "worst_country_for_erm_mlp": "Rwanda",
+    "tests": [
+      {
+        "model": "xgb",
+        "quantity": "cross-country minus noise",
+        "measure": "spearman",
+        "mean": 0.03770138888888888,
+        "ci_low": 0.033263888888888864,
+        "ci_high": 0.041666666666666664
+      },
+      {
+        "model": "xgb",
+        "quantity": "cross-country minus noise",
+        "measure": "kendall",
+        "mean": 0.11641203703703706,
+        "ci_low": 0.10162037037037042,
+        "ci_high": 0.12962962962962968
+      },
+      {
+        "model": "xgb",
+        "quantity": "cross-country minus noise",
+        "measure": "top3",
+        "mean": 0.14708333333333334,
+        "ci_low": 0.08333333333333331,
+        "ci_high": 0.22222222222222224
+      },
+      {
+        "model": "mlp_erm_wc",
+        "quantity": "cross-country minus noise",
+        "measure": "spearman",
+        "mean": 0.03368055555555558,
+        "ci_low": 0.02770833333333335,
+        "ci_high": 0.04031250000000002
+      },
+      {
+        "model": "mlp_erm_wc",
+        "quantity": "cross-country minus noise",
+        "measure": "kendall",
+        "mean": 0.08291666666666667,
+        "ci_low": 0.06458333333333335,
+        "ci_high": 0.10648148148148148
+      },
+      {
+        "model": "mlp_erm_wc",
+        "quantity": "cross-country minus noise",
+        "measure": "top3",
+        "mean": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      {
+        "model": "mlp_dro",
+        "quantity": "cross-country minus noise",
+        "measure": "spearman",
+        "mean": 0.009291666666666691,
+        "ci_low": 2.7755575615628914e-17,
+        "ci_high": 0.020833333333333325
+      },
+      {
+        "model": "mlp_dro",
+        "quantity": "cross-country minus noise",
+        "measure": "kendall",
+        "mean": 0.03097222222222219,
+        "ci_low": -5.551115123125783e-17,
+        "ci_high": 0.06944444444444445
+      },
+      {
+        "model": "mlp_dro",
+        "quantity": "cross-country minus noise",
+        "measure": "top3",
+        "mean": 0.007083333333333327,
+        "ci_low": -0.08333333333333334,
+        "ci_high": 0.16666666666666666
+      },
+      {
+        "model": "mlp_dro vs mlp_erm_wc",
+        "quantity": "Group DRO vs ERM in Rwanda, minus noise",
+        "measure": "spearman",
+        "mean": 0.007000000000000015,
+        "ci_low": -0.016666666666666663,
+        "ci_high": 0.024999999999999967
+      },
+      {
+        "model": "mlp_dro vs mlp_erm_wc",
+        "quantity": "Group DRO vs ERM in Rwanda, minus noise",
+        "measure": "kendall",
+        "mean": 0.023055555555555537,
+        "ci_low": -0.05555555555555558,
+        "ci_high": 0.08333333333333343
+      },
+      {
+        "model": "mlp_dro vs mlp_erm_wc",
+        "quantity": "Group DRO vs ERM in Rwanda, minus noise",
+        "measure": "top3",
+        "mean": 0.02916666666666667,
+        "ci_low": -0.16666666666666669,
+        "ci_high": 0.33333333333333337
+      }
+    ]
+  }
+}

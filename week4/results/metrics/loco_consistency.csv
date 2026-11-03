@@ -1,0 +1,8 @@
+method,held_out_countries_run,clear_wins,ever_clearly_beaten,consistently_better
+xgb,4,0,True,False
+mlp_erm,4,0,True,False
+mlp_dro,4,0,True,False
+tabpfn_v2,4,0,True,False
+h1_balanced,4,1,True,False
+h2_rw,4,0,True,False
+h2_dro,4,0,True,False

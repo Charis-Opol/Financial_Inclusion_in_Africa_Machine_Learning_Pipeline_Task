@@ -1,0 +1,27 @@
+{
+ "arm": "h2_erm",
+ "design": "nested",
+ "seed": 3,
+ "fold": "fold1",
+ "train_rows": 18819,
+ "val_rows": 4705,
+ "params": {
+  "hidden_dim": 86,
+  "dropout": 0.13924364132398764,
+  "lr": 0.0022516962469814267,
+  "weight_decay": 0.00023091453450156462
+ },
+ "selection": "worst_country",
+ "device": "cuda",
+ "budget": {
+  "tabpfn_estimators": 8,
+  "h2_estimators": 8,
+  "context_rows": 10000,
+  "final_epochs": 20
+ },
+ "torch_threads": 5,
+ "host": "cse-robotics-Alienware-Aurora-R16",
+ "seconds": 127.8,
+ "git_commit": "ddc058408006c1812c00b631fce3aeb1472aa39b",
+ "extra": {}
+}

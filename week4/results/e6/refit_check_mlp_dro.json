@@ -1,0 +1,27 @@
+[
+ {
+  "fold": "fold0",
+  "max_abs_refit_difference": 0.03909560775726317,
+  "rows_skipped_unseen_level": 0
+ },
+ {
+  "fold": "fold1",
+  "max_abs_refit_difference": 0.02993207325363162,
+  "rows_skipped_unseen_level": 0
+ },
+ {
+  "fold": "fold2",
+  "max_abs_refit_difference": 0.07757161505203247,
+  "rows_skipped_unseen_level": 0
+ },
+ {
+  "fold": "fold3",
+  "max_abs_refit_difference": 0.0769066073314667,
+  "rows_skipped_unseen_level": 0
+ },
+ {
+  "fold": "fold4",
+  "max_abs_refit_difference": 0.0626054155093384,
+  "rows_skipped_unseen_level": 0
+ }
+]
