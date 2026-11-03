@@ -42,3 +42,22 @@ Dated decisions, problems and surprises. Newest entry last. Post-hoc changes to 
 - I told the user step 8 would take about 17 minutes and E2 about 7 hours. It took 745 s, and E2 is estimated at 5.5 hours in the setting chosen.
 
 **Pre-registration.** No hypothesis or criterion changed. D1.8 removes E5c from planned work, which `HYPOTHESES.md` already allows ("H3 if run").
+
+## 2026-11-03: Phase 2
+
+**Done.** E1 ran both baseline arms twice: once exactly as the baseline did, and once with preprocessing fitted inside each outer fold. Comparison by script in `results/baseline_reproduction_summary.md`.
+
+**Result: exact reproduction.** With the baseline's own code path, every fold PR-AUC and every threshold matches the original saved values to full precision (maximum difference 0.000000). The tuned hyperparameters match in every fold, and every mean ± std in the report matches to three decimals.
+
+**Pre-CV preprocessing barely matters.**
+- **XGBoost:** fitting inside folds changes nothing. One-hot encoding learns only which levels exist, and every level appears in every training fold.
+- **MLP:** the scaler is learned from fewer rows. Mean PR-AUC moves by −0.000919, and at most 0.002724 in any fold. That's well below δ = 0.01 and the fold SD of about 0.019.
+
+So the leakage flagged in Phase 0 was real in principle, but negligible here.
+
+**My error, fixed before reporting.** My first comparison flagged every per-country SD as mismatched, by a factor of √(5/4). I had used the sample SD, while the original `summarize_country_metrics` uses NumPy's population SD (`reporting.py:51`). After matching it, all per-country values agree. There was no mismatch in the reproduction itself.
+
+**Also done during Phase 2, at the user's request.** I wrote the Phase 3 implementation, tests and `CODE_WALKTHROUGH.md`.
+- **Tests:** all 36 pass. One caught a real numerical bug: Group DRO weights overflowed to NaN at high step size and loss. I fixed it by moving the update to log space.
+- **Smoke test:** every experiment completed on a tiny subset. Its outputs are kept apart in `results/smoke/`, which is gitignored.
+- **Checkpoint 3:** Phase 3 still needs the user's review before any experiment uses this code.

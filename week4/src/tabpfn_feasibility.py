@@ -40,6 +40,7 @@ from fin_inclusion.preprocessing.pipeline_factory import (
     build_xgboost_pipeline,
 )
 from run_record import REPO_ROOT, RUNS_DIR, _git_commit
+from tabpfn_tools import stratified_context_lists
 
 OUTPUT = RUNS_DIR / "phase1_tabpfn_feasibility.json"
 SEED = 0
@@ -402,24 +403,6 @@ def section_runtime_clean() -> dict:
     return {"steps": _timed_ladder(plan, "runtime_clean_partial"), "cpu_threads": torch.get_num_threads()}
 
 
-def stratified_context_lists(strata: pd.Series, n_lists: int, max_rows: int, seed: int) -> list[np.ndarray]:
-    """One row-index array per estimator, each a stratified sample keeping stratum shares.
-
-    Rows are dealt out from a fresh shuffle of each stratum, so estimators see different
-    rows and, across the ensemble, every row of the training fold is used.
-    """
-    rng = np.random.default_rng(seed)
-    fraction = min(1.0, max_rows / len(strata))
-    positions: list[list[np.ndarray]] = [[] for _ in range(n_lists)]
-    for _, members in strata.groupby(strata, sort=True).indices.items():
-        shuffled = rng.permutation(members)
-        take = int(np.floor(len(members) * fraction))
-        for estimator in range(n_lists):
-            start = (estimator * take) % len(members)
-            positions[estimator].append(np.take(shuffled, np.arange(start, start + take), mode="wrap"))
-    return [np.sort(np.concatenate(chosen)) for chosen in positions]
-
-
 def section_runtime_planned() -> dict:
     """The planned E2 setting on one real-sized outer fold. Permuted labels, and no score is computed."""
     train = load_train()
@@ -430,7 +413,7 @@ def section_runtime_planned() -> dict:
     fit_idx, query_idx = next(
         StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED).split(X, strata)
     )
-    lists = stratified_context_lists(strata.iloc[fit_idx].reset_index(drop=True), 8, 10_000, SEED)
+    lists = stratified_context_lists(strata.iloc[fit_idx], 8, 10_000, SEED)
     model = v2_classifier(
         n_estimators=8,
         categorical_features_indices=list(range(len(CATEGORICAL_COLUMNS))),

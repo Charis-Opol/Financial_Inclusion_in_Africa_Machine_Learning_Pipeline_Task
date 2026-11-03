@@ -54,3 +54,12 @@ Required by rule 3. Verified by reading the installed source and running `week4/
 | D1.12 | Run TabPFN on CPU as resumable overnight jobs, saving each fold as it finishes. | About 10 h for priority A. A GPU would help but is not required. | **Confirm, Checkpoint 1** |
 | D1.13 | Leave data values uncorrected, including Tanzania's `location_type`, and report the anomaly. | See `RESEARCH_LOG.md`. Rule 1, and there is no way to confirm a coding error from the data itself. | **Confirm, Checkpoint 1** |
 | D1.14 | Displaying "Built with PriorLabs-TabPFN" is needed only if weights or a product containing them are distributed. Acknowledge TabPFN v2 and its licence in the paper regardless. | Licence paragraph 10. The paper distributes neither. | Decided |
+
+## Phase 2
+
+| ID | Decision | Why | Status |
+|---|---|---|---|
+| D2.1 | E1 calls the baseline's own `run_xgboost_arm` and `run_pytorch_arm`, importing the script without calling its `main()`. | `main()` writes to `reports/`, which rule 1 protects. Importing the original functions means the reproduction runs the original code, not a copy. | Decided |
+| D2.2 | E1 covers the two arms the brief names (XGBoost/class-weight and the 2-layer MLP/class-weight), not the SMOTE or 3-layer arms. | These are the baseline the study compares against. | Decided |
+| D2.3 | `imbalanced-learn==0.14.2` and `seaborn==0.13.2` added to `week4/.venv`, at the baseline's pinned versions. | The baseline modules import them. All shared libraries match `requirements.txt` exactly. | Decided |
+| D2.4 | Week 4 results use fold-fitted preprocessing (the `in_fold` variant's approach). The baseline's reported numbers stay as reported. | Rule 5. The measured effect is small, so comparisons with the reported baseline remain meaningful. | Decided |

@@ -1,0 +1,78 @@
+{
+  "name": "e1_xgboost_class_weight_in_fold",
+  "finished_at_utc": "2026-11-02T18:15:16+00:00",
+  "git_commit": "c84b96c09947ae9c88e82bbb57ac91e56577c1fa-dirty",
+  "seed": 42,
+  "config": {
+    "seed": 42,
+    "n_outer": 5,
+    "variant": "in_fold",
+    "arm": "xgboost_class_weight"
+  },
+  "metrics": {
+    "seconds": 144.4,
+    "fold_pr_auc": [
+      0.5794294115985709,
+      0.6006840281906457,
+      0.6211796837324247,
+      0.5646698361509642,
+      0.5846142117366551
+    ],
+    "mean_pr_auc": 0.5901154342818521,
+    "std_pr_auc": 0.019331920575330428,
+    "thresholds": [
+      0.45514804124832153,
+      0.4523411989212036,
+      0.5595550537109375,
+      0.344094842672348,
+      0.7487448453903198
+    ],
+    "best_params_per_fold": [
+      {
+        "max_depth": 8,
+        "learning_rate": 0.024172510199471923,
+        "n_estimators": 211,
+        "min_child_weight": 10,
+        "subsample": 0.6325111957475132,
+        "colsample_bytree": 0.5534562057273876,
+        "scale_pos_weight": 2.4198854503133935
+      },
+      {
+        "max_depth": 8,
+        "learning_rate": 0.024172510199471923,
+        "n_estimators": 211,
+        "min_child_weight": 10,
+        "subsample": 0.6325111957475132,
+        "colsample_bytree": 0.5534562057273876,
+        "scale_pos_weight": 2.4198854503133935
+      },
+      {
+        "max_depth": 7,
+        "learning_rate": 0.012314104500089176,
+        "n_estimators": 269,
+        "min_child_weight": 3,
+        "subsample": 0.5169749381559718,
+        "colsample_bytree": 0.9624559557084602,
+        "scale_pos_weight": 4.825058599946195
+      },
+      {
+        "max_depth": 8,
+        "learning_rate": 0.024172510199471923,
+        "n_estimators": 211,
+        "min_child_weight": 10,
+        "subsample": 0.6325111957475132,
+        "colsample_bytree": 0.5534562057273876,
+        "scale_pos_weight": 2.4198854503133935
+      },
+      {
+        "max_depth": 5,
+        "learning_rate": 0.0212146552873062,
+        "n_estimators": 290,
+        "min_child_weight": 3,
+        "subsample": 0.9126373500091916,
+        "colsample_bytree": 0.6579191637170307,
+        "scale_pos_weight": 7.484536608410666
+      }
+    ]
+  }
+}
