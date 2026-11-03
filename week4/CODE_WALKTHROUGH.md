@@ -150,3 +150,16 @@ The JSON is written last, and its existence marks a fold as finished. So if a se
 2. **"Identical class-imbalance handling" changes XGBoost.** The baseline's best XGBoost tuned `scale_pos_weight`, while its MLP used balanced weights. To follow your brief, the primary `xgb` uses balanced weights like the MLP, and `xgb_spw` keeps the baseline's method as a reported sensitivity arm. If `xgb_spw` scores higher, RQ1's comparison is against the weaker XGBoost, and the paper will show both. TabPFN takes no row weights, so it stays at defaults.
 3. **Tuning budgets are unequal.** I kept the baseline's 15 trials for XGBoost and 8 for MLPs. `mlp_dro` searches 2 more hyperparameters in those same 8 trials, which works slightly against it. The step-size sweep gives some protection.
 4. **No early stopping.** `koh2021wilds` (p.67) says methods like Group DRO work only while training loss hasn't vanished, achieved through early stopping. The baseline MLP has none, and I kept 20 epochs for every arm so they stay comparable. Weight decay is tuned, and the saved per-group losses will show whether loss vanishes.
+
+## 12. Added for the GPU run
+
+- **Point 1 of section 11, decided (D3.3).** A second pair of E3 arms uses class weights balanced inside each country: `mlp_erm_within_cw` and `mlp_dro_within_cw`. Each country keeps its total weight, and its two classes weigh the same within it (`within_country_class_weights` in `harness.py`). Both arms use the same weights, so the pair differs only in the objective.
+- **`run_everything.sh`** runs the checks first and stops if any fail. It then runs a GPU lane (TabPFN and hybrids) and CPU lanes (XGBoost and MLPs, one per seed) side by side, then E6, then the analysis.
+- **`analysis.py`.**
+  - `weighted_ap` computes PR-AUC with each bootstrap replicate's draw counts as row weights, so 2,000 replicates need one sort per model, not 2,000. A test checks it against sklearn.
+  - `bootstrap_counts` resamples within country-by-label strata, and every model uses the same counts, so every comparison is paired.
+  - `paired` gives a − b, or a minus the better of several models, chosen inside each replicate (RQ4).
+- **`e6_shap.py`.**
+  - Each outer fold's model is refitted from its saved parameters, and the refit's scores are compared with the saved ones.
+  - XGBoost is explained with TreeSHAP. Both MLPs use Week 3's exact Shapley values over the raw features.
+  - Rankings exclude `country`. The tests compare size-matched country subsamples with random halves of one country.

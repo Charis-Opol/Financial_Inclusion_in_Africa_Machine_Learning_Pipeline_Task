@@ -21,6 +21,7 @@ from harness import (
     prepare_xgb,
     run_arm,
     selection_score,
+    within_country_class_weights,
 )
 
 
@@ -204,7 +205,25 @@ def test_sweep_arm_takes_parent_params_and_changes_only_its_override(tmp_path):
 def test_every_mlp_arm_in_e3_selects_on_the_same_criterion():
     """D0.4: selection must not differ between ERM, reweighted and Group DRO in E3."""
     arms = build_arms()
-    assert {arms[name].selection for name in ("mlp_erm_wc", "mlp_rw", "mlp_dro")} == {"worst_country"}
+    names = ("mlp_erm_wc", "mlp_rw", "mlp_dro", "mlp_erm_within_cw", "mlp_dro_within_cw")
+    assert {arms[name].selection for name in names} == {"worst_country"}
+
+
+def test_within_country_class_weights_balance_classes_inside_each_country():
+    """D3.3: inside every country both classes weigh the same, and each country keeps its row count."""
+    country = pd.Series(["A"] * 100 + ["B"] * 50)
+    y = pd.Series(["Yes"] * 40 + ["No"] * 60 + ["Yes"] * 5 + ["No"] * 45)
+    weights = within_country_class_weights(y, country)
+    for name, size in (("A", 100), ("B", 50)):
+        rows = (country == name).to_numpy()
+        yes, no = rows & (y == "Yes").to_numpy(), rows & (y == "No").to_numpy()
+        assert np.isclose(weights[yes].sum(), weights[no].sum())
+        assert np.isclose(weights[rows].sum(), size)
+
+
+def test_within_cw_arms_pair_erm_and_group_dro_on_the_same_weights():
+    arms = build_arms()
+    assert arms["mlp_erm_within_cw"].weighting == arms["mlp_dro_within_cw"].weighting == "within_country"
 
 
 def test_country_label_key_matches_baseline_stratification():

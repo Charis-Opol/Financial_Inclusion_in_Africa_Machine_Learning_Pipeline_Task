@@ -1,0 +1,2 @@
+# Shell scripts run on Linux after a clone, so they keep LF endings on every platform.
+*.sh text eol=lf

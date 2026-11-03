@@ -18,4 +18,5 @@ PY=week4/.venv/Scripts/python.exe
 "$PY" -m pytest week4/tests -m "not slow" -q
 "$PY" -m pytest week4/tests -m slow -q
 
-# Phase 4 runs one stage at a time, with review between stages. See week4/run_all.py --help.
+# Phase 4, E6 and every metric and figure: one script, on the GPU machine. See week4/GPU_RUN.md.
+# bash week4/run_everything.sh

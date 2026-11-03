@@ -61,3 +61,36 @@ So the leakage flagged in Phase 0 was real in principle, but negligible here.
 - **Tests:** all 36 pass. One caught a real numerical bug: Group DRO weights overflowed to NaN at high step size and loss. I fixed it by moving the update to log space.
 - **Smoke test:** every experiment completed on a tiny subset. Its outputs are kept apart in `results/smoke/`, which is gitignored.
 - **Checkpoint 3:** Phase 3 still needs the user's review before any experiment uses this code.
+
+## 2026-11-03: Phase 3
+
+**Done.** The Phase 3 code written during Phase 2 was committed by the user in `95c91da`, before review. Rerunning the fast tests today: 35 pass. The Checkpoint 3 report is in `STATUS.md`. No experiment has used this code.
+
+**Compute plan.** The user proposed running the whole suite on this computer. Scaling measured times (E1 per-seed MLP and XGBoost runs, Phase 1's 786 s TabPFN fit), I estimate about 32 h of compute, about 19 h of it TabPFN. I recommended it (D3.1). This estimate has not been checked against a real stage. Stage 4A's actual time will be recorded at Checkpoint 4A, along with how far the estimate was off.
+
+## 2026-11-03: Phase 4 prepared for the GPU machine
+
+**Plan change.** The user moved the runs to a different computer with a GPU, reached by clone, and asked for everything to run in one go, figures included (D3.8). Nothing has run on real labels yet.
+
+**Added:**
+- `run_everything.sh`: preflight, tests, smoke, parallel lanes, E6, analysis.
+- `setup_env.sh`: environment setup on the GPU machine.
+- `src/preflight.py`: machine checks, GPU against CPU agreement, timing.
+- `src/analysis.py`: the pre-registered metrics, bootstrap, paired comparisons, figures.
+- `src/e6_shap.py`: E6.
+- `src/completion.py`: lists finished and missing folds.
+- `GPU_RUN.md`: the run guide.
+
+The raw data is now tracked in git. Decisions D3.3 to D3.11.
+
+**Verified here:**
+- **Tests:** 41 pass, including new ones for the bootstrap PR-AUC (matches sklearn with weights and ties), stratified resampling, Holm, and within-country class weights.
+- **Smoke:** every stage, E6 and the analysis ran end to end on CPU. E6 refits matched saved scores to 3e-8.
+- **Preflight:** passed on CPU.
+- **Not verified:** nothing has run on a GPU yet. The preflight and smoke steps on that machine are the first test.
+
+**Measured, and acted on.** Exact Shapley values for one MLP row took 260 ms with 100 background rows on this CPU. With Week 3's 200 rows, the two MLPs over all 23,524 rows would take about 7 hours here, so E6 scores MLP coalitions on the GPU.
+
+**Decided by me without the user's answer (D3.3).** The within-country class-weight pair was added before any result, so it is not post hoc. It is reported whatever it shows.
+
+**Smoke numbers are not results.** They come from 1-epoch, 2-trial runs on 2,400 rows, live in the gitignored `results/smoke/`, and are never reported.

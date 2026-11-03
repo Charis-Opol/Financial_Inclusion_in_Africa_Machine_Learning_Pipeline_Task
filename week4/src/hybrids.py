@@ -36,7 +36,8 @@ class EmbeddingHead(nn.Module):
 
 
 def embedding_cache_path(config: RunConfig, design: str, seed: int, fold_name: str) -> Path:
-    return config.cache_dir / "h2_embeddings" / design / f"seed{seed}" / f"{fold_name}.npz"
+    # The estimator count is in the path, so embeddings made with different counts never mix.
+    return config.cache_dir / "h2_embeddings" / f"est{config.h2_estimators}" / design / f"seed{seed}" / f"{fold_name}.npz"
 
 
 def fold_embeddings(

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+import platform
 import time
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
@@ -20,6 +21,7 @@ from pathlib import Path
 import numpy as np
 import optuna
 import pandas as pd
+import torch
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.utils.class_weight import compute_sample_weight
@@ -56,7 +58,7 @@ class RunConfig:
     tuning_epochs: int = 6
     final_epochs: int = 20
     tabpfn_estimators: int = 8
-    h2_estimators: int = 2  # D1.6. Raise if a GPU makes 8 affordable.
+    h2_estimators: int = 2  # D1.6 on CPU. run_all.py --h2-estimators raises it (D3.4: 8 on the GPU machine).
     context_rows: int = 10_000
     output_dir: Path = RESULTS_DIR / "oof"
     cache_dir: Path = RESULTS_DIR / "cache"
@@ -112,6 +114,7 @@ class Prepared:
     country_train: pd.Series
     categorical_columns: list[str] = field(default_factory=list)
     vocab_sizes: dict[str, int] = field(default_factory=dict)
+    pipeline: object | None = None  # The fitted preprocessing, kept for E6 explanations.
 
     @property
     def y_binary(self) -> np.ndarray:
@@ -133,6 +136,7 @@ def prepare_xgb(train: pd.DataFrame, val: pd.DataFrame, use_country: bool) -> Pr
         X_val=pipeline.transform(val).drop(columns=drop, errors="ignore"),
         y_train=train[TARGET_COLUMN],
         country_train=train["country"],
+        pipeline=pipeline,
     )
 
 
@@ -148,6 +152,7 @@ def prepare_mlp(train: pd.DataFrame, val: pd.DataFrame, use_country: bool) -> Pr
         country_train=train["country"],
         categorical_columns=columns,
         vocab_sizes=pipeline.named_steps["encode"].vocab_sizes_,
+        pipeline=pipeline,
     )
 
 
@@ -163,6 +168,20 @@ def prepare_matrix(train: pd.DataFrame, val: pd.DataFrame, use_country: bool) ->
 def class_weights(y: pd.Series) -> np.ndarray:
     """Balanced class weights, the same formula as the baseline's ClassWeightStrategy."""
     return compute_sample_weight(class_weight="balanced", y=y)
+
+
+def within_country_class_weights(y: pd.Series, country: pd.Series) -> np.ndarray:
+    """Balanced class weights computed inside each country (D3.3).
+
+    Each country keeps its total weight (its row count), but its two classes weigh equally within
+    it, so countries' losses are compared on the same class balance.
+    """
+    weight = np.empty(len(y), dtype=np.float64)
+    countries = country.to_numpy()
+    for name in np.unique(countries):
+        rows = countries == name
+        weight[rows] = compute_sample_weight(class_weight="balanced", y=y.to_numpy()[rows])
+    return weight
 
 
 def country_weights(country: pd.Series) -> np.ndarray:
@@ -266,6 +285,11 @@ def run_arm(arm, design: str, seed: int, frame: pd.DataFrame, config: RunConfig)
             "arm": arm.name, "design": design, "seed": seed, "fold": fold_name,
             "train_rows": len(train), "val_rows": len(val),
             "params": params, "selection": arm.selection, "device": config.device,
+            "budget": {
+                "tabpfn_estimators": config.tabpfn_estimators, "h2_estimators": config.h2_estimators,
+                "context_rows": config.context_rows, "final_epochs": config.final_epochs,
+            },
+            "torch_threads": torch.get_num_threads(), "host": platform.node(),
             "seconds": round(time.perf_counter() - start, 1),
             "git_commit": _git_commit(), "extra": extra,
         }

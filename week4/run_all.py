@@ -6,6 +6,8 @@ Run from the repo root, one stage at a time, reviewing results between stages:
   week4/.venv/Scripts/python.exe week4/run_all.py --stage 4a --smoke     # minutes, on a tiny subset
   week4/.venv/Scripts/python.exe week4/run_all.py --stage e3 --arms mlp_dro --seeds 0 1
 
+On the GPU machine, week4/run_everything.sh calls this for every stage (see week4/GPU_RUN.md).
+
 Finished folds are skipped, so rerunning the same command resumes after a dropped session.
 Smoke runs write to week4/results/smoke/, so they can never mix with real results.
 
@@ -15,6 +17,7 @@ because it depends on which country is worst; E5c (H3), marked as future work (D
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import platform
 import sys
@@ -27,21 +30,22 @@ import torch  # noqa: E402
 
 from arms import ADJUSTMENT_CHOICES, build_arms  # noqa: E402
 from harness import RunConfig, load_labelled, run_arm  # noqa: E402
+from tabpfn.utils import infer_autocast_inference_mode  # noqa: E402
 
 SWEEP_ARMS = [f"mlp_dro_step_{s}" for s in (0.0, 0.001, 0.01, 0.1, 1.0)] + [f"mlp_dro_c_{c}" for c in ADJUSTMENT_CHOICES]
 
 # Each experiment: (design, arms in run order). Sweep arms must follow their parent.
 EXPERIMENTS: dict[str, tuple[str, list[str]]] = {
     "e2": ("nested", ["xgb", "xgb_spw", "mlp_erm", "tabpfn_v2"]),
-    "e3": ("nested", ["mlp_erm_wc", "mlp_rw", "xgb_rw", "mlp_dro", *SWEEP_ARMS]),
+    "e3": ("nested", ["mlp_erm_wc", "mlp_rw", "xgb_rw", "mlp_dro", *SWEEP_ARMS, "mlp_erm_within_cw", "mlp_dro_within_cw"]),
     "e4": ("loco", ["xgb", "mlp_erm", "mlp_dro", "tabpfn_v2"]),
     "e5a": ("nested", ["h1_balanced"]),
     "e5b": ("nested", ["h2_erm", "h2_rw", "h2_dro"]),
-    # E4 asks for "the best hybrids", so run only after E5, naming the hybrids with --arms.
-    "e4_hybrids": ("loco", ["h1_balanced", "h2_rw", "h2_dro"]),
+    # E4 asks for "the best hybrids". Every hybrid runs here, so nothing is chosen after seeing E5 (D3.5).
+    "e4_hybrids": ("loco", ["h1_balanced", "h2_erm", "h2_rw", "h2_dro"]),
     "e7": ("nested", ["mlp_dro_country_label"]),
 }
-STAGES = {"4a": ["e2", "e3", "e4"], "4b": ["e5a", "e5b"], "4c": ["e7"]}
+STAGES = {"4a": ["e2", "e3", "e4"], "4b": ["e5a", "e5b", "e4_hybrids"], "4c": ["e7"]}
 
 
 def main() -> None:
@@ -51,11 +55,14 @@ def main() -> None:
     parser.add_argument("--seeds", nargs="*", type=int, default=[0, 1, 2, 3, 4])
     parser.add_argument("--device", default="cpu", help="Device for TabPFN only, such as cpu or cuda")
     parser.add_argument("--smoke", action="store_true", help="Tiny subset and budgets: checks code paths only")
+    parser.add_argument("--h2-estimators", type=int, help="TabPFN estimators for H2 embeddings (default 2, D1.6)")
     args = parser.parse_args()
 
     if args.device.startswith("cuda") and not torch.cuda.is_available():
         sys.exit(f"--device {args.device} was requested, but torch cannot see a GPU here.")
     config = RunConfig.smoke(args.device) if args.smoke else RunConfig(device=args.device)
+    if args.h2_estimators is not None and not args.smoke:
+        config = dataclasses.replace(config, h2_estimators=args.h2_estimators)
     seeds = args.seeds[:1] if args.smoke else args.seeds
 
     frame = load_labelled(config)
@@ -73,6 +80,9 @@ def main() -> None:
                 "torch": torch.__version__,
                 "device": args.device,
                 "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+                # TabPFN's default precision on this device: fp16 autocast on GPU (tabpfn/utils.py).
+                "tabpfn_autocast": infer_autocast_inference_mode([torch.device(args.device)], enable=None),
+                "h2_estimators": config.h2_estimators,
                 "rows": len(frame),
             },
             indent=1,

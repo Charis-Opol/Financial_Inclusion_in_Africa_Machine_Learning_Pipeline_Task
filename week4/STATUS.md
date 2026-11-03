@@ -1,84 +1,64 @@
-# Status: Checkpoint 2 (Phase 2)
+# Status: Checkpoint 3, ready to run on the GPU machine
 
-Date: 2026-11-03. Base commit: `c84b96c`. Nothing committed or pushed. Nothing outside `week4/` changed.
+Date: 2026-11-03. Base commit: `95c91da`. Nothing committed or pushed. Nothing outside `week4/` changed, except the root `.gitignore`, so the two raw data files are tracked.
 
-**Phase 2 is complete.** The Phase 3 code you asked me to write during the run is also ready. It gets its own review at Checkpoint 3 before any experiment uses it.
+**Everything is prepared to run in one go.** Clone, run `bash week4/setup_env.sh`, then `bash week4/run_everything.sh`. Steps are in `week4/GPU_RUN.md`. No experiment has run on real labels.
 
 ## Done
 
 | File | Contents |
 |---|---|
-| `week4/src/e1_reproduce_baseline.py` | E1: the baseline's own arm functions, run as reported and with in-fold preprocessing |
-| `week4/src/e1_summary.py` | Compares everything with the original saved values, by script |
-| `week4/results/baseline_reproduction.csv` | Every fold, country and metric |
-| `week4/results/baseline_reproduction_summary.md` | **The mismatch note** |
-| `week4/results/runs/e1_*.json` | Run records |
+| `week4/run_everything.sh` | Preflight, tests, smoke, GPU and CPU lanes in parallel, E6, analysis, completion report |
+| `week4/setup_env.sh` | Builds `week4/.venv` on a fresh clone, downloads TabPFN v2, reports the GPU |
+| `week4/GPU_RUN.md` | Step by step: push, clone, set up, run, bring results back |
+| `week4/src/preflight.py` | Stops early on a dirty tree, missing data or no GPU. Measures GPU against CPU agreement and times one E2 fit |
+| `week4/src/analysis.py` | Every pre-registered metric, 2,000-replicate paired bootstrap, Holm, and 14 figures (PNG and PDF) |
+| `week4/src/e6_shap.py` | E6 (RQ6): SHAP rankings per country against the size-matched noise baseline, and Group DRO against ERM |
+| `week4/src/completion.py` | Finished and missing folds per arm |
+| `data/raw/*.csv` | Now tracked, so the clone has the data |
 
-**Phase 3 code**, for Checkpoint 3: `week4/src/group_dro.py`, `tabpfn_tools.py`, `harness.py`, `arms.py`, `hybrids.py`, `week4/run_all.py`, `week4/tests/`, `week4/CODE_WALKTHROUGH.md`.
+Phase 3 code from the previous report is unchanged apart from: the D3.3 arms, the estimator count in the H2 cache path, and fold metadata now recording budget, threads and host.
 
 ## Findings
 
-From `week4/results/baseline_reproduction_summary.md`:
-
-- **The baseline reproduces exactly.**
-  - Every fold PR-AUC and threshold matches the original run to full precision. The maximum difference is 0.000000 for both arms.
-  - Tuned hyperparameters match in all 5 folds of both arms.
-  - Every reported mean ± std matches to three decimals: XGBoost 0.590 ± 0.019, MLP 0.584 ± 0.019, and XGBoost per country Kenya 0.649, Rwanda 0.473, Tanzania 0.627, Uganda 0.553.
-- **Fitting preprocessing before CV barely mattered.**
-
-  | Arm | Change in mean PR-AUC | Largest change in any fold |
-  |---|---|---|
-  | XGBoost | 0.000000 | 0.000000 |
-  | MLP | −0.000919 | 0.002724 |
-
-  Both are well below δ = 0.01. XGBoost doesn't change because one-hot encoding learns nothing beyond which levels exist.
-- **Run time:** XGBoost about 142 s and MLP about 678 s per 5-fold run.
+- **Checked here:**
+  - 41 tests pass.
+  - Every stage, E6 and the analysis ran end to end on a smoke subset.
+  - E6's refitted models reproduce their saved scores to 3e-8.
+  - The preflight passes on CPU.
+- **Not checked:** anything on a GPU. The preflight, tests and smoke run on that machine are the first test, and the run stops there if any fail.
+- **TabPFN's default on a GPU is fp16 mixed precision**, while Phase 1 used float32 on CPU. The preflight records how far GPU scores move from CPU scores (D3.7).
+- **Measured E6 cost:** 260 ms per row on this CPU, so MLP explanations run on the GPU there.
 
 ## Decisions and assumptions
 
-- **D2.1:** E1 imports and calls the baseline's own functions, never its `main()`, which writes to `reports/`.
-- **D2.2:** E1 covers the two baseline arms your brief names, not the SMOTE or 3-layer arms.
-- **D2.4:** all Week 4 results use fold-fitted preprocessing, and the reported baseline stays as reported. The effect measured above shows the two are comparable.
+New ones are D3.3 to D3.11 in `DECISIONS.md`. The ones to check:
+
+- **D3.3, my call:** I added an ERM and Group DRO pair with class weights balanced within each country. That was your open question from section 11. I added the arms rather than leave E3 waiting, before any result exists. `mlp_dro` stays primary. To drop them, delete the two lines in `build_arms()`.
+- **D3.4:** H2 now uses 8 estimators, matching TabPFN, instead of 2.
+- **D3.5:** every hybrid runs under leave-one-country-out, so none is picked after seeing E5.
+- **D3.8:** all stages run unattended, at your request. Checkpoints 4A to 4C become reviews of finished results.
 
 ## Problems and risks
 
-- **My error:** my first comparison wrongly showed the per-country SDs as mismatched, because I used the sample SD and the original code uses the population SD. Fixed and logged before this report; the reproduction itself had no mismatch.
-- **Smaller fixes:**
-  - **Earlier timings:** the Phase 3 tests and smoke runs shared the CPU with part of E1, limited to 2 threads, so E1's run times are slightly pessimistic. Its results are deterministic and unaffected.
-  - **Dependencies:** `imbalanced-learn` and `seaborn` were missing from `week4/.venv`, so I added them at the baseline's pinned versions.
-- **Still open:** the Group DRO source (the Sagawa PDF) and the GPU choice.
+- **The repository is public.** Pushing publishes `Train_v2.csv` and `Test_v2.csv`. If the dataset's terms don't allow redistribution, make the repo private before pushing (`gh repo edit --visibility private`), then push and clone.
+- **GPU-side unknowns:** the driver's CUDA version (see `TORCH_INDEX_URL` in `GPU_RUN.md`), memory for 10,000-row TabPFN contexts, and run time. The preflight reports each before the long jobs start.
+- **The Sagawa et al. (2020) PDF is still missing.** It doesn't block the run, but the paper's methods section needs a decision.
 
 ## Review checklist
 
-1. `week4/results/baseline_reproduction_summary.md`.
-2. `week4/src/e1_reproduce_baseline.py`, especially `nested_cv_in_fold`, which mirrors `cv_runner.run_nested_cv` except for the preprocessing line.
-
-To reproduce (Git Bash, about 30 minutes):
-
-```bash
-week4/.venv/Scripts/python.exe week4/src/e1_reproduce_baseline.py
-week4/.venv/Scripts/python.exe week4/src/e1_summary.py
-```
+1. `week4/GPU_RUN.md`.
+2. `week4/run_everything.sh`: what runs, in what order, and what stops it.
+3. `DECISIONS.md` D3.3 to D3.11.
 
 ## Suggested commit message
 
 ```text
-Add Week 4 Phase 2: exact reproduction of the baseline (E1)
+Prepare Week 4 Phase 4 for a single GPU run: runner, preflight, analysis, E6, tracked data
 ```
-
-The Phase 3 files are also in the working tree. Commit them separately after Checkpoint 3, or now if you prefer, since no result depends on them yet.
 
 ## Next
 
-**Checkpoint 3 needs your review of the Phase 3 code before any experiment uses it.** In this order:
-1. `week4/CODE_WALKTHROUGH.md`.
-2. `week4/src/group_dro.py`.
-3. `week4/src/tabpfn_tools.py`.
-4. Section 11 of the walkthrough: four design decisions for you.
-
-**What I need from you:**
-
-1. **Reply "continue to Phase 3"** to approve Phase 2. I'll then write the Checkpoint 3 report.
-2. **The four design points in section 11 of the walkthrough.** The first matters most: Group DRO may push towards Kenya rather than the country with the lowest PR-AUC, because class weights are pooled across countries. Should I add an arm whose class weights are computed within each country?
-3. **The Sagawa et al. (2020) PDF:** add it, or I describe the update as our own implementation. This must be settled before the paper's methods section.
-4. **Your GPU setup:** what kind it is and where it runs. Only TabPFN uses it.
+1. Decide whether the repo should be private, then commit and push.
+2. Follow `week4/GPU_RUN.md` on the GPU machine.
+3. When results are pushed back, `git pull` here. I'll then check completeness and the preflight's agreement numbers, and write Checkpoint 4 from the tables, with verdicts applied by the pre-registered rules.

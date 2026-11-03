@@ -28,6 +28,7 @@ from harness import (
     prepare_matrix,
     prepare_mlp,
     prepare_xgb,
+    within_country_class_weights,
 )
 from hybrids import fit_head, fold_embeddings, prepare_embeddings
 from tabpfn_tools import balanced_context_lists, predict_scores, stratified_context_lists
@@ -98,18 +99,20 @@ class XGBoostArm(Arm):
     def prepare(self, train, val, use_country, context):
         return prepare_xgb(train, val, use_country)
 
-    def fit_predict(self, params, prepared, config, seed, tuning):
+    def fit_model(self, params, prepared, config, seed, tuning) -> XGBoostModel:
         weight = None
         if self.weighting == "balanced":
             weight = class_weights(prepared.y_train)
         elif self.weighting == "balanced_country":
             weight = class_weights(prepared.y_train) * country_weights(prepared.country_train)
-        model = XGBoostModel(seed=seed, **params).fit(prepared.X_train, prepared.y_train, sample_weight=weight)
-        return model.predict_proba(prepared.X_val), {}
+        return XGBoostModel(seed=seed, **params).fit(prepared.X_train, prepared.y_train, sample_weight=weight)
+
+    def fit_predict(self, params, prepared, config, seed, tuning):
+        return self.fit_model(params, prepared, config, seed, tuning).predict_proba(prepared.X_val), {}
 
 
 class MLPArm(Arm):
-    """The baseline MLP search space. `weighting` is "balanced" or "balanced_country"."""
+    """The baseline MLP search space. `weighting` is "balanced", "balanced_country" or "within_country"."""
 
     def __init__(self, name: str, weighting: str, selection: str):
         self.name, self.weighting, self.selection = name, weighting, selection
@@ -146,25 +149,33 @@ class MLPArm(Arm):
         }
 
     def _weights(self, prepared) -> np.ndarray:
+        if self.weighting == "within_country":
+            return within_country_class_weights(prepared.y_train, prepared.country_train)
         weight = class_weights(prepared.y_train)
         if self.weighting == "balanced_country":
             weight = weight * country_weights(prepared.country_train)
         return weight
 
-    def fit_predict(self, params, prepared, config, seed, tuning):
+    def fit_model(self, params, prepared, config, seed, tuning) -> PyTorchMLP:
         model = PyTorchMLP(**self._model_args(params, prepared, config, seed, tuning))
-        model.fit(prepared.X_train, prepared.y_train, sample_weight=self._weights(prepared))
-        return model.predict_proba(prepared.X_val), {}
+        return model.fit(prepared.X_train, prepared.y_train, sample_weight=self._weights(prepared))
+
+    def fit_predict(self, params, prepared, config, seed, tuning):
+        return self.fit_model(params, prepared, config, seed, tuning).predict_proba(prepared.X_val), {}
 
 
 class GroupDROArm(MLPArm):
     """The same MLP trained with Group DRO. Class weights match the ERM MLP (rule 5, brief item 3).
 
     `group_by_label` makes the groups country by label instead of country, for E7.
+    `weighting="within_country"` is the D3.3 variant.
     """
 
-    def __init__(self, name: str, group_by_label: bool = False, params_from: str | None = None, overrides: dict | None = None):
-        super().__init__(name, weighting="balanced", selection="worst_country")
+    def __init__(
+        self, name: str, group_by_label: bool = False, params_from: str | None = None,
+        overrides: dict | None = None, weighting: str = "balanced",
+    ):
+        super().__init__(name, weighting=weighting, selection="worst_country")
         self.group_by_label = group_by_label
         self.params_from = params_from
         self.overrides = overrides or {}
@@ -176,10 +187,13 @@ class GroupDROArm(MLPArm):
             "adjustment_c": trial.suggest_categorical("adjustment_c", ADJUSTMENT_CHOICES),
         }
 
-    def fit_predict(self, params, prepared, config, seed, tuning):
+    def fit_model(self, params, prepared, config, seed, tuning) -> GroupDROMLP:
         groups = group_ids(prepared.country_train, prepared.y_train if self.group_by_label else None)
         model = GroupDROMLP(**self._model_args(params, prepared, config, seed, tuning))
-        model.fit(prepared.X_train, prepared.y_train, sample_weight=self._weights(prepared), groups=groups)
+        return model.fit(prepared.X_train, prepared.y_train, sample_weight=self._weights(prepared), groups=groups)
+
+    def fit_predict(self, params, prepared, config, seed, tuning):
+        model = self.fit_model(params, prepared, config, seed, tuning)
         extra = {} if tuning else _dro_history_extra(model.history_)
         return model.predict_proba(prepared.X_val), extra
 
@@ -263,6 +277,10 @@ def build_arms() -> dict[str, Arm]:
         MLPArm("mlp_rw", weighting="balanced_country", selection="worst_country"),
         GroupDROArm("mlp_dro"),
         XGBoostArm("xgb_rw", weighting="balanced_country"),
+        # E3 secondary pair (D3.3): class weights balanced within each country, for ERM and Group DRO alike,
+        # so Group DRO compares countries on the same class balance. Fixed before any result exists.
+        MLPArm("mlp_erm_within_cw", weighting="within_country", selection="worst_country"),
+        GroupDROArm("mlp_dro_within_cw", weighting="within_country"),
         # E3 ablations: the parent's tuned parameters, with one setting changed. Nothing is tuned.
         *[
             GroupDROArm(f"mlp_dro_step_{step}", params_from="mlp_dro", overrides={"step_size": step})
