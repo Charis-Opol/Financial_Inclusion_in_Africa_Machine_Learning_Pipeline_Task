@@ -139,11 +139,17 @@ def attributions(model_name: str, frame: pd.DataFrame, config: RunConfig, out_di
     for fold_name, train_idx, val_idx in outer_folds(frame, E6_SEED, config.n_outer):
         _, meta_path = fold_paths(config, "nested", model_name, E6_SEED, fold_name)
         scores_path = meta_path.with_suffix("").with_suffix(".csv.gz")
-        params = json.loads(meta_path.read_text(encoding="utf-8"))["params"]
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        params = meta["params"]
+        # MLP training is deterministic only at a fixed thread count, so refit with the fold's own (D4.2).
+        threads = int(meta.get("torch_threads") or torch.get_num_threads())
+        torch.set_num_threads(threads)
         train, val = frame.iloc[train_idx], frame.iloc[val_idx]
         values, names, refit, known = explain_fold(arm, params, train, val, config, n_background)
         saved = pd.read_csv(scores_path).set_index("row_id").reindex(val.index)["score"].to_numpy()
         checks.append({"fold": fold_name, "max_abs_refit_difference": float(np.abs(refit - saved).max()),
+                       "mean_abs_refit_difference": float(np.abs(refit - saved).mean()),
+                       "torch_threads": threads, "host": meta.get("host"),
                        "rows_skipped_unseen_level": int((~known).sum())})
         part = pd.DataFrame(values, columns=names)
         part.insert(0, "row_country", val["country"].to_numpy()[known])  # "country" is a feature column.

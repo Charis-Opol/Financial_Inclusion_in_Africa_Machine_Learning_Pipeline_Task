@@ -79,3 +79,11 @@ Required by rule 3. Verified by reading the installed source and running `week4/
 | D3.9 | CPU arms run in parallel lanes, one per seed (on 12+ cores), each with cores ÷ lanes threads. The thread count and host are saved with every fold. | Saves wall time. A sweep arm always runs after its parent in the same lane. Thread count can change MLP results in the last bits only. | Decided |
 | D3.10 | `data/raw/Train_v2.csv` and `Test_v2.csv` are tracked in git (root `.gitignore`), so a clone has the data. | The user moves the repo by push and clone. **The repository is public, so pushing publishes the data.** | Decided by the user |
 | D3.11 | **Analysis definitions:** W = min over countries of the seed-mean P_c, chosen per replicate; per-seed W is used only for seed noise. Bootstrap seed 2026. Bootstrap p-values: two-sided 2·min(share ≤ 0, share ≥ 0); for RQ4, one-sided share ≤ 0. Holm uses these. The analysis writes quantities and figures; verdicts are written at the checkpoint. | Fills in what HYPOTHESES.md implies but doesn't spell out. | Decided |
+
+## Phase 4 review and Phase 5
+
+| ID | Decision | Why | Status |
+|---|---|---|---|
+| D4.1 | Verdicts applied exactly as pre-registered: RQ1 matches; RQ2, RQ3, RQ4 and RQ5 falsified; RQ6 not falsified for the primary model (XGBoost). No rule, arm or setting changed after results. | `HYPOTHESES.md` and rule 4. | Decided |
+| D4.2 | E6 now refits each fold with its recorded `torch_threads`. The GPU run refitted MLPs with 32 threads against 5 in training, and the refits differed from the saved scores by up to 0.17 (XGBoost matched to 3e-8). Confirmed here: same thread count gives identical fits; 5 against 16 threads moves scores by up to 0.049. **E6 was not rerun, by the user's decision.** The paper states the caveat for the MLP rows of RQ6. | MLP training is deterministic only at a fixed thread count. The primary RQ6 model is unaffected. | Decided by the user |
+| D4.3 | The paper is `paper/paper.md`. Exploratory patterns (H1 in held-out Tanzania, Group DRO under shift, the Tanzania collapse under Group DRO) are labelled as not pre-registered and untested. | Reporting commitments in `HYPOTHESES.md`. | Decided |

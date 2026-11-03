@@ -94,3 +94,26 @@ The raw data is now tracked in git. Decisions D3.3 to D3.11.
 **Decided by me without the user's answer (D3.3).** The within-country class-weight pair was added before any result, so it is not post hoc. It is reported whatever it shows.
 
 **Smoke numbers are not results.** They come from 1-epoch, 2-trial runs on 2,400 rows, live in the gitignored `results/smoke/`, and are never reported.
+
+## 2026-11-03: Phase 4 results and Phase 5
+
+**Run.** The Alienware (RTX 4080 SUPER, 24 threads) finished all 760 folds of 32 arms in 3 h 48 min. The preflight, 41 tests and the smoke run passed. TabPFN GPU scores differed from CPU scores by at most 0.0038. Results are in commit `1e5f1d3`.
+
+**Verdicts (D4.1).**
+- RQ1: TabPFN matches XGBoost.
+- RQ2, RQ3, RQ4 and RQ5: falsified.
+- RQ6: not falsified for XGBoost. The Group DRO parts show no difference.
+
+The full reasoning is in `STATUS.md`.
+
+**Surprises.**
+1. **Group DRO lowered worst-country PR-AUC,** by 0.017. Its weights went to Kenya (0.91), the highest-loss country, not Rwanda, the lowest-PR-AUC country. With within-country class weights it did focus on Rwanda (0.65), and Rwanda's PR-AUC still did not move. In both versions Tanzania's weight went to about 0 and its PR-AUC collapsed from 0.616 to 0.486 or 0.463.
+2. **Worst-country PR-AUC barely moves:** 0.44 to 0.47 across every model and objective, outside the extreme step sizes. Rwanda is the worst country for every primary model in every seed.
+3. **`xgb_spw` scores 0.565 pooled against 0.589 fold-mean.** Tuning `scale_pos_weight` per fold changes the score scale between folds.
+4. **Leave-one-country-out:** H1 clearly wins in held-out Tanzania, and Group DRO is best in held-out Kenya and Rwanda. Neither pattern was pre-registered.
+
+**Problem (D4.2).** E6 refitted the MLPs with 32 threads, while training had used 5, so the refits did not reproduce the saved scores. The code is fixed. The user chose not to rerun E6, and the paper states the caveat.
+
+**My error.** My first Checkpoint 4 text gave 742 folds. The count is 760: 24 nested arms × 25 folds plus 8 leave-one-country-out arms × 20. Corrected before reporting. My first paper draft also said the 0.12 gap held for every variant, but `mlp_erm_within_cw` has 0.092. Corrected to "every model with pooled class weights and without Group DRO".
+
+**Phase 5.** Drafted `paper/paper.md`.
