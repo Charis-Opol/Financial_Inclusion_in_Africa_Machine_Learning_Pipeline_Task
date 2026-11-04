@@ -379,12 +379,16 @@ def fig_sweeps(results: dict):
             xs = np.arange(len(items))
             points = [results[a]["point"][metric] for _, a in items]
             lows, highs = zip(*[ci(results[a]["boot"][metric]) for _, a in items]) if items else ([], [])
-            ax.vlines(xs, lows, highs, color=INK, linewidth=2)
-            ax.plot(xs, points, "o", color=INK, markersize=6, markeredgecolor="white")
+            # Reference line drawn first (lowest zorder) so it sits behind the markers instead of
+            # cutting across them, which previously looked like a dot punched into the line.
             if "mlp_dro" in results:
-                ax.axhline(results["mlp_dro"]["point"][metric], color=PALETTE[1], linewidth=1.5)
-                ax.annotate("tuned mlp_dro", (xs[-1] if len(xs) else 0, results["mlp_dro"]["point"][metric]),
-                            textcoords="offset points", xytext=(0, 4), ha="right", fontsize=7.5, color=INK_SECONDARY)
+                ref = results["mlp_dro"]["point"][metric]
+                ax.axhline(ref, color=PALETTE[1], linewidth=1.3, linestyle="--", alpha=0.7, zorder=1)
+                ax.annotate("tuned mlp_dro", (xs[0] if len(xs) else 0, ref),
+                            textcoords="offset points", xytext=(0, 6), ha="left", fontsize=7.5, color=INK_SECONDARY,
+                            zorder=4, bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="none", alpha=0.85))
+            ax.vlines(xs, lows, highs, color=INK, linewidth=2, zorder=2)
+            ax.plot(xs, points, "o", color=INK, markersize=6, markeredgecolor="white", zorder=3)
             ax.set_xticks(xs, [f"{v:g}" for v, _ in items])
             ax.set_xlabel(label)
             ax.set_ylabel("Worst-country PR-AUC (W)" if metric == "W" else "Pooled PR-AUC (P)")

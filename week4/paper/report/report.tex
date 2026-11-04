@@ -143,11 +143,11 @@ The literature leaves four questions open for this task. First, prior work on th
 
 \subsection{Quantities of interest}
 
-Let $P(m)$ be the pooled PR-AUC of model $m$ and $P_c(m)$ its PR-AUC on the rows of country $c$. The worst-country PR-AUC and the gap are
+Throughout the paper, $m$ indexes a model or training arm (e.g.\ \arm{xgb}, \arm{tabpfn\_v2}), $c$ indexes a country (Kenya, Rwanda, Tanzania or Uganda), and $K = 4$ is the number of countries. ``Group'' and ``country'' mean the same thing in this paper; we use whichever reads more naturally in context. Let $P(m)$ be the pooled PR-AUC of model $m$, computed over all countries together, and let $P_c(m)$ be its PR-AUC computed only on the rows of country $c$. The worst-country PR-AUC and the gap between pooled and worst-country performance are
 \begin{equation}
   W(m) = \min_{c} P_c(m), \qquad G(m) = P(m) - W(m).
 \end{equation}
-The minimising country is chosen separately for each model and each bootstrap replicate, so it floats. Earlier reports on this dataset showed Rwanda, not Uganda, with the lowest PR-AUC. Fixing the country in advance could have measured the wrong group, and choosing it after seeing results would have been selection. Raw PR-AUC depends on prevalence, so $W$ is also reported on two other scales: excess over prevalence ($P_c - \pi_c$) and lift ($P_c / \pi_c$). The minimum of noisy estimates is biased downward, more so for small groups.
+The minimising country is chosen separately for each model and each bootstrap replicate, so it floats. Earlier reports on this dataset showed Rwanda, not Uganda, with the lowest PR-AUC. Fixing the country in advance could have measured the wrong group, and choosing it after seeing results would have been selection. Raw PR-AUC depends on prevalence, so $W$ is also reported on two other scales: excess over prevalence ($P_c - \pi_c$, where $\pi_c$ is country $c$'s share of positive labels, i.e.\ its prevalence) and lift ($P_c / \pi_c$). The minimum of noisy estimates is biased downward, more so for small groups.
 
 \subsection{Models}
 
@@ -157,19 +157,22 @@ The minimising country is chosen separately for each model and each bootstrap re
   \item \textbf{TabPFN v2} \citep{hollmann2025accurate} with default settings: 8 ensemble members and no tuning. The installed package (\texttt{tabpfn} 9.2.0) defaults to a later, gated version, so v2 weights were requested explicitly. Training folds hold about 18,800 rows, above v2's supported 10,000. Each of the 8 estimators therefore reads its own context of about 10,000 rows, stratified by country and label, dealt so that every training row appears in at least one context. This is the only departure from defaults.
 \end{itemize}
 
+\paragraph{Arm-name suffixes.} Arm names (Table~\ref{tab:arms}) combine a model (\arm{xgb}, \arm{mlp}, \arm{tabpfn\_v2}, \arm{h1}, \arm{h2}) with suffixes that are reused across the paper and are defined here once: \arm{erm} is plain empirical risk minimisation with pooled balanced class weights; \arm{dro} is Group DRO (Section~\ref{sec:dro}); \arm{rw} is the fixed inverse-frequency country reweighting defined below as a comparator to Group DRO; \arm{spw} tunes \texttt{scale\_pos\_weight} instead of using balanced class weights; \arm{within\_cw} balances class weights separately inside each country rather than pooling them first; \arm{wc} marks the arm selected, in the inner loop, on worst-country PR-AUC rather than on pooled PR-AUC (so Group DRO cannot win the comparison by construction); and \arm{country\_label} (E7) uses eight groups, one per country-by-label pair, instead of four country groups.
+
 \subsection{Group DRO}
+\label{sec:dro}
 
-Group DRO minimises the worst group's loss, with an optional adjustment for small groups \citep[pp.~2--3]{ghosal2023distributionally}; \citep[Eq.~4]{stahlschmidt2024domain}:
+Instead of minimising the average loss over all rows (as ERM does), Group DRO minimises whichever group's own loss is currently highest, so that training cannot keep improving on easy groups while an easy-to-ignore group stays poorly fit. Groups here are countries, indexed $g \in \{1, \dots, K\}$ with $K=4$; $n_g$ is country $g$'s number of training rows, and $\theta$ denotes the model's trainable parameters. Formally, with an optional adjustment that inflates the apparent loss of small groups \citep[pp.~2--3]{ghosal2023distributionally}; \citep[Eq.~4]{stahlschmidt2024domain}:
 \begin{equation}
-  \min_\theta \; \max_{g} \; \Big[ L_g(\theta) + \frac{C}{\sqrt{n_g}} \Big],
+  \min_\theta \; \max_{g \in \{1,\dots,K\}} \; \Big[ L_g(\theta) + \frac{C}{\sqrt{n_g}} \Big],
 \end{equation}
-where $L_g$ is the mean class-weighted loss of country $g$ and $n_g$ its training size. The paper usually cited for the online update is not in our literature, so the following is our own implementation statement. A weight $q_g$ is kept per group. At each step,
+where $L_g(\theta)$ is the mean class-weighted loss of country $g$ under parameters $\theta$, and $C \geq 0$ is a tuned constant that is zero when no such adjustment is used. The paper usually cited for the online update is not in our literature, so the following is our own implementation statement. Rather than solving the inner maximisation exactly, we track an exponential-moving weight $q_g \in [0,1]$ per group, with $\sum_g q_g = 1$, and after each training step update it towards whichever group currently has the highest adjusted loss:
 \begin{equation}
-  q_g \leftarrow \frac{q_g \exp\!\big(\eta\,(L_g + C/\sqrt{n_g})\big)}{\sum_{h} q_h \exp\!\big(\eta\,(L_h + C/\sqrt{n_h})\big)},
+  q_g \leftarrow \frac{q_g \exp\!\big(\eta\,(L_g + C/\sqrt{n_g})\big)}{\sum_{h=1}^{K} q_h \exp\!\big(\eta\,(L_h + C/\sqrt{n_h})\big)},
 \end{equation}
-computed in log space for numerical stability, and the model then takes a gradient step on $\sum_g q_g (L_g + C/\sqrt{n_g})$. Every batch of 256 rows holds 64 rows from each country, following the uniform per-domain sampling described by \citet[p.~66]{koh2021wilds}. The step size $\eta$ is searched on a log scale over $[0.001, 1]$, which includes the default of 0.01 in \citet[p.~66]{koh2021wilds}, and $C$ over $\{0, 1, 2, 4\}$. The weights $q$ and the per-group losses are saved at every epoch, so we can see which countries the method actually focused on.
+computed in log space for numerical stability, where $h$ ranges over the same $K$ groups as $g$ and $\eta > 0$ is the step size controlling how fast $q$ reacts. The model then takes a gradient step on the $q$-weighted sum of adjusted losses, $\sum_{g=1}^{K} q_g (L_g + C/\sqrt{n_g})$, so a group with a larger $q_g$ pulls the gradient more. Every batch of 256 rows holds 64 rows from each country, following the uniform per-domain sampling described by \citet[p.~66]{koh2021wilds}. The step size $\eta$ is searched on a log scale over $[0.001, 1]$, which includes the default of 0.01 in \citet[p.~66]{koh2021wilds}, and $C$ over $\{0, 1, 2, 4\}$. The weights $q$ and the per-group losses are saved at every epoch, so we can see which countries the method actually focused on (Figure~\ref{fig:q}).
 
-\paragraph{Comparators.} Inverse-frequency reweighting gives each row weight $N / (K\, n_{c})$, multiplied by its class weight, so that each country carries equal total weight. Unlike Group DRO, these weights are fixed before training.
+\paragraph{Comparators.} Inverse-frequency reweighting gives each row from country $c$ a fixed weight $N / (K\, n_{c})$, where $N = \sum_c n_c$ is the total number of training rows, multiplied by the row's class weight, so that each country carries equal total weight across the training set. Unlike Group DRO's $q_g$, these weights do not change during training.
 
 \subsection{Hybrids}
 
@@ -290,6 +293,8 @@ The primary metric is PR-AUC (average precision). It is computed on each seed's 
 \section{Results}
 \label{sec:results}
 
+Results are organised one subsection per research question, in the order RQ1 to RQ6. Each subsection leads with a bold verdict sentence stating whether the pre-registered rule in Table~\ref{tab:rules} was falsified, followed by the table or figure that supports it. $P$, $W$, $G$ and $\pi_c$ are as defined in Section~\ref{sec:method}; a value in square brackets is always a 95\% bootstrap interval, and ``paired'' means the same resampled rows were used for both arms in the comparison, so the interval is for the \emph{difference}, not for either arm alone. Arm-name suffixes (\arm{erm}, \arm{dro}, \arm{rw}, \arm{wc}, \ldots) are defined once in Section~\ref{sec:method} and not repeated at each table.
+
 \paragraph{Baseline reproduction (E1).} Through the baseline's own code, every fold PR-AUC and decision threshold matched the original run to full precision. The baseline had fitted its preprocessing before cross-validation. Refitting it inside each fold changed nothing for XGBoost and moved MLP fold-mean PR-AUC by $-0.0009$, which is negligible next to $\delta$.
 
 \subsection{RQ1 and RQ2: TabPFN}
@@ -297,7 +302,7 @@ The primary metric is PR-AUC (average precision). It is computed on each seed's 
 \begin{table}[H]
   \centering
   \small
-  \caption{Main benchmark: five-seed means with 95\% bootstrap intervals. Rwanda is the worst country for every arm in every seed.}
+  \caption{Main benchmark: five-seed means with 95\% bootstrap intervals. Rwanda is the worst country for every arm in every seed, so the $W$ column is Rwanda's PR-AUC; Kenya, Tanzania and Uganda are given as separate columns.}
   \label{tab:e2}
   \begin{tabular}{lcccccc}
     \toprule
@@ -331,18 +336,18 @@ One TabPFN fit and prediction took about 3~s per outer fold on the GPU.
 \begin{table}[H]
   \centering
   \small
-  \caption{Group DRO and its comparators: five-seed means of pooled and per-country PR-AUC.}
+  \caption{Group DRO and its comparators: five-seed means of pooled PR-AUC ($P$), worst-country PR-AUC ($W$) and per-country PR-AUC. $W$ always equals Rwanda's PR-AUC here (Rwanda is the worst country for every arm), so the two columns are identical; Rwanda is repeated for easy comparison with Kenya, Tanzania and Uganda in the same row. Kenya is the country Group DRO concentrates its weight $q$ on (Figure~\ref{fig:q}); its PR-AUC barely moves even as $q_{\text{Kenya}}$ rises to 0.91 under \arm{mlp\_dro}.}
   \label{tab:e3}
-  \begin{tabular}{lccccc}
+  \begin{tabular}{lccccccc}
     \toprule
-    Arm & $P$ & $W$ & Rwanda & Tanzania & Uganda \\
+    Arm & $P$ & $W$ & Kenya & Rwanda & Tanzania & Uganda \\
     \midrule
-    \arm{mlp\_erm\_wc} (ERM)         & 0.583 & 0.461 & 0.461 & 0.616 & 0.517 \\
-    \arm{mlp\_rw} (reweighted)       & 0.580 & 0.460 & 0.460 & 0.612 & 0.513 \\
-    \arm{mlp\_dro} (Group DRO)       & 0.543 & 0.444 & 0.444 & \textbf{0.486} & 0.482 \\
-    \arm{mlp\_erm\_within\_cw}       & 0.553 & 0.462 & 0.462 & 0.616 & 0.520 \\
-    \arm{mlp\_dro\_within\_cw}       & 0.502 & 0.460 & 0.460 & \textbf{0.463} & 0.495 \\
-    \arm{mlp\_dro\_country\_label} (E7) & 0.516 & 0.458 & 0.458 & 0.487 & 0.504 \\
+    \arm{mlp\_erm\_wc} (ERM)         & 0.583 & 0.461 & 0.644 & 0.461 & 0.616 & 0.517 \\
+    \arm{mlp\_rw} (reweighted)       & 0.580 & 0.460 & 0.641 & 0.460 & 0.612 & 0.513 \\
+    \arm{mlp\_dro} (Group DRO)       & 0.543 & 0.444 & 0.640 & 0.444 & \textbf{0.486} & 0.482 \\
+    \arm{mlp\_erm\_within\_cw}       & 0.553 & 0.462 & 0.643 & 0.462 & 0.616 & 0.520 \\
+    \arm{mlp\_dro\_within\_cw}       & 0.502 & 0.460 & 0.639 & 0.460 & \textbf{0.463} & 0.495 \\
+    \arm{mlp\_dro\_country\_label} (E7) & 0.516 & 0.458 & 0.641 & 0.458 & 0.487 & 0.504 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -383,7 +388,7 @@ Selecting ERM on pooled instead of worst-country PR-AUC gives the same conclusio
   \label{fig:sweeps}
 \end{figure}
 
-\textbf{Mechanism} (Figure~\ref{fig:q}). With pooled class weights, $q$ moves steadily towards Kenya, ending at 0.91, against 0.06 for Rwanda and 0.02 each for Tanzania and Uganda. Kenya has the highest training loss throughout (final group loss 0.60, against 0.39 to 0.49 for the others) because it has the highest prevalence. But the worst country by PR-AUC is Rwanda. Group DRO maximises the worst group's \emph{loss}, and here the worst-loss group is not the group with the worst \emph{ranking quality}.
+\textbf{Mechanism} (Figure~\ref{fig:q}, Table~\ref{tab:e3}). With pooled class weights, $q$ moves steadily towards Kenya, ending at 0.91, against 0.06 for Rwanda and 0.02 each for Tanzania and Uganda. Kenya has the highest training loss throughout (final group loss 0.60, against 0.39 to 0.49 for the others) because it has the highest prevalence. But the worst country by PR-AUC is Rwanda, not Kenya, and the near-total weight on Kenya does not even help Kenya: its PR-AUC is 0.640 under Group DRO against 0.644 under ERM (Table~\ref{tab:e3}), a difference below $\delta$. Group DRO maximises the worst group's \emph{loss}, and here the worst-loss group is not the group with the worst \emph{ranking quality}, so chasing it buys nothing for either the group it targets or the group that actually needs help.
 
 With within-country class weights, $q$ does move to Rwanda (0.65), yet Rwanda's PR-AUC is unchanged (0.460 against 0.462). Both Group DRO variants push Tanzania's weight to almost zero, and Tanzania's PR-AUC collapses, from 0.616 to 0.486 and to 0.463. This collapse accounts for most of Group DRO's pooled cost. It would fit the reversed \texttt{location\_type} relationship described in Section~\ref{sec:experiments}, but we have not tested that explanation.
 
@@ -489,9 +494,13 @@ Compared with within-country cross-validation, held-out PR-AUC drops by 0.03--0.
 \section{Discussion}
 \label{sec:discussion}
 
+Taken together, the six research questions point to one conclusion: the ceiling on Rwanda's PR-AUC is set by what the ten survey features can tell us about Rwanda, not by which model family or training objective we chose. TabPFN (RQ1--RQ2) and Group DRO (RQ3--RQ4) are two different routes to a fairer classifier, and both failed, but for different, diagnosable reasons: TabPFN simply replicates whatever the data support, while Group DRO actively optimises for the wrong target. Neither failure is a software bug or a tuning shortfall; both are explained below. The explanation evidence (RQ6) is consistent with this reading, so we discuss it first.
+
+\paragraph{Explanations do not point to a different model for Rwanda.} If Rwanda needed a different kind of model, we would expect its drivers of account ownership to look different from the other three countries' beyond ordinary resampling noise. RQ6 found the opposite for the primary models: \texttt{cellphone\_access} and \texttt{education\_level} dominate every country's ranking, and the measured cross-country disagreement, while real, is small (Table~\ref{tab:e6}). This is more consistent with the same relationships holding everywhere at different strengths than with Rwanda running on a qualitatively different process that a different architecture could exploit. It also argues against one tempting alternative explanation for Rwanda's low PR-AUC, that the features are simply irrelevant there: a model that relied on nothing would not reproduce the same feature ranking as the other three countries. The more consistent reading is that these features are informative in Rwanda, just less separating, which is what the next paragraphs attribute to the data rather than the model.
+
 \paragraph{The limit lies in the data, not the model.} Across 24 within-country model variants, worst-country PR-AUC lies between 0.40 and 0.47. Excluding the deliberately extreme step-size ablations, it lies between 0.44 and 0.47. The gap $G$ is 0.12 for every model trained with pooled class weights and without Group DRO. Where the gap is smaller, it is because pooled PR-AUC fell, not because the worst country improved. Rwanda remained the worst country for every one of these approaches: a foundation model pretrained on millions of synthetic tasks, a tuned tree ensemble, reweighting, an objective that targets Rwanda directly, and a TabPFN context with equal country shares. This matches the observation in WILDS that a worst-group gap can reflect intrinsic difficulty, which more attention to that group does not fix \citep[pp.~113--115]{koh2021wilds}. Rwanda is not a small group: it has the most rows and the second-highest prevalence. Our reading is that these ten survey features separate account holders from non-holders less well in Rwanda than elsewhere. We have not tested why.
 
-\paragraph{Why Group DRO failed.} First, it weights groups by training loss, and log-loss is highest in the highest-prevalence group. A mini-max objective on loss is therefore not a mini-max objective on a ranking metric when prevalence differs between groups. We found no discussion of this point in the literature we reviewed. Second, correcting the target did not help: within-country class weights moved the weight to Rwanda without moving Rwanda's PR-AUC, and the cost fell on Tanzania, which the objective then ignored. This mirrors \citet{koh2021wilds} and \citet{stahlschmidt2024domain}, and our pre-registration noted it in advance as a plausible outcome.
+\paragraph{Why Group DRO failed.} First, it weights groups by training loss, and log-loss is highest in the highest-prevalence group. A mini-max objective on loss is therefore not a mini-max objective on a ranking metric when prevalence differs between groups: Group DRO spent 91\% of its weight $q$ on Kenya (Figure~\ref{fig:q}), the country with the highest loss, not Rwanda, the country with the lowest PR-AUC, and even that effort left Kenya's own PR-AUC unchanged (Table~\ref{tab:e3}). We found no discussion of this point in the literature we reviewed. Second, correcting the target did not help: within-country class weights moved $q$ to Rwanda without moving Rwanda's PR-AUC, and the cost fell on Tanzania, which the objective then ignored. So the failure is not merely that Group DRO looked at the wrong group; redirecting it to the right group bought nothing either, which suggests the bottleneck is Rwanda's features, not Rwanda's training weight. This mirrors \citet{koh2021wilds} and \citet{stahlschmidt2024domain}, and our pre-registration noted it in advance as a plausible outcome.
 
 \paragraph{TabPFN as a practical result.} Untuned TabPFN v2 matched tuned XGBoost within 0.003 PR-AUC in about 3~s per fold. This agrees with independent clinical benchmarks \citep{shaktah2026established}. Pretraining did not supply fairness, consistent with \citet{liu2026causal} and \citet[pp.~22--23]{kurashkin2026current}.
 
